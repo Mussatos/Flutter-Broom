@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/user.dart';
 
 class LoginPage extends StatelessWidget {
+  User user = User(
+      name: '',
+      sobrenome: '',
+      email: '',
+      password: '',
+      cpf: '',
+      data: new DateTime(0),
+      profileId: 0,
+      basic_description: '',
+      cellphone_number: '',
+      user_image: '');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,8 +80,11 @@ class LoginPage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 40),
                   child: Column(
                     children: <Widget>[
-                      inputFile(label: "Email"),
-                      inputFile(label: "Password", obscureText: true)
+                      inputFile(label: "Email", credential: user),
+                      inputFile(
+                          label: "Password",
+                          credential: user,
+                          obscureText: true)
                     ],
                   ),
                 ),
@@ -86,7 +103,10 @@ class LoginPage extends StatelessWidget {
                     child: MaterialButton(
                         minWidth: double.infinity,
                         height: 60,
-                        onPressed: () {},
+                        onPressed: () {
+                          print('${user.email}' + '${user.password}');
+                          login(user.email, user.password);
+                        },
                         color: Colors.black,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
@@ -124,7 +144,7 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-Widget inputFile({label, obscureText = false}) {
+Widget inputFile({label, User? credential, obscureText = false}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
@@ -137,6 +157,14 @@ Widget inputFile({label, obscureText = false}) {
         height: 5,
       ),
       TextField(
+        onChanged: (value) {
+          if (obscureText) {
+            credential?.password = value;
+          } else {
+            credential?.email = value;
+          }
+          print('$credential');
+        },
         obscureText: obscureText,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),

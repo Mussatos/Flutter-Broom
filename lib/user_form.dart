@@ -1,9 +1,12 @@
+
 import 'package:broom_main_vscode/field_form.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/utils/validators.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({super.key, required List<Container> children});
@@ -53,6 +56,7 @@ class _UserFormState extends State<UserForm> {
 
     return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           SizedBox(
             width: 120,
@@ -82,62 +86,80 @@ class _UserFormState extends State<UserForm> {
                   });
                 }),
           ),
-          FieldForm(
-              label: 'Name', isPassoword: false, controller: controllerName),
-          FieldForm(
-              label: 'Sobrenome',
-              isPassoword: false,
-              controller: controllerSobrenome),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Email',
-              filled: true,
-              fillColor: Colors.white,
-            ),
-            obscureText: false,
-            controller: controllerEmail,
-            onChanged: (value) {
-              setState(() {
-                isValidEmail = validEmail(controllerEmail.text);
-              });
-            },
+          SizedBox(
+            width: 350,
+            child: FieldForm(
+                label: 'Name', isPassoword: false, controller: controllerName),
           ),
-          TextField(
+          SizedBox(
+            width: 350,
+            child: FieldForm(
+                label: 'Sobrenome',
+                isPassoword: false,
+                controller: controllerSobrenome),
+          ),
+          SizedBox(
+            width: 350,
+            child: TextField(
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: 'Email',
                 filled: true,
                 fillColor: Colors.white,
               ),
-              obscureText: true,
-              controller: controllerPassword,
+              obscureText: false,
+              controller: controllerEmail,
               onChanged: (value) {
                 setState(() {
-                  isValidPassword = validPassword(controllerPassword.text);
+                  isValidEmail = validEmail(controllerEmail.text);
                 });
-              }),
-          FieldForm(
-              label: 'CPF', isPassoword: false, controller: controllerCpf),
-          TextField(
-            controller: controllerDate,
-            decoration: InputDecoration(
-              labelText: 'Date',
-              filled: true,
-              fillColor: Colors.white,
-              prefixIcon: Icon(Icons.calendar_today),
+              },
             ),
-            readOnly: true,
-            onTap: () {
-              _selectDate();
-            },
           ),
           SizedBox(
-            width: double.infinity,
+            width: 350,
+            child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                obscureText: true,
+                controller: controllerPassword,
+                onChanged: (value) {
+                  setState(() {
+                    isValidPassword = validPassword(controllerPassword.text);
+                  });
+                }),
+          ),
+          SizedBox(
+            width: 350,
+            child: FieldForm(
+                label: 'CPF', isPassoword: false, controller: controllerCpf),
+          ),
+          SizedBox(
+            width: 350,
+            child: TextField(
+              controller: controllerDate,
+              decoration: InputDecoration(
+                labelText: 'Date',
+                filled: true,
+                fillColor: Colors.white,
+                prefixIcon: Icon(Icons.calendar_today),
+              ),
+              readOnly: true,
+              onTap: () {
+                _selectDate();
+              },
+            ),
+          ),
+          SizedBox(
+            width: 350,
+            height: 50,
             child: TextButton(
               onPressed: () => save(),
               child: Text('Salvar'),
               style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateProperty.all(Theme.of(context).primaryColor),
+                backgroundColor: MaterialStateProperty.all(Colors.black),
                 foregroundColor: MaterialStateProperty.all(Colors.white),
               ),
             ),

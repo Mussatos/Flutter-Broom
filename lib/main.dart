@@ -1,6 +1,6 @@
-
 import 'package:broom_main_vscode/Login.dart';
 import 'package:broom_main_vscode/user_provider.dart';
+import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
 
@@ -9,6 +9,9 @@ void main() {
       child: MaterialApp(
     debugShowCheckedModeBanner: false,
     home: HomePage(),
+    routes: {
+      "/list": (_) => UserList(),
+    },
   )));
 }
 
@@ -49,10 +52,10 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height / 3,
+                  height: MediaQuery.of(context).size.height / 2,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage("assets/Logo_so_o_balde.png"))),
+                          image: AssetImage("assets/Logo_com_letra.png"))),
                 ),
                 Column(
                   children: <Widget>[

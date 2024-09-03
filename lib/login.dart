@@ -1,3 +1,5 @@
+import 'package:broom_main_vscode/signup.dart';
+import 'package:broom_main_vscode/user_form.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user.dart';
@@ -40,10 +42,10 @@ class LoginPage extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Container(
-              height: 300,
+              height: 250,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage("assets/Logo_com_letra.png"),
+                  image: AssetImage("assets/Logo_so_o_balde.png"),
                   fit: BoxFit.fitHeight,
                 ),
               ),

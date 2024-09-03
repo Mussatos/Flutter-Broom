@@ -1,4 +1,3 @@
-
 import 'package:broom_main_vscode/field_form.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
@@ -45,13 +44,17 @@ class _UserFormState extends State<UserForm> {
           cellphone_number: '',
           user_image: '');
 
-      userProvider.users.insert(0, user);
+      int usersLength = userProvider.users.length;
+
+      userProvider.users.insert(usersLength, user);
 
       if (isValidEmail && isValidPassword) {
         register(user.toJson());
       } else {
         Error();
       }
+
+      Navigator.popAndPushNamed(context, "/list");
     }
 
     return Center(

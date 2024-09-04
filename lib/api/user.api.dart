@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 
 // o valor 10.2.2.2:3000 é a forma de nós acessarmos o locahost do
 // nosso pc via emulador
-Uri url = Uri.http('10.0.2.2:3001', '/register');
-Uri urlLogin = Uri.http('10.0.2.2:3001', '/login');
+Uri url = Uri.http('10.0.2.2:3000', '/register');
+Uri urlLogin = Uri.http('10.0.2.2:3000', '/login');
 Uri urlImg =
     Uri.http('10.0.2.2:3001', '/file/db56558ca8eeb4267759dd3e9b616f1e');
 

@@ -1,5 +1,6 @@
 import 'package:broom_main_vscode/Login.dart';
 import 'package:broom_main_vscode/user_provider.dart';
+import 'package:broom_main_vscode/user_view.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
@@ -11,6 +12,7 @@ void main() {
     home: HomePage(),
     routes: {
       "/list": (_) => UserList(),
+      "/view": (_) => UserView(),
     },
   )));
 }

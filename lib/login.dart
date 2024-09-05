@@ -1,5 +1,6 @@
 import 'package:broom_main_vscode/signup.dart';
 import 'package:broom_main_vscode/user_form.dart';
+import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user.dart';
@@ -108,6 +109,10 @@ class LoginPage extends StatelessWidget {
                         onPressed: () {
                           print('${user.email}' + '${user.password}');
                           login(user.email, user.password);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserList()));
                         },
                         color: Colors.black,
                         elevation: 0,
@@ -127,6 +132,13 @@ class LoginPage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    /*
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.popAndPushNamed(context, const => SignUpPage());
+                      },
+                    ),
+                    */
                     Text("Don't have an account?"),
                     Text(
                       " Sign up",

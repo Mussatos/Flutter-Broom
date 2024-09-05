@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class UserProvider extends InheritedWidget {
   final Widget child;
-
+  
   List<User> users = [];
   User? userSelect;
   int? indexUser;

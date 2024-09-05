@@ -29,20 +29,9 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
-    int? chave;
 
-    if (userProvider.indexUser != null) {
-      chave = UserProvider.indexUser;
-      controllerName.text = UserProvider.userSelect!.name;
-      controllerSobrenome.text = UserProvider.userSelect!.sobrenome;
-      controllerEmail.text = UserProvider.userSelect!.email;
-    }
-    
     void save() {
-      UserProvider userProvider = UserProvider.of(context) as UserProvider;
-
       User user = User(
           name: controllerName.text,
           sobrenome: controllerSobrenome.text,
@@ -68,7 +57,6 @@ class _UserFormState extends State<UserForm> {
       Navigator.popAndPushNamed(context, "/list");
     }
 
-    
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

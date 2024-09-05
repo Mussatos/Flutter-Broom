@@ -1,13 +1,50 @@
-import 'package:broom_main_vscode/field_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+
 
 class UserView extends StatelessWidget {
   UserView({super.key});
 
   String title = "Show User";
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
+      appBar: AppBar(
+        title: Text('Informações'),
+        elevation: 0,
+        backgroundColor: Color(0xFF2ECC8F),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.popAndPushNamed(context, "/list");
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: Colors.black,
+          ),
+        ),
+      ),
+      
+      body: Text("Vini"),
+      /*
+      ListView.builder(
+        itemCount: usersLength,
+        itemBuilder: (BuildContext contextBuilder, indexBuilder) => Container(
+          child: ListTile(
+              title: Text(users[indexBuilder].name),
+              subtitle: Text(users[indexBuilder].sobrenome),
+              leading: Image.asset("assets/Logo_so_o_balde.png"),
+              ),
+        ),
+      ),
+      */
+    );
+  }
+
+/*
   TextEditingController controllerName = TextEditingController();
   TextEditingController controllerSobrenome = TextEditingController();
   TextEditingController controllerEmail = TextEditingController();
@@ -121,7 +158,8 @@ class UserView extends StatelessWidget {
           )
         ],
       ),
+      
     );
   }
+  */
 }
-

@@ -3,11 +3,14 @@ import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(UserProvider(
       child: MaterialApp(
     debugShowCheckedModeBanner: false,
+    localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+    supportedLocales: const [Locale('pt')],
     home: HomePage(),
     routes: {
       "/list": (_) => UserList(),
@@ -24,7 +27,7 @@ class HomePage extends StatelessWidget {
           child: Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
-            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+            padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,

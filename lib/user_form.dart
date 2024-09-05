@@ -65,38 +65,55 @@ class _UserFormState extends State<UserForm> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            SizedBox(
-              width: 120,
-              child: DropdownButton<int>(
-                  value: userProfileSelected,
-                  underline: Container(
-                    height: 1,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Selecione o seu perfil: ',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-                  dropdownColor: Colors.white,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  isExpanded: true,
-                  iconSize: 35,
-                  iconEnabledColor: Colors.white,
-                  items: profileType.map<DropdownMenuItem<int>>((int value) {
-                    return DropdownMenuItem<int>(
-                        value: value,
-                        child: Text(value == 1 ? 'Cliente' : 'Diarista'));
-                  }).toList(),
-                  onChanged: (int? value) {
-                    setState(() {
-                      userProfileSelected = value!;
-                    });
-                  }),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                SizedBox(
+                  width: 120,
+                  child: DropdownButton<int>(
+                      value: userProfileSelected,
+                      underline: Container(
+                        height: 1,
+                        color: Colors.white,
+                      ),
+                      dropdownColor: Colors.white,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      isExpanded: true,
+                      iconSize: 35,
+                      iconEnabledColor: Colors.white,
+                      items:
+                          profileType.map<DropdownMenuItem<int>>((int value) {
+                        return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text(value == 1 ? 'Cliente' : 'Diarista'));
+                      }).toList(),
+                      onChanged: (int? value) {
+                        setState(() {
+                          userProfileSelected = value!;
+                        });
+                      }),
+                ),
+              ],
             ),
             SizedBox(
               width: 350,
               child: FieldForm(
-                  label: 'Name',
+                  label: 'Nome',
                   isPassoword: false,
                   controller: controllerName),
             ),
@@ -137,7 +154,7 @@ class _UserFormState extends State<UserForm> {
               width: 350,
               child: TextField(
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: 'Senha',
                     filled: true,
                     fillColor: Colors.white,
                   ),
@@ -165,7 +182,7 @@ class _UserFormState extends State<UserForm> {
               child: TextField(
                 controller: controllerDate,
                 decoration: InputDecoration(
-                  labelText: 'Date',
+                  labelText: 'Data de Nascimento',
                   filled: true,
                   fillColor: Colors.white,
                   prefixIcon: Icon(Icons.calendar_today),
@@ -183,7 +200,6 @@ class _UserFormState extends State<UserForm> {
                 children: [
                   Text('Selecione seu gênero:'),
                   Radio(
-
                     value: 'M',
                     groupValue: gender,
                     onChanged: (value) {

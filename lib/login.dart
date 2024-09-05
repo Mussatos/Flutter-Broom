@@ -40,7 +40,7 @@ class LoginPage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height - 100,
           width: double.infinity,
           child: Column(
             children: <Widget>[

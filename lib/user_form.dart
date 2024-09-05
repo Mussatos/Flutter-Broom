@@ -47,13 +47,17 @@ class _UserFormState extends State<UserForm> {
           wantService: null,
           gender: gender);
 
-      userProvider.users.insert(0, user);
+      int usersLength = userProvider.users.length;
+
+      userProvider.users.insert(usersLength, user);
 
       if (isValidEmail && isValidPassword) {
         register(user.toJson());
       } else {
         Error();
       }
+
+      Navigator.popAndPushNamed(context, "/list");
     }
 
     return Center(

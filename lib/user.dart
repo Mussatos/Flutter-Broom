@@ -7,34 +7,39 @@ class User {
   String cellphone_number = '';
   String user_image = '';
   String cpf;
-  String basic_description = '';
+  String description = '';
   DateTime data;
+  String gender;
+  bool? wantService;
 
-  User({
-    required this.profileId,
-    required this.name,
-    required this.sobrenome,
-    required this.email,
-    required this.password,
-    required this.cellphone_number,
-    required this.cpf,
-    required this.user_image,
-    required this.data,
-    required this.basic_description,
-  });
+  User(
+      {required this.profileId,
+      required this.name,
+      required this.sobrenome,
+      required this.email,
+      required this.password,
+      required this.cellphone_number,
+      required this.cpf,
+      required this.user_image,
+      required this.data,
+      required this.description,
+      required this.gender,
+      required this.wantService});
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
         profileId: json['profile_id'],
         email: json['email'],
         password: json['password'],
-        basic_description: json['basic_description'],
+        description: json['description'],
         cpf: json['cpf'],
         name: json['first_name'],
         sobrenome: json['last_name'],
         data: json['age'],
         cellphone_number: json['cellphone_number'],
-        user_image: json['user_image']);
+        user_image: json['user_image'],
+        gender: json['gender'],
+        wantService: json['want_service']);
   }
 
   Map<String, dynamic> toJson() {
@@ -43,12 +48,14 @@ class User {
       'last_name': sobrenome,
       'password': password,
       'user_image': user_image,
-      'basic_description': basic_description,
+      'description': description,
       'age': data.toIso8601String(),
       'cpf': cpf,
       'email': email,
       'profile_id': profileId,
       'cellphone_number': cellphone_number,
+      'gender': gender,
+      'want_service': wantService
     };
   }
 }

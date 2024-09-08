@@ -9,7 +9,7 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNTU2OTM5OCwiZXhwIjoxNzI1NTgzNzk4LCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.Y485bjEz1GV7KJvDRzwDSMfuIwkOK_F_COZKYeSt03s';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmljaXVzc2FudGFuYS5hemFtYnVqNEBnbWFpbC5jb20iLCJpZCI6MSwiaWF0IjoxNzI1ODIzNTgzLCJleHAiOjE3MjU4Mzc5ODMsImlzcyI6InJlZ2lzdGVyIiwic3ViIjoiMSJ9.je2kcfqb9_TeRB--7THiBE6fqWfPOrppyqJyrLo81s0';
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
 
     List<User> users = userProvider.users;
@@ -33,7 +33,7 @@ class UserList extends StatelessWidget {
           ),
         ),
       ),
-      body: FutureBuilder<List<ContractModel>>(
+      body: FutureBuilder<List<ListUsers>>(
         future: fetchUsuarios(token),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -45,15 +45,15 @@ class UserList extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('Nenhum usuário encontrado'));
           } else {
-            List<ContractModel> usuarios = snapshot.data!;
+            List<ListUsers> usuarios = snapshot.data!;
             return ListView.builder(
               itemCount: usuarios.length,
               itemBuilder: (context, index) {
-                ContractModel usuario = usuarios[index];
+                ListUsers usuario = usuarios[index];
                 return ListTile(
-                  leading: CircleAvatar(child: Text(usuario.name)),
-                  title: Text(usuario.name),
-                  subtitle: Text(usuario.sobrenome),
+                  leading: CircleAvatar(child: Text(usuario.firstName)),
+                  title: Text(usuario.firstName),
+                  subtitle: Text(usuario.lastName),
                 );
               },
             );

@@ -1,7 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:broom_main_vscode/ui-components/user_image.dart';
 
 class UserList extends StatelessWidget {
   const UserList({super.key});
@@ -9,7 +12,7 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmljaXVzc2FudGFuYS5hemFtYnVqNEBnbWFpbC5jb20iLCJpZCI6MSwiaWF0IjoxNzI1OTMyNjQyLCJleHAiOjE3MjU5NDcwNDIsImlzcyI6ImxvZ2luIiwic3ViIjoiMSJ9.pMnASa3NTbcgIkBwjhMKCtwxU72YMea2b0qtEBResUQ';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmljaXVzc2FudGFuYS5hemFtYnVqNEBnbWFpbC5jb20iLCJpZCI6MSwiaWF0IjoxNzI1OTk4Njc2LCJleHAiOjE3MjYwMTMwNzYsImlzcyI6ImxvZ2luIiwic3ViIjoiMSJ9.GHZboY3Tzq8xQ46q2SzA7UnYdUFowIh5YwRqN-LaXwU';
 
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
@@ -28,14 +31,16 @@ class UserList extends StatelessWidget {
             street: ''));
     }
 
-    Widget getUserImage(ListUsers user){
-      return user.userImage == '' ? const Icon(Icons.person) : Text('');
+    String getListUserFormatedAddress(Address userAddress) {
+      if (userAddress.state == '' ||
+          userAddress.neighborhood == '' ||
+          userAddress.city == '') return '';
+
+      return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
     }
 
-    String getListUserFormatedAddress(Address userAddress){
-        if(userAddress.state == '' || userAddress.neighborhood == '' || userAddress.city == '') return '';
-
-        return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
+    String getListUserFullName(ListUsers user) {
+      return '${user.firstName} ${user.lastName}';
     }
 
     return Scaffold(
@@ -75,9 +80,24 @@ class UserList extends StatelessWidget {
                 addAddressForUser(usuario);
 
                 return ListTile(
-                  leading: CircleAvatar(child: getUserImage(usuario)),
-                  title: Text('${usuario.firstName} ${usuario.lastName}'),
+                  titleTextStyle: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600),
+                  subtitleTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      decorationColor: Colors.white,
+                      decoration: TextDecoration.overline),
+                  leading: UserImage(user: usuario, token: token),
+                  title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
+                  onTap: () {
+                    print(index);
+                    print(usuario.id);
+                    print(usuario.wantService);
+                  },
                 );
               },
             );

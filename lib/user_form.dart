@@ -30,9 +30,9 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    void save() {
-      UserProvider userProvider = UserProvider.of(context) as UserProvider;
+    UserProvider userProvider = UserProvider.of(context) as UserProvider;
 
+    void save() {
       User user = User(
           name: controllerName.text,
           sobrenome: controllerSobrenome.text,

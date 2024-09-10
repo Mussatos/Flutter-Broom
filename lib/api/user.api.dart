@@ -9,12 +9,12 @@ import 'package:http/http.dart' as http;
 // o valor 10.2.2.2:3000 é a forma de nós acessarmos o locahost do
 // nosso pc via emulador
 
-Uri url = Uri.http('10.0.0.2:3000', '/register');
-Uri urlLogin = Uri.http('10.0.0.2:3000', '/login');
-Uri urlListContractors = Uri.http('10.0.0.2:3000', '/list/contractors');
-Uri urlListDiarists = Uri.http('10.0.0.2:3000', '/list/diarists');
+Uri url = Uri.http('10.0.2.2:3000', '/register');
+Uri urlLogin = Uri.http('10.0.2.2:3000', '/login');
+Uri urlListContractors = Uri.http('10.0.2.2:3000', '/list/contractors');
+Uri urlListDiarists = Uri.http('10.0.2.2:3000', '/list/diarists');
 Uri urlImg =
-    Uri.http('10.0.0.2:3000', '/file/db56558ca8eeb4267759dd3e9b616f1e');
+    Uri.http('10.0.2.2:3000', '/file/db56558ca8eeb4267759dd3e9b616f1e');
 
 Future<void> register(Map<String, dynamic> user) async {
   // verificação muito foda hehehe

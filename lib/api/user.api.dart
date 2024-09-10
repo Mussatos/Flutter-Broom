@@ -24,7 +24,7 @@ Future<void> register(Map<String, dynamic> user) async {
 
     final response = jsonDecode(resp.body) as Map<String, dynamic>;
     if (resp.statusCode == 201) {
-      print('${response['data']}');
+      return response['data'];
     } else {
       throw Exception(response['message']);
     }
@@ -43,7 +43,7 @@ Future<void> login(String email, String password) async {
 
     final response = jsonDecode(resp.body) as Map<String, dynamic>;
     if (resp.statusCode == 201) {
-      print('${response['data']}');
+      return response['data'];
     } else {
       throw Exception(response['message']);
     }
@@ -60,20 +60,12 @@ Future<List<ListUsers>> fetchUsuarios(String token) async {
       'Authorization': 'Bearer $token', // Passa o token no cabeçalho
     },
   );
-  print('${response.statusCode}');
-  print('${response.body}');
+
   if (response.statusCode == 200) {
     // Parse da resposta para uma lista de objetos Usuario
     List<dynamic> data = jsonDecode(response.body);
-    print(data[0]);
-    List<ListUsers> batata =
-        data.map((json) => ListUsers.fromJson(json)).toList();
-
-    print('sexo');
-    print(batata);
-    return data.map((json) {
-      return ListUsers.fromJson(json);
-    }).toList();
+  
+    return data.map((json) => ListUsers.fromJson(json)).toList();
   } else {
     throw Exception('Falha ao carregar dados');
   }

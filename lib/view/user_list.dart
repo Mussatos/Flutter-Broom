@@ -9,12 +9,34 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmljaXVzc2FudGFuYS5hemFtYnVqNEBnbWFpbC5jb20iLCJpZCI6MSwiaWF0IjoxNzI1ODIzNTgzLCJleHAiOjE3MjU4Mzc5ODMsImlzcyI6InJlZ2lzdGVyIiwic3ViIjoiMSJ9.je2kcfqb9_TeRB--7THiBE6fqWfPOrppyqJyrLo81s0';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmljaXVzc2FudGFuYS5hemFtYnVqNEBnbWFpbC5jb20iLCJpZCI6MSwiaWF0IjoxNzI1OTMyNjQyLCJleHAiOjE3MjU5NDcwNDIsImlzcyI6ImxvZ2luIiwic3ViIjoiMSJ9.pMnASa3NTbcgIkBwjhMKCtwxU72YMea2b0qtEBResUQ';
+
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
-
     List<User> users = userProvider.users;
-
     int usersLength = users.length;
+
+    List<Address> address = [];
+    void addAddressForUser(ListUsers user) {
+      if (user.address.length > 0)
+        address.add(Address.fromJson(user.address[0]));
+      else
+        address.add(Address(
+            state: '',
+            city: '',
+            neighborhood: '',
+            addressType: '',
+            street: ''));
+    }
+
+    Widget getUserImage(ListUsers user){
+      return user.userImage == '' ? const Icon(Icons.person) : Text('');
+    }
+
+    String getListUserFormatedAddress(Address userAddress){
+        if(userAddress.state == '' || userAddress.neighborhood == '' || userAddress.city == '') return '';
+
+        return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
+    }
 
     return Scaffold(
       backgroundColor: Color(0xFF2ECC8F),
@@ -50,10 +72,12 @@ class UserList extends StatelessWidget {
               itemCount: usuarios.length,
               itemBuilder: (context, index) {
                 ListUsers usuario = usuarios[index];
+                addAddressForUser(usuario);
+
                 return ListTile(
-                  leading: CircleAvatar(child: Text(usuario.firstName)),
-                  title: Text(usuario.firstName),
-                  subtitle: Text(usuario.lastName),
+                  leading: CircleAvatar(child: getUserImage(usuario)),
+                  title: Text('${usuario.firstName} ${usuario.lastName}'),
+                  subtitle: Text(getListUserFormatedAddress(address[index])),
                 );
               },
             );

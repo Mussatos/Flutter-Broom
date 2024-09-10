@@ -105,28 +105,5 @@ class UserList extends StatelessWidget {
         },
       ),
     );
-    /*
-      ListView.builder(
-        itemCount: usersLength,
-        itemBuilder: (BuildContext contextBuilder, indexBuilder) => Container(
-          child: ListTile(
-              title: Text(users[indexBuilder].name),
-              subtitle: Text(users[indexBuilder].sobrenome),
-              leading: Image.asset("assets/Logo_so_o_balde.png"),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        //print(users[indexBuilder].profileId);
-                        Navigator.popAndPushNamed(context, "/view");
-                      },
-                      icon: Icon(Icons.visibility, color: Colors.blue)),
-                ],
-              )),
-          decoration:
-              BoxDecoration(border: Border(bottom: BorderSide(width: 0.4))),
-        ),
-      ),*/
   }
 }

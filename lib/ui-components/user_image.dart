@@ -16,11 +16,17 @@ class UserImage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Icon(Icons.person);
+          return const CircleAvatar(child: Icon(Icons.person));
         } else if (snapshot.hasData) {
-          return Image.memory(snapshot.data!);
+          return Container(
+            width: 80,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                      image: MemoryImage(snapshot.data!),
+                      fit: BoxFit.contain)));
         } else {
-          return const Icon(Icons.person);
+          return const CircleAvatar(child: Icon(Icons.person));
         }
       },
     );

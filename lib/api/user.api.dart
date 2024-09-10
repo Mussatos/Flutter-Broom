@@ -4,17 +4,18 @@ import 'dart:typed_data';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 // o valor 10.2.2.2:3000 é a forma de nós acessarmos o locahost do
 // nosso pc via emulador
-
-Uri url = Uri.http('10.0.2.2:3000', '/register');
-Uri urlLogin = Uri.http('10.0.2.2:3000', '/login');
-Uri urlListContractors = Uri.http('10.0.2.2:3000', '/list/contractors');
-Uri urlListDiarists = Uri.http('10.0.2.2:3000', '/list/diarists');
+final String host = dotenv.env['API_URL']!;
+Uri url = Uri.http(host, '/register');
+Uri urlLogin = Uri.http(host, '/login');
+Uri urlListContractors = Uri.http(host, '/list/contractors');
+Uri urlListDiarists = Uri.http(host, '/list/diarists');
 Uri urlImg =
-    Uri.http('10.0.2.2:3000', '/file/db56558ca8eeb4267759dd3e9b616f1e');
+    Uri.http(host, '/file/db56558ca8eeb4267759dd3e9b616f1e');
 
 Future<void> register(Map<String, dynamic> user) async {
   // verificação muito foda hehehe

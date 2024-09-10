@@ -4,9 +4,11 @@ import 'package:broom_main_vscode/user_view.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
+  await dotenv.load(fileName: '.env');
   runApp(UserProvider(
       child: MaterialApp(
     debugShowCheckedModeBanner: false,

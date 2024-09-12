@@ -1,165 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-
+import 'user.dart';
+import 'package:broom_main_vscode/ui-components/user_image.dart';
 
 class UserView extends StatelessWidget {
-  UserView({super.key});
+  final ListUsers usuario;
+  final String token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpYW5taXJhbmRhMjZAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTcyNjA5NjY2NSwiZXhwIjoxNzI2MTExMDY1LCJpc3MiOiJsb2dpbiIsInN1YiI6IjEifQ.79PLGjF55TpD0RIRtthvfmrrBuyCNa4NAOzoUZh2x64";
 
-  String title = "Show User";
+  UserView({required this.usuario});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
-        title: Text('Informações'),
-        elevation: 0,
-        backgroundColor: Color(0xFF2ECC8F),
+        title: Text('Informações do Usuário'),
+        backgroundColor: Colors.green,
         leading: IconButton(
           onPressed: () {
-            Navigator.popAndPushNamed(context, "/list");
+            Navigator.pop(context);
           },
-          icon: Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-            color: Colors.black,
+          icon: Icon(Icons.arrow_back),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Container(
+          width: double.infinity,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 40,
+                child: UserImage(user: usuario, token: token),
+              ),
+              SizedBox(height: 10),
+              Text(
+                '${usuario.firstName} ${usuario.lastName} \nServiço: ${usuario.wantService} \nEndereço: ${usuario.address}',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),
-      
-      body: Text("Vini"),
-      /*
-      ListView.builder(
-        itemCount: usersLength,
-        itemBuilder: (BuildContext contextBuilder, indexBuilder) => Container(
-          child: ListTile(
-              title: Text(users[indexBuilder].name),
-              subtitle: Text(users[indexBuilder].sobrenome),
-              leading: Image.asset("assets/Logo_so_o_balde.png"),
-              ),
-        ),
-      ),
-      */
     );
   }
-
-/*
-  TextEditingController controllerName = TextEditingController();
-  TextEditingController controllerSobrenome = TextEditingController();
-  TextEditingController controllerEmail = TextEditingController();
-  TextEditingController controllerPassword = TextEditingController();
-  TextEditingController controllerCpf = TextEditingController();
-  TextEditingController controllerDate = TextEditingController();
-  List<int> profileType = [1, 2];
-  int userProfileSelected = 1;
-  DateTime picked = new DateTime(0);
-  bool isValidEmail = true;
-  bool isValidPassword = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SizedBox(
-            width: 120,
-            child: DropdownButton<int>(
-              value: userProfileSelected,
-              underline: Container(
-                height: 1,
-                color: Colors.white,
-              ),
-              dropdownColor: Colors.white,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-              isExpanded: true,
-              iconSize: 35,
-              iconEnabledColor: Colors.white,
-              items: profileType.map<DropdownMenuItem<int>>((int value) {
-                return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value == 1 ? 'Cliente' : 'Diarista'));
-              }).toList(),
-              onChanged: (int? value) {},
-            ),
-          ),
-          SizedBox(
-            width: 350,
-            child: FieldForm(
-                label: 'Name', isPassoword: false, controller: controllerName),
-          ),
-          SizedBox(
-            width: 350,
-            child: FieldForm(
-                label: 'Sobrenome',
-                isPassoword: false,
-                controller: controllerSobrenome),
-          ),
-          SizedBox(
-            width: 350,
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Email',
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              obscureText: false,
-              controller: controllerEmail,
-            ),
-          ),
-          SizedBox(
-            width: 350,
-            child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-                obscureText: true,
-                controller: controllerPassword,
-              ),
-          ),
-          SizedBox(
-            width: 350,
-            child: FieldForm(
-                label: 'CPF', isPassoword: false, controller: controllerCpf),
-          ),
-          SizedBox(
-            width: 350,
-            child: TextField(
-              controller: controllerDate,
-              decoration: InputDecoration(
-                labelText: 'Date',
-                filled: true,
-                fillColor: Colors.white,
-                prefixIcon: Icon(Icons.calendar_today),
-              ),
-              readOnly: true,
-            ),
-          ),
-          SizedBox(
-            width: 350,
-            height: 50,
-            child: TextButton(
-              onPressed: () {
-                Navigator.popAndPushNamed(context, "/create");
-              },
-              child: Text('Edit'),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.black),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
-            ),
-          )
-        ],
-      ),
-      
-    );
-  }
-  */
 }

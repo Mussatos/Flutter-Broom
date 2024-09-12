@@ -5,6 +5,7 @@ import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
+import 'package:broom_main_vscode/user_view.dart';
 
 class UserList extends StatelessWidget {
   const UserList({super.key});
@@ -97,7 +98,13 @@ class UserList extends StatelessWidget {
                     print(index);
                     print(usuario.id);
                     print(usuario.wantService);
-                    _showUserDetails(context, usuario);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserView(usuario: usuario),
+                      ),
+                    );
+                    //_showUserDetails(context, usuario);
                   },
                 );
               },
@@ -108,7 +115,7 @@ class UserList extends StatelessWidget {
     );
   }
 }
-
+/*
 void _showUserDetails(BuildContext context, ListUsers usuario) {
   String token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpYW5taXJhbmRhMjZAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTcyNjA5NjY2NSwiZXhwIjoxNzI2MTExMDY1LCJpc3MiOiJsb2dpbiIsInN1YiI6IjEifQ.79PLGjF55TpD0RIRtthvfmrrBuyCNa4NAOzoUZh2x64";
@@ -147,3 +154,4 @@ void _showUserDetails(BuildContext context, ListUsers usuario) {
     },
   );
 }
+*/

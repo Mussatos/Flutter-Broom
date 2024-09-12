@@ -9,12 +9,32 @@ class UserView extends StatelessWidget {
 
   UserView({required this.usuario});
 
+/*
+  _openWhatsApp() async {
+    var whatsappUrl = "whatsapp://send?phone=${usuario.cellphone_number}";
+    if (await canLaunch(whatsappUrl)) {
+      await launch(whatsappUrl);
+    } else {
+      print("Não foi possível abrir o WhatsApp");
+    }
+  }
+
+  _sendEmail() async {
+    var emailUrl = "mailto:${usuario.email}";
+    if (await canLaunch(emailUrl)) {
+      await launch(emailUrl);
+    } else {
+      print("Não foi possível abrir o aplicativo de email");
+    }
+  }
+*/
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Informações do Usuário'),
-        backgroundColor: Colors.green,
+        backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -40,6 +60,21 @@ class UserView extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
+              /*
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.whatsapp, color: Colors.green, size: 40),
+                    onPressed: _openWhatsApp,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.email, color: Colors.blue, size: 40),
+                    onPressed: _sendEmail,
+                  ),
+                ],
+              ),
+              */
             ],
           ),
         ),

@@ -11,21 +11,18 @@ class UserList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = UserProvider.of(context) as UserProvider;
-    List<User> users = userProvider.users;
-    int usersLength = users.length;
-
     List<Address> address = [];
     void addAddressForUser(ListUsers user) {
-      if (user.address.length > 0)
+      if (user.address.isNotEmpty) {
         address.add(Address.fromJson(user.address[0]));
-      else
+      } else {
         address.add(Address(
             state: '',
             city: '',
             neighborhood: '',
             addressType: '',
             street: ''));
+      }
     }
 
     String getListUserFormatedAddress(Address userAddress) {

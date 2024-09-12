@@ -29,11 +29,12 @@ Future<void> register(Map<String, dynamic> user) async {
       throw Exception('Falha ao cadastrar usuário');
     }
   } catch (err) {
-    throw Exception('Falha ao conectar ao sistema');
+    print(err);
   }
 }
 
-Future<void> login(String email, String password) async {
+Future<bool> login(String email, String password) async {
+  bool isLogged = false;
   try {
     var resp = await http.post(urlLogin,
         headers: <String, String>{'Content-Type': 'application/json'},
@@ -42,16 +43,17 @@ Future<void> login(String email, String password) async {
 
     final response = jsonDecode(resp.body) as Map<String, dynamic>;
     if (resp.statusCode == 201) {
+      isLogged = true;
       await autentication.setToken(response['access_token']);
       await autentication.setProfileId(response['data']['profile_id']);
       await autentication.setUserId(response['data']['id']);
 
-      return response['data'];
+      return isLogged;
     } else {
-      throw Exception('Credenciais inválidas');
+      throw Exception();
     }
   } catch (err) {
-    throw Exception('Falha ao conectar no sistema.');
+    return isLogged;
   }
 }
 
@@ -74,7 +76,8 @@ Future<List<ListUsers>> fetchUsuarios() async {
       throw Exception('Falha ao carregar dados');
     }
   } catch (err) {
-    throw Exception('Falha ao conectar ao sistema');
+    print(err);
+    return [];
   }
 }
 
@@ -82,15 +85,20 @@ Uri getListUrl(int? userProfileId) {
   return userProfileId == 1 ? urlListDiarists : urlListContractors;
 }
 
-Future<Uint8List> fetchUserImage(String imageName) async {
+Future<Uint8List?> fetchUserImage(String imageName) async {
   final token = await autentication.getToken();
 
-  final response = await http.get(Uri.http(host, '/file/$imageName'),
-      headers: {'Authorization': 'Bearer $token'});
+  try {
+    final response = await http.get(Uri.http(host, '/file/$imageName'),
+        headers: {'Authorization': 'Bearer $token'});
 
-  if (response.statusCode == 200) {
-    return response.bodyBytes;
-  } else {
-    throw Exception('Falha ao carregar imagem');
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      throw Exception('Falha ao carregar imagem');
+    }
+  } catch (err) {
+    print(err);
+    return null;
   }
 }

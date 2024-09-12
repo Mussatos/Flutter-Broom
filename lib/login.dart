@@ -11,11 +11,24 @@ class LoginPage extends StatelessWidget {
   TextEditingController? passwordController = TextEditingController(text: '');
   bool isLogged = false;
 
-  void userLogged(context) {
-    login(emailController!.text, passwordController!.text);
+  void userLogged(context) async {
+    if (await login(emailController!.text, passwordController!.text)) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => UserList()));
+      return;
+    }
 
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => UserList()));
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Credenciais inválidas.',
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+        ),
+        snackBarAnimationStyle:
+            AnimationStyle(duration: const Duration(milliseconds: 500)));
   }
 
   bool validCredentials() {

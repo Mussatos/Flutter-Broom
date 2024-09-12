@@ -52,11 +52,10 @@ class _UserFormState extends State<UserForm> {
 
       if (isValidEmail && controllerEmail.text.isNotEmpty) {
         register(user.toJson());
+        Navigator.popAndPushNamed(context, "/list");
       } else {
         Error();
       }
-
-      Navigator.popAndPushNamed(context, "/list");
     }
 
     return Center(

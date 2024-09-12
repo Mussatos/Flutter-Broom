@@ -15,7 +15,7 @@ class UserImage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return const CircleAvatar(child: Icon(Icons.person));
+          return const UserIcon();
         } else if (snapshot.hasData) {
           return Container(
               width: 80,
@@ -25,13 +25,22 @@ class UserImage extends StatelessWidget {
                       image: MemoryImage(snapshot.data!),
                       fit: BoxFit.contain)));
         } else {
-          return Container(
-            width: 80,
-            decoration: const BoxDecoration(shape: BoxShape.circle),
-            child: const CircleAvatar(child: Icon(Icons.person)),
-          );
+          return const UserIcon();
         }
       },
+    );
+  }
+}
+
+class UserIcon extends StatelessWidget {
+  const UserIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80,
+      decoration: const BoxDecoration(shape: BoxShape.circle),
+      child: const CircleAvatar(child: Icon(Icons.person)),
     );
   }
 }

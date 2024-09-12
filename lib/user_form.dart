@@ -25,7 +25,6 @@ class _UserFormState extends State<UserForm> {
   int userProfileSelected = 1;
   DateTime picked = new DateTime(0);
   bool isValidEmail = true;
-  bool isValidPassword = true;
   String gender = '';
 
   @override
@@ -51,7 +50,7 @@ class _UserFormState extends State<UserForm> {
 
       userProvider.users.insert(usersLength, user);
 
-      if (isValidEmail && isValidPassword) {
+      if (isValidEmail && controllerEmail.text.isNotEmpty) {
         register(user.toJson());
       } else {
         Error();
@@ -153,18 +152,14 @@ class _UserFormState extends State<UserForm> {
             SizedBox(
               width: 350,
               child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Senha',
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  obscureText: true,
-                  controller: controllerPassword,
-                  onChanged: (value) {
-                    setState(() {
-                      isValidPassword = validPassword(controllerPassword.text);
-                    });
-                  }),
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
+                obscureText: true,
+                controller: controllerPassword,
+              ),
             ),
             SizedBox(
               height: 5,

@@ -11,9 +11,6 @@ class UserList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmljaXVzc2FudGFuYS5hemFtYnVqNEBnbWFpbC5jb20iLCJpZCI6MSwiaWF0IjoxNzI1OTk4Njc2LCJleHAiOjE3MjYwMTMwNzYsImlzcyI6ImxvZ2luIiwic3ViIjoiMSJ9.GHZboY3Tzq8xQ46q2SzA7UnYdUFowIh5YwRqN-LaXwU';
-
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
@@ -46,14 +43,14 @@ class UserList extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
-        title: Text('User List'),
+        title: const Text('User List'),
         elevation: 0,
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             size: 20,
             color: Colors.black,
@@ -61,16 +58,14 @@ class UserList extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<List<ListUsers>>(
-        future: fetchUsuarios(token),
+        future: fetchUsuarios(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            print(snapshot.data);
-            print(snapshot.hasError);
-            return Center(child: Text('Erro ao carregar usuários'));
+            return const Center(child: Text('Erro ao carregar usuários'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Nenhum usuário encontrado'));
+            return const Center(child: Text('Nenhum usuário encontrado'));
           } else {
             List<ListUsers> usuarios = snapshot.data!;
             return ListView.builder(
@@ -90,14 +85,10 @@ class UserList extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       decorationColor: Colors.white,
                       decoration: TextDecoration.overline),
-                  leading: UserImage(user: usuario, token: token),
+                  leading: UserImage(user: usuario),
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
-                  onTap: () {
-                    print(index);
-                    print(usuario.id);
-                    print(usuario.wantService);
-                  },
+                  onTap: () {},
                 );
               },
             );

@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 
 class UserImage extends StatelessWidget {
-  final String token;
   final ListUsers user;
 
-  const UserImage({required this.user, required this.token, super.key});
+  const UserImage({required this.user, super.key});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetchUserImage(user.userImage, token),
+      future: fetchUserImage(user.userImage),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
@@ -19,14 +18,18 @@ class UserImage extends StatelessWidget {
           return const CircleAvatar(child: Icon(Icons.person));
         } else if (snapshot.hasData) {
           return Container(
-            width: 80,
+              width: 80,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
                       image: MemoryImage(snapshot.data!),
                       fit: BoxFit.contain)));
         } else {
-          return const CircleAvatar(child: Icon(Icons.person));
+          return Container(
+            width: 80,
+            decoration: const BoxDecoration(shape: BoxShape.circle),
+            child: const CircleAvatar(child: Icon(Icons.person)),
+          );
         }
       },
     );

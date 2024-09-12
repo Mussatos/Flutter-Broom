@@ -12,7 +12,7 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZpbmljaXVzc2FudGFuYS5hemFtYnVqNEBnbWFpbC5jb20iLCJpZCI6MSwiaWF0IjoxNzI1OTk4Njc2LCJleHAiOjE3MjYwMTMwNzYsImlzcyI6ImxvZ2luIiwic3ViIjoiMSJ9.GHZboY3Tzq8xQ46q2SzA7UnYdUFowIh5YwRqN-LaXwU';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpYW5taXJhbmRhMjZAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTcyNjA5NjY2NSwiZXhwIjoxNzI2MTExMDY1LCJpc3MiOiJsb2dpbiIsInN1YiI6IjEifQ.79PLGjF55TpD0RIRtthvfmrrBuyCNa4NAOzoUZh2x64';
 
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
@@ -97,6 +97,7 @@ class UserList extends StatelessWidget {
                     print(index);
                     print(usuario.id);
                     print(usuario.wantService);
+                    _showUserDetails(context, usuario);
                   },
                 );
               },
@@ -106,4 +107,43 @@ class UserList extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showUserDetails(BuildContext context, ListUsers usuario) {
+  String token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpYW5taXJhbmRhMjZAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTcyNjA5NjY2NSwiZXhwIjoxNzI2MTExMDY1LCJpc3MiOiJsb2dpbiIsInN1YiI6IjEifQ.79PLGjF55TpD0RIRtthvfmrrBuyCNa4NAOzoUZh2x64";
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: EdgeInsets.all(20),
+        content: Container(
+          width: 300,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircleAvatar(
+                radius: 40,
+                child:UserImage(user: usuario, token: token)
+              ),
+              SizedBox(height: 10),
+              Text(
+                '${usuario.firstName} ${usuario.lastName} \n ${usuario.wantService} \n ${usuario.address}',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              TextButton(onPressed: () =>{} , child: Text('Vini gay'))
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Fecha o pop-up
+            },
+            child: Text('Fechar'),
+          ),
+        ],
+      );
+    },
+  );
 }

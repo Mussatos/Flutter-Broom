@@ -5,7 +5,7 @@ import 'package:broom_main_vscode/ui-components/user_image.dart';
 class UserView extends StatelessWidget {
   final ListUsers usuario;
   final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpYW5taXJhbmRhMjZAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTcyNjA5NjY2NSwiZXhwIjoxNzI2MTExMDY1LCJpc3MiOiJsb2dpbiIsInN1YiI6IjEifQ.79PLGjF55TpD0RIRtthvfmrrBuyCNa4NAOzoUZh2x64";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjI1ODU2NCwiZXhwIjoxNzI2MjcyOTY0LCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.cAAnF2Hh8RwU_la3IIrYR4mSYOrx0F-k5LQRLPjIE-s";
 
   UserView({required this.usuario});
 
@@ -39,7 +39,11 @@ class UserView extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 20,
+            color: Colors.black,
+          ),
         ),
       ),
       body: Padding(
@@ -57,24 +61,31 @@ class UserView extends StatelessWidget {
               SizedBox(height: 10),
               Text(
                 '${usuario.firstName} ${usuario.lastName} \nServiço: ${usuario.wantService} \nEndereço: ${usuario.address}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
                 textAlign: TextAlign.center,
               ),
-              /*
+              SizedBox(
+                height: 40,
+              ),
+              Text(
+                'Descrição: Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos.',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+                textAlign: TextAlign.justify,
+              ),
+              Spacer(),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.whatsapp, color: Colors.green, size: 40),
-                    onPressed: _openWhatsApp,
-                  ),
+                      icon: Icon(Icons.edit, color: Colors.green, size: 40),
+                      onPressed: () {} //_openWhatsApp,
+                      ),
                   IconButton(
-                    icon: Icon(Icons.email, color: Colors.blue, size: 40),
-                    onPressed: _sendEmail,
-                  ),
+                      icon: Icon(Icons.email, color: Colors.blue, size: 40),
+                      onPressed: () {} //_sendEmail,
+                      ),
                 ],
               ),
-              */
             ],
           ),
         ),

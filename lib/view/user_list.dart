@@ -13,7 +13,7 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpYW5taXJhbmRhMjZAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTcyNjA5NjY2NSwiZXhwIjoxNzI2MTExMDY1LCJpc3MiOiJsb2dpbiIsInN1YiI6IjEifQ.79PLGjF55TpD0RIRtthvfmrrBuyCNa4NAOzoUZh2x64';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjI1ODU2NCwiZXhwIjoxNzI2MjcyOTY0LCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.cAAnF2Hh8RwU_la3IIrYR4mSYOrx0F-k5LQRLPjIE-s';
 
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
@@ -45,9 +45,20 @@ class UserList extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text('User List'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            color: Colors.white,
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(Icons.settings),
+            color: Colors.grey.shade800,
+            onPressed: () {},
+          ),
+        ],
         elevation: 0,
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
@@ -79,7 +90,6 @@ class UserList extends StatelessWidget {
               itemBuilder: (context, index) {
                 ListUsers usuario = usuarios[index];
                 addAddressForUser(usuario);
-
                 return ListTile(
                   titleTextStyle: const TextStyle(
                       color: Colors.black87,

@@ -32,6 +32,9 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final address = usuario.address[0];
+    final formatAddress = 'Endereço: Bairro ${address['neighborhood']}, ${address['city']}, ${address['state']}';
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Informações do Usuário'),
@@ -61,7 +64,7 @@ class UserView extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Text(
-                '${usuario.firstName} ${usuario.lastName} \nServiço: ${usuario.wantService} \nEndereço: ${usuario.address}',
+                '${usuario.firstName} ${usuario.lastName} \nServiço: ${usuario.wantService} \n$formatAddress',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
                 textAlign: TextAlign.center,
               ),

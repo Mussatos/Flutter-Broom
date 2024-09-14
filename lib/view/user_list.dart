@@ -21,15 +21,16 @@ class UserList extends StatelessWidget {
 
     List<Address> address = [];
     void addAddressForUser(ListUsers user) {
-      if (user.address.length > 0)
+      if (user.address.isNotEmpty) {
         address.add(Address.fromJson(user.address[0]));
-      else
+      } else {
         address.add(Address(
             state: '',
             city: '',
             neighborhood: '',
             addressType: '',
             street: ''));
+      }
     }
 
     String getListUserFormatedAddress(Address userAddress) {
@@ -65,7 +66,7 @@ class UserList extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios,
             size: 20,
             color: Colors.black,
@@ -73,16 +74,14 @@ class UserList extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<List<ListUsers>>(
-        future: fetchUsuarios(token),
+        future: fetchUsuarios(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            print(snapshot.data);
-            print(snapshot.hasError);
-            return Center(child: Text('Erro ao carregar usuários'));
+            return const Center(child: Text('Erro ao carregar usuários'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('Nenhum usuário encontrado'));
+            return const Center(child: Text('Nenhum usuário encontrado'));
           } else {
             List<ListUsers> usuarios = snapshot.data!;
             return ListView.builder(
@@ -96,12 +95,12 @@ class UserList extends StatelessWidget {
                       fontSize: 20,
                       fontWeight: FontWeight.w600),
                   subtitleTextStyle: const TextStyle(
-                      color: Colors.white,
+                      color: Color(0xFF2ECC8F),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
-                      decorationColor: Colors.white,
+                      decorationColor: Color(0xFF2ECC8F),
                       decoration: TextDecoration.overline),
-                  leading: UserImage(user: usuario, token: token),
+                  leading: UserImage(user: usuario),
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
                   onTap: () {

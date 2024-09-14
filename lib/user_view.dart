@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'user.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
+import 'package:broom_main_vscode/view/user_list.dart';
 
 class UserView extends StatelessWidget {
   final ListUsers usuario;
@@ -56,7 +57,7 @@ class UserView extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 40,
-                child: UserImage(user: usuario, token: token),
+                child: UserImage(user: usuario),
               ),
               SizedBox(height: 10),
               Text(

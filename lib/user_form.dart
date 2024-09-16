@@ -25,14 +25,13 @@ class _UserFormState extends State<UserForm> {
   int userProfileSelected = 1;
   DateTime picked = new DateTime(0);
   bool isValidEmail = true;
-  bool isValidPassword = true;
   String gender = '';
 
   @override
   Widget build(BuildContext context) {
-    void save() {
-      UserProvider userProvider = UserProvider.of(context) as UserProvider;
+    UserProvider userProvider = UserProvider.of(context) as UserProvider;
 
+    void save() {
       User user = User(
           name: controllerName.text,
           sobrenome: controllerSobrenome.text,
@@ -51,13 +50,12 @@ class _UserFormState extends State<UserForm> {
 
       userProvider.users.insert(usersLength, user);
 
-      if (isValidEmail && isValidPassword) {
+      if (isValidEmail && controllerEmail.text.isNotEmpty) {
         register(user.toJson());
+        Navigator.popAndPushNamed(context, "/list");
       } else {
         Error();
       }
-
-      Navigator.popAndPushNamed(context, "/list");
     }
 
     return Center(
@@ -111,126 +109,251 @@ class _UserFormState extends State<UserForm> {
               ],
             ),
             SizedBox(
-              width: 350,
-              child: FieldForm(
-                  label: 'Nome',
-                  isPassoword: false,
-                  controller: controllerName),
+              height: 10,
             ),
-            SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              width: 350,
-              child: FieldForm(
-                  label: 'Sobrenome',
-                  isPassoword: false,
-                  controller: controllerSobrenome),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              width: 350,
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  filled: true,
-                  fillColor: Colors.white,
+            Container(
+              color: Color(0xFF2ECC8F),
+              padding: EdgeInsets.all(5),
+              child: SizedBox(
+                width: 350,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Nome',
+                    labelStyle:
+                        TextStyle(color: Colors.white), // Placeholder branco
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white), // Borda branca
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),  
+                  controller: controllerName,
                 ),
-                obscureText: false,
-                controller: controllerEmail,
-                onChanged: (value) {
-                  setState(() {
-                    isValidEmail = validEmail(controllerEmail.text);
-                  });
-                },
               ),
             ),
             SizedBox(
-              height: 5,
+              height: 10,
+            ),
+             Container(
+              color: Color(0xFF2ECC8F),
+              padding: EdgeInsets.all(5),
+              child: SizedBox(
+                width: 350,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Sobrenome',
+                    labelStyle:
+                        TextStyle(color: Colors.white), // Placeholder branco
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white), // Borda branca
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),  
+                  controller: controllerSobrenome,
+                ),
+              ),
             ),
             SizedBox(
-              width: 350,
-              child: TextField(
+              height: 10,
+            ),
+            Container(
+              color: Color(0xFF2ECC8F),
+              padding: EdgeInsets.all(5),
+              child: SizedBox(
+                width: 350,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle:
+                        TextStyle(color: Colors.white), // Placeholder branco
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.white), // Borda branca
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  obscureText: false,
+                  controller: controllerEmail,
+                  onChanged: (value) {
+                    setState(() {
+                      isValidEmail = validEmail(controllerEmail.text);
+                    });
+                  },
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              color: Color(0xFF2ECC8F),
+              padding: EdgeInsets.all(5),
+              child: SizedBox(
+                width: 350,
+                child: TextField(
                   decoration: InputDecoration(
                     labelText: 'Senha',
+                    labelStyle: TextStyle(color: Colors.white),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: Colors.transparent,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
                   ),
                   obscureText: true,
                   controller: controllerPassword,
-                  onChanged: (value) {
-                    setState(() {
-                      isValidPassword = validPassword(controllerPassword.text);
-                    });
-                  }),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              width: 350,
-              child: FieldForm(
-                  label: 'CPF', isPassoword: false, controller: controllerCpf),
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            SizedBox(
-              width: 350,
-              child: TextField(
-                controller: controllerDate,
-                decoration: InputDecoration(
-                  labelText: 'Data de Nascimento',
-                  filled: true,
-                  fillColor: Colors.white,
-                  prefixIcon: Icon(Icons.calendar_today),
                 ),
-                readOnly: true,
-                onTap: () {
-                  _selectDate();
-                },
               ),
             ),
             SizedBox(
+              height: 10,
+            ),
+            Container(
+              color: Color(0xFF2ECC8F),
+              padding: EdgeInsets.all(5),
+              child: SizedBox(
+                width: 350,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'CPF',
+                    labelStyle: TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  obscureText: false,
+                  controller: controllerCpf,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Container(
+              color: Color(0xFF2ECC8F),
+              padding: EdgeInsets.all(5),
+              child: SizedBox(
+                width: 350,
+                child: TextField(
+                  controller: controllerDate,
+                  decoration: InputDecoration(
+                    labelText: 'Data de Nascimento',
+                    labelStyle: TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.transparent,
+                    prefixIcon: Icon(Icons.calendar_today, color: Colors.white),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                  ),
+                  readOnly: true,
+                  onTap: () {
+                    _selectDate();
+                  },
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            SizedBox(
               width: 350,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Selecione seu gênero:'),
-                  Radio(
-                    value: 'M',
-                    groupValue: gender,
-                    onChanged: (value) {
-                      setState(() {
-                        gender = value!;
-                      });
-                    },
+                  Text(
+                    'Selecione seu gênero:',
+                    style: TextStyle(color: Colors.white),
                   ),
-                  Radio(
-                    value: 'F',
-                    groupValue: gender,
-                    onChanged: (value) {
-                      setState(() {
-                        gender = value!;
-                      });
-                    },
-                  ),
-                  Radio(
-                    value: 'O',
-                    groupValue: gender,
-                    onChanged: (value) {
-                      setState(() {
-                        gender = value!;
-                      });
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Radio(
+                            value: 'M',
+                            groupValue: gender,
+                            onChanged: (value) {
+                              setState(() {
+                                gender = value!;
+                              });
+                            },
+                          ),
+                          Text(
+                            'Masculino',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 20), // Espaço entre as opções
+                      Row(
+                        children: [
+                          Radio(
+                            value: 'F',
+                            groupValue: gender,
+                            onChanged: (value) {
+                              setState(() {
+                                gender = value!;
+                              });
+                            },
+                          ),
+                          Text(
+                            'Feminino',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 20), // Espaço entre as opções
+                      Row(
+                        children: [
+                          Radio(
+                            value: 'O',
+                            groupValue: gender,
+                            onChanged: (value) {
+                              setState(() {
+                                gender = value!;
+                              });
+                            },
+                          ),
+                          Text(
+                            'Outro',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
+
+
             SizedBox(
-              height: 5,
+              height: 10,
             ),
             SizedBox(
               width: 350,

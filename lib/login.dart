@@ -1,23 +1,44 @@
 import 'package:broom_main_vscode/signup.dart';
 import 'package:broom_main_vscode/user_form.dart';
+import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user.dart';
+import 'package:broom_main_vscode/utils/validators.dart';
 
 class LoginPage extends StatelessWidget {
-  User user = User(
-      name: '',
-      sobrenome: '',
-      email: '',
-      password: '',
-      cpf: '',
-      data: new DateTime(0),
-      profileId: 0,
-      description: '',
-      cellphone_number: '',
-      user_image: '',
-      gender: '',
-      wantService: null);
+  TextEditingController? emailController = TextEditingController(text: '');
+  TextEditingController? passwordController = TextEditingController(text: '');
+  bool isLogged = false;
+
+  void userLogged(context) async {
+    if (await login(emailController!.text, passwordController!.text)) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => UserList()));
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Credenciais inválidas.',
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+        ),
+        snackBarAnimationStyle:
+            AnimationStyle(duration: const Duration(milliseconds: 500)));
+  }
+
+  bool validCredentials() {
+    if (emailController!.text.isNotEmpty &&
+        passwordController!.text.isNotEmpty) {
+      return validEmail(emailController!.text);
+    }
+
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +107,10 @@ class LoginPage extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 40),
                     child: Column(
                       children: <Widget>[
-                        inputFile(label: "Email", credential: user),
+                        inputFile(label: "Email", controller: emailController),
                         inputFile(
                             label: "Password",
-                            credential: user,
+                            controller: passwordController,
                             obscureText: true)
                       ],
                     ),
@@ -113,8 +134,24 @@ class LoginPage extends StatelessWidget {
                           minWidth: double.infinity,
                           height: 60,
                           onPressed: () {
-                            print('${user.email}' + '${user.password}');
-                            login(user.email, user.password);
+                            if (validCredentials()) {
+                              userLogged(context);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Preencha os campos de e-mail e senha corretamente.',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black),
+                                    ),
+                                    backgroundColor: Colors.white,
+                                  ),
+                                  snackBarAnimationStyle: AnimationStyle(
+                                      duration:
+                                          const Duration(milliseconds: 500)));
+                            }
                           },
                           color: Colors.black,
                           elevation: 0,
@@ -137,6 +174,13 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
+                      /*
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.popAndPushNamed(context, const => SignUpPage());
+                      },
+                    ),
+                    */
                       Text("Ainda não possui uma conta?"),
                       Text(
                         " Sign up",
@@ -157,7 +201,8 @@ class LoginPage extends StatelessWidget {
   }
 }
 
-Widget inputFile({label, User? credential, obscureText = false}) {
+Widget inputFile(
+    {label, TextEditingController? controller, obscureText = false}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
@@ -170,14 +215,7 @@ Widget inputFile({label, User? credential, obscureText = false}) {
         height: 5,
       ),
       TextField(
-        onChanged: (value) {
-          if (obscureText) {
-            credential?.password = value;
-          } else {
-            credential?.email = value;
-          }
-          print('$credential');
-        },
+        controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),

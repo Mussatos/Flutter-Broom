@@ -15,6 +15,8 @@ Uri urlRegister = Uri.http(host, '/register');
 Uri urlLogin = Uri.http(host, '/login');
 Uri urlListContractors = Uri.http(host, '/list/contractors');
 Uri urlListDiarists = Uri.http(host, '/list/diarists');
+//URL de Prod do backend: https://broom-api.onrender.com/
+Uri urlViewDiarist = Uri.http(host, '');
 
 Future<void> register(Map<String, dynamic> user) async {
   try {
@@ -101,4 +103,44 @@ Future<Uint8List?> fetchUserImage(String imageName) async {
     print(err);
     return null;
   }
+}
+
+Future<UserModel> fetchUsuario(int? id) async {
+  final token = await autentication.getToken();
+  final userProfileId = await autentication.getProfileId();
+  try {
+    final response = await http.get(
+      getViewUrl(userProfileId, id),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      print(data);
+      return UserModel.fromJson(data);
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return UserModel(
+        name: 'aa',
+        lastName: 'aa',
+        cellphoneNumber: '67',
+        userImage: 'sfas',
+        description: '',
+        address: [],
+        wantService: false,
+        gender: 'a',
+        email: 'a@a');
+  }
+}
+
+Uri getViewUrl(int? userProfileId, int? id) {
+  return userProfileId == 1
+      ? Uri.http(host, '/diarist/${id}')
+      : Uri.http(host, '/contractor/${id}');
 }

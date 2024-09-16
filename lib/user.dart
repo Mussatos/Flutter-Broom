@@ -71,17 +71,16 @@ class UserModel {
   bool wantService;
   String gender = '';
 
-  UserModel({
-    required this.name,
-    required this.lastName,
-    required this.cellphoneNumber,
-    required this.userImage,
-    required this.description,
-    required this.address,
-    required this.wantService,
-    required this.gender,
-    required this.email
-  });
+  UserModel(
+      {required this.name,
+      required this.lastName,
+      required this.cellphoneNumber,
+      required this.userImage,
+      required this.description,
+      required this.address,
+      required this.wantService,
+      required this.gender,
+      required this.email});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -91,12 +90,11 @@ class UserModel {
         cellphoneNumber: json['cellphone_number'],
         userImage: json['user_image'],
         address: json['address'],
-        wantService: json['want_service'] ?? '',
+        wantService: json['want_service'] ?? false,
         gender: json['gender'],
         email: json['email'] ?? '');
   }
 }
-
 
 class ListUsers {
   int id;
@@ -151,7 +149,7 @@ class Address {
       state: json['state'],
       street: json['street'],
       addressType: json['address_type'],
-      city: json['city'] ,
+      city: json['city'],
       neighborhood: json['neighborhood'],
     );
   }

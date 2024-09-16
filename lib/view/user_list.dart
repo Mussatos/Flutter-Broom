@@ -13,7 +13,7 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjI1ODU2NCwiZXhwIjoxNzI2MjcyOTY0LCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.cAAnF2Hh8RwU_la3IIrYR4mSYOrx0F-k5LQRLPjIE-s';
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24';
 
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
@@ -25,11 +25,12 @@ class UserList extends StatelessWidget {
         address.add(Address.fromJson(user.address[0]));
       } else {
         address.add(Address(
-            state: '',
-            city: '',
-            neighborhood: '',
-            addressType: '',
-            street: ''));
+          state: '',
+          city: '',
+          neighborhood: '',
+          addressType: '',
+          street: '',
+        ));
       }
     }
 
@@ -113,7 +114,6 @@ class UserList extends StatelessWidget {
                         builder: (context) => UserView(usuario: usuario),
                       ),
                     );
-                    //_showUserDetails(context, usuario);
                   },
                 );
               },
@@ -124,43 +124,3 @@ class UserList extends StatelessWidget {
     );
   }
 }
-/*
-void _showUserDetails(BuildContext context, ListUsers usuario) {
-  String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxpYW5taXJhbmRhMjZAZ21haWwuY29tIiwiaWQiOjEsImlhdCI6MTcyNjA5NjY2NSwiZXhwIjoxNzI2MTExMDY1LCJpc3MiOiJsb2dpbiIsInN1YiI6IjEifQ.79PLGjF55TpD0RIRtthvfmrrBuyCNa4NAOzoUZh2x64";
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        contentPadding: EdgeInsets.all(20),
-        content: Container(
-          width: 300,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircleAvatar(
-                radius: 40,
-                child:UserImage(user: usuario, token: token)
-              ),
-              SizedBox(height: 10),
-              Text(
-                '${usuario.firstName} ${usuario.lastName} \n ${usuario.wantService} \n ${usuario.address}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              TextButton(onPressed: () =>{} , child: Text('Vini gay'))
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Fecha o pop-up
-            },
-            child: Text('Fechar'),
-          ),
-        ],
-      );
-    },
-  );
-}
-*/

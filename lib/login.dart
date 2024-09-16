@@ -174,20 +174,21 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      /*
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.popAndPushNamed(context, const => SignUpPage());
-                      },
-                    ),
-                    */
                       Text("Ainda não possui uma conta?"),
-                      Text(
-                        " Sign up",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
+                      GestureDetector(
+                        child: Text(
+                          " Sign up",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
                         ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignUpPage()));
+                        },
                       ),
                     ],
                   ),

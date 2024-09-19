@@ -142,3 +142,44 @@ Uri getViewUrl(int? userProfileId, int? id) {
       ? Uri.https(host, '/diarist/${id}')
       : Uri.https(host, '/contractor/${id}');
 }
+
+
+/*
+Future<void> createAddress() async {
+  final token = await autentication.getToken();
+  final String url = '/address';
+
+  final Map<String, dynamic> addressData = {
+    neighborhood: '',
+    address_code: '',
+    address_type: '',
+    complement: '',
+    street: '',
+    number: '',
+    state: '',
+    city: '',
+    user_id: '',
+  };
+
+  try {
+    final http.Response response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(addressData),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Endereço criado com sucesso!');
+      print('Resposta: ${response.body}');
+    } else {
+      print('Falha ao criar endereço. Código: ${response.statusCode}');
+      print('Erro: ${response.body}');
+    }
+  } catch (e) {
+    print('Ocorreu um erro: $e');
+  }
+}
+*/

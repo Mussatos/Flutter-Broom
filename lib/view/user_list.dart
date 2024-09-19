@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
+import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
@@ -20,7 +21,6 @@ class UserList extends StatelessWidget {
     int usersLength = users.length;
 
     List<Address> address = [];
-    
 
     void addAddressForUser(ListUsers user) {
       if (user.address.isNotEmpty) {
@@ -55,7 +55,10 @@ class UserList extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.white,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UserYourself()));
+            },
           ),
           IconButton(
             icon: Icon(Icons.settings),

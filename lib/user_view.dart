@@ -164,7 +164,6 @@ class UserView extends StatelessWidget {
               ),
             );
           }
-          ;
         },
       ),
     );

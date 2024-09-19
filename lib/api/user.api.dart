@@ -10,13 +10,13 @@ import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
-final String host = dotenv.env['API_URL']!;
-Uri urlRegister = Uri.http(host, '/register');
-Uri urlLogin = Uri.http(host, '/login');
-Uri urlListContractors = Uri.http(host, '/list/contractors');
-Uri urlListDiarists = Uri.http(host, '/list/diarists');
+const String host = 'broom-api.onrender.com';
+Uri urlRegister = Uri.https(host, '/register');
+Uri urlLogin = Uri.https(host, '/login');
+Uri urlListContractors = Uri.https(host, '/list/contractors');
+Uri urlListDiarists = Uri.https(host, '/list/diarists');
 //URL de Prod do backend: https://broom-api.onrender.com/
-Uri urlViewDiarist = Uri.http(host, '');
+Uri urlViewDiarist = Uri.https(host, '');
 
 Future<void> register(Map<String, dynamic> user) async {
   try {
@@ -26,7 +26,6 @@ Future<void> register(Map<String, dynamic> user) async {
 
     final response = jsonDecode(resp.body) as Map<String, dynamic>;
     if (resp.statusCode == 201) {
-      print(response);
     } else {
       throw Exception('Falha ao cadastrar usuário');
     }
@@ -91,7 +90,7 @@ Future<Uint8List?> fetchUserImage(String imageName) async {
   final token = await autentication.getToken();
 
   try {
-    final response = await http.get(Uri.http(host, '/file/$imageName'),
+    final response = await http.get(Uri.https(host, '/file/$imageName'),
         headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
@@ -119,7 +118,6 @@ Future<UserModel> fetchUsuario(int? id) async {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      print(data);
       return UserModel.fromJson(data);
     } else {
       throw Exception('Falha ao carregar dados');
@@ -141,6 +139,6 @@ Future<UserModel> fetchUsuario(int? id) async {
 
 Uri getViewUrl(int? userProfileId, int? id) {
   return userProfileId == 1
-      ? Uri.http(host, '/diarist/${id}')
-      : Uri.http(host, '/contractor/${id}');
+      ? Uri.https(host, '/diarist/${id}')
+      : Uri.https(host, '/contractor/${id}');
 }

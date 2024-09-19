@@ -20,6 +20,8 @@ class UserList extends StatelessWidget {
     int usersLength = users.length;
 
     List<Address> address = [];
+    
+
     void addAddressForUser(ListUsers user) {
       if (user.address.isNotEmpty) {
         address.add(Address.fromJson(user.address[0]));
@@ -105,9 +107,6 @@ class UserList extends StatelessWidget {
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
                   onTap: () {
-                    print(index);
-                    print(usuario.id);
-                    print(usuario.wantService);
                     Navigator.push(
                       context,
                       MaterialPageRoute(

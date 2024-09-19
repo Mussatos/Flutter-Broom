@@ -36,7 +36,7 @@ class UserView extends StatelessWidget {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

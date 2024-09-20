@@ -144,22 +144,9 @@ Uri getViewUrl(int? userProfileId, int? id) {
 }
 
 
-/*
-Future<void> createAddress() async {
+Future<void> createAddress(Address payload) async {
   final token = await autentication.getToken();
   final String url = '/address';
-
-  final Map<String, dynamic> addressData = {
-    neighborhood: '',
-    address_code: '',
-    address_type: '',
-    complement: '',
-    street: '',
-    number: '',
-    state: '',
-    city: '',
-    user_id: '',
-  };
 
   try {
     final http.Response response = await http.post(
@@ -168,7 +155,7 @@ Future<void> createAddress() async {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode(addressData),
+      body: jsonEncode(payload),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -182,4 +169,65 @@ Future<void> createAddress() async {
     print('Ocorreu um erro: $e');
   }
 }
-*/
+
+Future<Address?> getAddressByUserId(int userId) async {
+  final token = await autentication.getToken();
+  final String url = '/address/$userId';
+
+  try {
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> addressData = jsonDecode(response.body);
+      return Address.fromJson(addressData);
+    } else {
+      print('Falha ao obter o endereço. Código: ${response.statusCode}');
+      print('Erro: ${response.body}');
+      return null;
+    }
+  } catch (e) {
+    print('Ocorreu um erro: $e');
+    return null;
+  }
+}
+
+
+Future<void> getUserById(int id) async {
+  final token = await autentication.getToken();
+  final String url = '/user/$id';
+
+  try {
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> userData = jsonDecode(response.body);
+
+      if (userData['address'] != null && userData['address'].isNotEmpty) {
+        userData['address'].forEach((address) {
+          print(
+              'Endereço: ${address['street']}, ${address['number']} - ${address['neighborhood']}, ${address['city']}, ${address['state']}');
+        });
+      } else {
+        print('Nenhum endereço disponível.');
+      }
+    } else {
+      print(
+          'Falha ao obter os dados do usuário. Código: ${response.statusCode}');
+      print('Erro: ${response.body}');
+    }
+  } catch (e) {
+    print('Ocorreu um erro: $e');
+  }
+}

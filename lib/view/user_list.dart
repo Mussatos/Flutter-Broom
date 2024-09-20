@@ -32,6 +32,10 @@ class UserList extends StatelessWidget {
           neighborhood: '',
           addressType: '',
           street: '',
+          addressCode: '',
+          complement: '',
+          number: '',
+          userId: null,
         ));
       }
     }

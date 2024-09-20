@@ -85,9 +85,9 @@ class _UserFormState extends State<UserForm> {
                         height: 1,
                         color: Colors.white,
                       ),
-                      dropdownColor: Colors.white,
+                      dropdownColor: Colors.black,
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -130,6 +130,9 @@ class _UserFormState extends State<UserForm> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
                   ),  
                   controller: controllerName,
                 ),
@@ -157,7 +160,10 @@ class _UserFormState extends State<UserForm> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
-                  ),  
+                  ), 
+                  style: TextStyle(
+                    color: Colors.white,
+                  ), 
                   controller: controllerSobrenome,
                 ),
               ),
@@ -184,6 +190,9 @@ class _UserFormState extends State<UserForm> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                   obscureText: false,
                   controller: controllerEmail,
@@ -216,6 +225,9 @@ class _UserFormState extends State<UserForm> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                   obscureText: true,
                   controller: controllerPassword,
                 ),
@@ -241,6 +253,9 @@ class _UserFormState extends State<UserForm> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                   obscureText: false,
                   controller: controllerCpf,
@@ -269,6 +284,9 @@ class _UserFormState extends State<UserForm> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                   readOnly: true,
                   onTap: () {

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
+import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
@@ -20,6 +21,7 @@ class UserList extends StatelessWidget {
     int usersLength = users.length;
 
     List<Address> address = [];
+
     void addAddressForUser(ListUsers user) {
       if (user.address.isNotEmpty) {
         address.add(Address.fromJson(user.address[0]));
@@ -30,6 +32,10 @@ class UserList extends StatelessWidget {
           neighborhood: '',
           addressType: '',
           street: '',
+          addressCode: '',
+          complement: '',
+          number: '',
+          userId: null,
         ));
       }
     }
@@ -53,7 +59,10 @@ class UserList extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.white,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UserYourself()));
+            },
           ),
           IconButton(
             icon: Icon(Icons.settings),
@@ -105,9 +114,6 @@ class UserList extends StatelessWidget {
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
                   onTap: () {
-                    print(index);
-                    print(usuario.id);
-                    print(usuario.wantService);
                     Navigator.push(
                       context,
                       MaterialPageRoute(

@@ -4,8 +4,7 @@ class UserAutentication {
   String _tokenKey = 'token';
   String _userIdKey = 'user_id';
   String _profileIdKey = 'profile_id';
-  String _addressId = 'address_id';
-
+ 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   UserAutentication();
@@ -40,14 +39,4 @@ class UserAutentication {
     return prefs.getInt(_profileIdKey) ?? -1;
   }
 
-
-  Future<void> setAddressId(int id) async {
-    final prefs = await _prefs;
-    prefs.setInt(_addressId, id);
-  }
-
-  Future<int?> getAddressId() async {
-    final prefs = await _prefs;
-    return prefs.getInt(_addressId) ?? -1;
-  }
 }

@@ -41,7 +41,6 @@ class _AddressFormState extends State<AddressForm> {
 
   void saveAddress() async {
     int? userId = await autentication.getUserId();
-    int? addressId = await autentication.getAddressId();
     if (_formKey.currentState!.validate()) {
       Address newAddress = Address(
         city: cityController.text,
@@ -53,7 +52,7 @@ class _AddressFormState extends State<AddressForm> {
         complement: complementController.text,
         number: int.parse(numberController.text),
         userId: userId,
-        addressId: addressId,
+        id: null,
       );
       if (/*isValidEmail && controllerEmail.text.isNotEmpty*/ true) {
         createAddress(newAddress.toJson());

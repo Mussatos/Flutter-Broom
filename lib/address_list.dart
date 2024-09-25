@@ -34,7 +34,7 @@ class AddressList extends StatelessWidget {
           complement: '',
           number: -1,
           userId: null,
-          addressId: null,
+          id: null,
         ));
       }
     }
@@ -119,7 +119,7 @@ class AddressList extends StatelessWidget {
                                       userAddress)),
                         );
                       } else if (value == 'delete') {
-                        _showDeleteConfirmationDialog(context);
+                        _showDeleteConfirmationDialog(context, userAddress.id);
                       }
                     },
                     itemBuilder: (BuildContext context) {
@@ -146,7 +146,7 @@ class AddressList extends StatelessWidget {
   }
 }
 
-void _showDeleteConfirmationDialog(BuildContext context) {
+void _showDeleteConfirmationDialog(BuildContext context, int? id) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -163,8 +163,7 @@ void _showDeleteConfirmationDialog(BuildContext context) {
           TextButton(
             child: Text('Confirmar'),
             onPressed: () {
-              deleteAddress(
-                  '$getAddressById');
+              deleteAddress(id);
               Navigator.of(context).pop();
             },
           ),

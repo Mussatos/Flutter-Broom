@@ -21,6 +21,8 @@ class _EditAddressFormState extends State<EditAddressForm> {
   late TextEditingController stateController;
   late TextEditingController cityController;
   late TextEditingController complementController;
+  late int? id;
+  late String? addressTypeSelected;
 
   List<String> addressType = [
     'Residencia',
@@ -30,13 +32,11 @@ class _EditAddressFormState extends State<EditAddressForm> {
     'Studio'
   ];
 
-  String addressTypeSelected =
-      'Residencia'; //Mudar esse cabra aqui também para o da ultima atualização
-
   @override
   void initState() {
     super.initState();
 
+    id = widget.address.id;
     streetController = TextEditingController(text: widget.address.street);
     numberController =
         TextEditingController(text: widget.address.number.toString());
@@ -47,7 +47,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
     cityController = TextEditingController(text: widget.address.city);
     complementController =
         TextEditingController(text: widget.address.complement);
-    String? addressTypeSelected = widget.address.addressType;
+    addressTypeSelected = widget.address.addressType;
   }
 
   @override
@@ -73,13 +73,10 @@ class _EditAddressFormState extends State<EditAddressForm> {
         complement: complementController.text,
         number: int.parse(numberController.text),
         userId: widget.address.userId,
-        addressId: widget.address.addressId,
+        id: null,
       );
 
-      updateAddress(
-          '$getAddressById()',
-          updatedAddress
-              .toJson());
+      updateAddress(id, updatedAddress.toJson());
 
       Navigator.pop(context);
     }
@@ -326,33 +323,32 @@ class _EditAddressFormState extends State<EditAddressForm> {
                 ),
               ),
               SizedBox(
-                width: 350,
-                child: DropdownButton<String>(
-                    value: addressTypeSelected,
-                    underline: Container(
-                      height: 1,
-                      color: Colors.white,
-                    ),
-                    dropdownColor: Colors.black,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    isExpanded: true,
-                    iconSize: 35,
-                    iconEnabledColor: Colors.white,
-                    items: addressType
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                          value: value, child: Text(value));
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        addressTypeSelected = value!;
-                      });
-                    }),
-              ),
+                  width: 350,
+                  child: DropdownButton<String>(
+                      value: addressTypeSelected,
+                      underline: Container(
+                        height: 1,
+                        color: Colors.white,
+                      ),
+                      dropdownColor: Colors.black,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      isExpanded: true,
+                      iconSize: 35,
+                      iconEnabledColor: Colors.white,
+                      items: addressType
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                            value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          addressTypeSelected = value!;
+                        });
+                      })),
               SizedBox(height: 10),
               SizedBox(
                 width: 350,

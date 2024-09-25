@@ -10,13 +10,13 @@ import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
-const String host = 'broom-api.onrender.com';
-Uri urlRegister = Uri.https(host, '/register');
-Uri urlLogin = Uri.https(host, '/login');
-Uri urlListContractors = Uri.https(host, '/list/contractors');
-Uri urlListDiarists = Uri.https(host, '/list/diarists');
 //URL de Prod do backend: https://broom-api.onrender.com/
-Uri urlViewDiarist = Uri.https(host, '');
+const String host = 'localhost:3001';
+Uri urlRegister = Uri.http(host, '/register');
+Uri urlLogin = Uri.http(host, '/login');
+Uri urlListContractors = Uri.http(host, '/list/contractors');
+Uri urlListDiarists = Uri.http(host, '/list/diarists');
+Uri urlViewDiarist = Uri.http(host, '');
 
 Future<void> register(Map<String, dynamic> user) async {
   try {
@@ -90,7 +90,7 @@ Future<Uint8List?> fetchUserImage(String imageName) async {
   final token = await autentication.getToken();
 
   try {
-    final response = await http.get(Uri.https(host, '/file/$imageName'),
+    final response = await http.get(Uri.http(host, '/file/$imageName'),
         headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
@@ -139,14 +139,13 @@ Future<UserModel> fetchUsuario(int? id) async {
 
 Uri getViewUrl(int? userProfileId, int? id) {
   return userProfileId == 1
-      ? Uri.https(host, '/diarist/${id}')
-      : Uri.https(host, '/contractor/${id}');
+      ? Uri.http(host, '/diarist/${id}')
+      : Uri.http(host, '/contractor/${id}');
 }
 
-
-Future<void> createAddress(Address payload) async {
+Future<void> createAddress(Map<String, dynamic> payload) async {
   final token = await autentication.getToken();
-  final String url = '/address';
+  final String url = 'http://$host/address';
 
   try {
     final http.Response response = await http.post(
@@ -170,7 +169,8 @@ Future<void> createAddress(Address payload) async {
   }
 }
 
-Future<Address?> getAddressByUserId(int userId) async {
+Future<Address?> getAddressByUserId() async {
+  final userId = await autentication.getUserId();
   final token = await autentication.getToken();
   final String url = '/address/$userId';
 
@@ -197,10 +197,11 @@ Future<Address?> getAddressByUserId(int userId) async {
   }
 }
 
-
-Future<void> getUserById(int id) async {
+Future<Yourself?> getUserById() async {
+  final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final String url = '/user/$id';
+
+  final String url = 'http://$host/user/$userId';
 
   try {
     final http.Response response = await http.get(
@@ -211,9 +212,11 @@ Future<void> getUserById(int id) async {
       },
     );
 
+    print(response);
     if (response.statusCode == 200) {
       final Map<String, dynamic> userData = jsonDecode(response.body);
-
+      return Yourself.fromJson(userData);
+      /*
       if (userData['address'] != null && userData['address'].isNotEmpty) {
         userData['address'].forEach((address) {
           print(
@@ -222,6 +225,7 @@ Future<void> getUserById(int id) async {
       } else {
         print('Nenhum endereço disponível.');
       }
+      */
     } else {
       print(
           'Falha ao obter os dados do usuário. Código: ${response.statusCode}');
@@ -229,5 +233,33 @@ Future<void> getUserById(int id) async {
     }
   } catch (e) {
     print('Ocorreu um erro: $e');
+  }
+}
+
+Future<List<Address>> fetchAddress() async {
+  final id = await autentication.getUserId();
+  final token = await autentication.getToken();
+
+  final String url = 'http://$host/address/$id';
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      print(data);
+      return data.map((json) => Address.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return [];
   }
 }

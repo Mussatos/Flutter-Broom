@@ -134,7 +134,7 @@ class Address {
   String? neighborhood = '';
   String? street = '';
   String? addressType;
-  String? number;
+  int? number;
   String? addressCode;
   String? complement;
   int? userId;
@@ -160,9 +160,9 @@ class Address {
       city: json['city'],
       neighborhood: json['neighborhood'],
       number: json['number'],
-      addressCode: json['addressCode'],
+      addressCode: json['address_code'],
       complement: json['complement'],
-      userId: json['userId'],
+      userId: json['user_id'],
     );
   }
   Map<String, dynamic> toJson() {
@@ -173,9 +173,48 @@ class Address {
       'city': city,
       'neighborhood': neighborhood,
       'number': number,
-      'addressCode': addressCode,
+      'address_code': addressCode,
       'complement': complement,
-      'userId': userId,
+      'user_id': userId,
     };
+  }
+}
+
+class Yourself {
+  String name;
+  int id;
+  String lastName;
+  String cellphoneNumber = '';
+  String userImage = '';
+  String description = '';
+  String email = '';
+  bool wantService;
+  String cpf = '';
+  List<dynamic> address;
+
+  Yourself(
+      {required this.name,
+      required this.id,
+      required this.lastName,
+      required this.cellphoneNumber,
+      required this.userImage,
+      required this.description,
+      required this.address,
+      required this.wantService,
+      required this.cpf,
+      required this.email});
+
+  factory Yourself.fromJson(Map<String, dynamic> json) {
+    return Yourself(
+        id: json['id'],
+        description: json['description'],
+        name: json['first_name'],
+        lastName: json['last_name'],
+        cellphoneNumber: json['cellphone_number'],
+        userImage: json['user_image'],
+        address: json['address'],
+        wantService: json['want_service'] ?? false,
+        cpf: json['cpf'],
+        email: json['email'] ?? '');
   }
 }

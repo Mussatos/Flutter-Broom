@@ -50,10 +50,15 @@ class _AddressFormState extends State<AddressForm> {
         neighborhood: neighController.text,
         addressCode: addressCodeController.text,
         complement: complementController.text,
-        number: numberController.text,
+        number: int.parse(numberController.text),
         userId: userId,
       );
-      Navigator.pop(context);
+      if (/*isValidEmail && controllerEmail.text.isNotEmpty*/ true) {
+        createAddress(newAddress.toJson());
+        Navigator.pop(context);
+      } else {
+        Error();
+      }
     }
   }
 

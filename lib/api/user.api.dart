@@ -216,16 +216,6 @@ Future<Yourself?> getUserById() async {
     if (response.statusCode == 200) {
       final Map<String, dynamic> userData = jsonDecode(response.body);
       return Yourself.fromJson(userData);
-      /*
-      if (userData['address'] != null && userData['address'].isNotEmpty) {
-        userData['address'].forEach((address) {
-          print(
-              'Endereço: ${address['street']}, ${address['number']} - ${address['neighborhood']}, ${address['city']}, ${address['state']}');
-        });
-      } else {
-        print('Nenhum endereço disponível.');
-      }
-      */
     } else {
       print(
           'Falha ao obter os dados do usuário. Código: ${response.statusCode}');

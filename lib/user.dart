@@ -222,3 +222,45 @@ class Yourself {
         email: json['email'] ?? '');
   }
 }
+
+Map<String, dynamic> toJson({
+  required List<String> tipoDeServico,
+  required String tipoLimpeza,
+  required bool possuiPets,
+  required bool possuiMaterialLimpeza,
+  required int quantidadeRoupa,
+  required int quantidadeLouca,
+  required int quantidadeQuarto,
+  required int quantidadeBanheiro,
+  required int quantidadeSala,
+  required int quantidadeCozinha,
+  required String observacao,
+}) {
+  return {
+    'tiposDeServico': tipoDeServico,
+    'tipoLimpeza': tipoLimpeza,
+    'possuiPets': possuiPets,
+    'possuiMaterialLimpeza': possuiMaterialLimpeza,
+    'quantidadeRoupa': quantidadeRoupa,
+    'quantidadeLouca': quantidadeLouca,
+    'comodos': [
+      {
+        'tipo': 'quarto',
+        'quantidade': quantidadeQuarto,
+      },
+      {
+        'tipo': 'banheiro',
+        'quantidade': quantidadeBanheiro,
+      },
+      {
+        'tipo': 'sala',
+        'quantidade': quantidadeSala,
+      },
+      {
+        'tipo': 'cozinha',
+        'quantidade': quantidadeCozinha,
+      },
+    ],
+    'mensagem': observacao,
+  };
+}

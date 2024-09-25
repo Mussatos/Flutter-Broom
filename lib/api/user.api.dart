@@ -288,8 +288,8 @@ Future<void> deleteAddress(String idDoEndereco) async {
   }
 }
 
-
-Future<void> updateAddress(String idDoEndereco, Map<String, dynamic> addressData) async {
+Future<void> updateAddress(
+    String idDoEndereco, Map<String, dynamic> addressData) async {
   final token = await autentication.getToken();
   final String url = 'http://$host/address/$idDoEndereco';
 
@@ -311,5 +311,61 @@ Future<void> updateAddress(String idDoEndereco, Map<String, dynamic> addressData
     }
   } catch (e) {
     print("Ocorreu um erro: $e");
+  }
+}
+
+Future<void> updateUser(Map<String, dynamic> addressData) async {
+  final token = await autentication.getToken();
+  final id = await autentication.getUserId();
+  final String url = 'http://$host/user/$id';
+
+  try {
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(Yourself),
+    );
+
+    if (response.statusCode == 200) {
+      print("Perfil atualizado com sucesso!");
+    } else {
+      print("Erro ao atualizar o perfil: ${response.statusCode}");
+      print("Mensagem do servidor: ${response.body}");
+    }
+  } catch (e) {
+    print("Ocorreu um erro: $e");
+  }
+}
+
+Future<Yourself?> getAddressById() async {
+  final idDoEndereco = await autentication.getAddressId();
+  final token = await autentication.getToken();
+
+  final String url = 'http://$host/user/$idDoEndereco';
+
+  try {
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print(response);
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> userData = jsonDecode(response.body);
+      return Yourself.fromJson(userData);
+
+    } else {
+      print(
+          'Falha ao obter os dados do usuário. Código: ${response.statusCode}');
+      print('Erro: ${response.body}');
+    }
+  } catch (e) {
+    print('Ocorreu um erro: $e');
   }
 }

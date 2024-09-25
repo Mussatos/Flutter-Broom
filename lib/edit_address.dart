@@ -73,12 +73,13 @@ class _EditAddressFormState extends State<EditAddressForm> {
         complement: complementController.text,
         number: int.parse(numberController.text),
         userId: widget.address.userId,
+        addressId: widget.address.addressId,
       );
 
       updateAddress(
-          '2',
+          '$getAddressById()',
           updatedAddress
-              .toJson()); //Falar com o vini sobre passar o id do endereço aqui também
+              .toJson());
 
       Navigator.pop(context);
     }

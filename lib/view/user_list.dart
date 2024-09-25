@@ -36,6 +36,7 @@ class UserList extends StatelessWidget {
           complement: '',
           number: -1,
           userId: null,
+          addressId: null,
         ));
       }
     }

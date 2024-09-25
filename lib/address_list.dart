@@ -34,6 +34,7 @@ class AddressList extends StatelessWidget {
           complement: '',
           number: -1,
           userId: null,
+          addressId: null,
         ));
       }
     }
@@ -113,8 +114,9 @@ class AddressList extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  EditAddressForm(address: address[0])), //Falar com o vini sobre esse parametro também
+                              builder: (context) => EditAddressForm(
+                                  address:
+                                      userAddress)),
                         );
                       } else if (value == 'delete') {
                         _showDeleteConfirmationDialog(context);
@@ -162,7 +164,7 @@ void _showDeleteConfirmationDialog(BuildContext context) {
             child: Text('Confirmar'),
             onPressed: () {
               deleteAddress(
-                  '1'); //Falar com o vini sobre como puxar o idDoEndereço
+                  '$getAddressById');
               Navigator.of(context).pop();
             },
           ),

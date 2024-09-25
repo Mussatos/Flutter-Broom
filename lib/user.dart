@@ -138,18 +138,21 @@ class Address {
   String? addressCode;
   String? complement;
   int? userId;
+  int? addressId;
 
   // Construtor
-  Address(
-      {required this.state,
-      required this.city,
-      required this.neighborhood,
-      required this.addressType,
-      required this.street,
-      required this.number,
-      required this.addressCode,
-      required this.complement,
-      required this.userId});
+  Address({
+    required this.state,
+    required this.city,
+    required this.neighborhood,
+    required this.addressType,
+    required this.street,
+    required this.number,
+    required this.addressCode,
+    required this.complement,
+    required this.userId,
+    required this.addressId,
+  });
 
   // Método fromJson para converter um Map (JSON) em um objeto Address
   factory Address.fromJson(Map<String, dynamic> json) {
@@ -163,6 +166,7 @@ class Address {
       addressCode: json['address_code'],
       complement: json['complement'],
       userId: json['user_id'],
+      addressId: json['id'],
     );
   }
   Map<String, dynamic> toJson() {

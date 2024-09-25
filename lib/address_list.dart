@@ -18,10 +18,6 @@ class AddressList extends StatelessWidget {
     final String token =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24';
 
-    UserProvider userProvider = UserProvider.of(context) as UserProvider;
-    List<User> users = userProvider.users;
-    int usersLength = users.length;
-
     List<Address> address = [];
 
     void addAddressForUser(ListUsers user) {
@@ -54,10 +50,6 @@ class AddressList extends StatelessWidget {
       if (userAddress.street == '' || userAddress.number == '') return '';
 
       return '${userAddress.street}, ${userAddress.number}';
-    }
-
-    String getListUserFullName(ListUsers user) {
-      return '${user.firstName} ${user.lastName}';
     }
 
     return Scaffold(
@@ -121,7 +113,8 @@ class AddressList extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => EditAddress()),
+                              builder: (context) =>
+                                  EditAddressForm(address: address[0])), //Falar com o vini sobre esse parametro também
                         );
                       } else if (value == 'delete') {
                         _showDeleteConfirmationDialog(context);
@@ -168,8 +161,9 @@ void _showDeleteConfirmationDialog(BuildContext context) {
           TextButton(
             child: Text('Confirmar'),
             onPressed: () {
-              Navigator.of(context)
-                  .pop();
+              deleteAddress(
+                  '1'); //Falar com o vini sobre como puxar o idDoEndereço
+              Navigator.of(context).pop();
             },
           ),
         ],

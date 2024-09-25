@@ -263,3 +263,53 @@ Future<List<Address>> fetchAddress() async {
     return [];
   }
 }
+
+Future<void> deleteAddress(String idDoEndereco) async {
+  final token = await autentication.getToken();
+  final String url = 'http://$host/address/$idDoEndereco';
+
+  try {
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("Endereço deletado com sucesso!");
+    } else {
+      print("Erro ao deletar o endereço: ${response.statusCode}");
+      print("Mensagem do servidor: ${response.body}");
+    }
+  } catch (e) {
+    print("Ocorreu um erro: $e");
+  }
+}
+
+
+Future<void> updateAddress(String idDoEndereco, Map<String, dynamic> addressData) async {
+  final token = await autentication.getToken();
+  final String url = 'http://$host/address/$idDoEndereco';
+
+  try {
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(addressData),
+    );
+
+    if (response.statusCode == 200) {
+      print("Endereço atualizado com sucesso!");
+    } else {
+      print("Erro ao atualizar o endereço: ${response.statusCode}");
+      print("Mensagem do servidor: ${response.body}");
+    }
+  } catch (e) {
+    print("Ocorreu um erro: $e");
+  }
+}

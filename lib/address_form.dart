@@ -1,7 +1,7 @@
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 import 'package:flutter/material.dart';
-import 'user.dart'; // Para usar a classe Address
+import 'user.dart';
 
 class AddressForm extends StatefulWidget {
   @override

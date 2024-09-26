@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
@@ -327,5 +328,72 @@ Future<void> updateUser(Map<String, dynamic> addressData) async {
     }
   } catch (e) {
     print("Ocorreu um erro: $e");
+  }
+}
+
+class ApiService {
+  Future<String?> sendContract({
+    required List<String?> tiposDeServico,
+    required String? tipoLimpeza,
+    required bool? possuiPets,
+    required bool? possuiMaterialLimpeza,
+    required int? quantidadeRoupaLavar,
+    required int? quantidadeRoupaPassar,
+    required int? quantidadeLouca,
+    required int? quantidadeQuarto,
+    required int? quantidadeBanheiro,
+    required int? quantidadeSala,
+    required String mensagem,
+    required int id,
+  }) async {
+    final token = await autentication.getToken();
+    final String url = 'http://$host/contract/sendContract/$id';
+
+    Map<String, dynamic> body = {
+      "tiposDeServico": tiposDeServico,
+      "tipoLimpeza": tipoLimpeza,
+      "possuiPets": possuiPets,
+      "possuiMaterialLimpeza": possuiMaterialLimpeza,
+      "qntRoupaLavar": quantidadeRoupaLavar,
+      "qntRoupaPassar": quantidadeRoupaPassar,
+      "qntLouca": quantidadeLouca,
+      "comodos": [
+        {
+          "tipo": "quarto",
+          "quantidade": quantidadeQuarto,
+        },
+        {
+          "tipo": "banheiro",
+          "quantidade": quantidadeBanheiro,
+        },
+        {
+          "tipo": "sala",
+          "quantidade": quantidadeSala,
+        },
+      ],
+      "mensagem": mensagem,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201) {
+        print('Contrato enviado com sucesso!');
+        var link = jsonDecode(response.body);
+        return link['link'];
+      } else {
+        print('Falha ao enviar contrato. Código: ${response.statusCode}');
+        print('Mensagem: ${response.body}');
+      }
+    } catch (e) {
+      print('Erro ao enviar contrato: $e');
+    }
   }
 }

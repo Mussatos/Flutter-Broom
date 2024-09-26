@@ -140,7 +140,6 @@ class Address {
   int? userId;
   int? id;
 
-  // Construtor
   Address({
     required this.state,
     required this.city,
@@ -154,7 +153,6 @@ class Address {
     required this.id,
   });
 
-  // Método fromJson para converter um Map (JSON) em um objeto Address
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
       state: json['state'],
@@ -228,7 +226,8 @@ Map<String, dynamic> toJson({
   required String tipoLimpeza,
   required bool possuiPets,
   required bool possuiMaterialLimpeza,
-  required int quantidadeRoupa,
+  required int quantidadeRoupaLavar,
+  required int quantidadeRoupaPassar,
   required int quantidadeLouca,
   required int quantidadeQuarto,
   required int quantidadeBanheiro,
@@ -241,8 +240,9 @@ Map<String, dynamic> toJson({
     'tipoLimpeza': tipoLimpeza,
     'possuiPets': possuiPets,
     'possuiMaterialLimpeza': possuiMaterialLimpeza,
-    'quantidadeRoupa': quantidadeRoupa,
-    'quantidadeLouca': quantidadeLouca,
+    'qntRoupaLavar': quantidadeRoupaLavar,
+    'qntRoupaPassar': quantidadeRoupaPassar,
+    'qntLouca': quantidadeLouca,
     'comodos': [
       {
         'tipo': 'quarto',

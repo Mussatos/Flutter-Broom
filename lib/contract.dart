@@ -1,8 +1,11 @@
+import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Contract extends StatefulWidget {
-  Contract({super.key});
+  int idDoUser;
+
+  Contract({super.key, required this.idDoUser});
 
   @override
   _ContractState createState() => _ContractState();
@@ -14,6 +17,7 @@ class _ContractState extends State<Contract> {
   final TextEditingController toiletController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
   final TextEditingController clothController = TextEditingController();
+  final TextEditingController clothCleanController = TextEditingController();
   final TextEditingController dishesController = TextEditingController();
   final TextEditingController obsController = TextEditingController();
   bool? petsController = false;
@@ -32,20 +36,35 @@ class _ContractState extends State<Contract> {
   List<String> cleanType = ['Leve', 'Média', 'Pesada'];
   String cleanTypeSelected = 'Leve';
 
-  void sendWhatsAppMessage() async {
-    String bedroom = bedroomController.text;
-    String kitchen = kitchenController.text;
-    String toilet = toiletController.text;
-    String room = roomController.text;
-    String observation = obsController.text;
-    String cloth = clothController.text;
-    String iron = dishesController.text;
-    String dishes = dishesController.text;
-    String pets = petsController! ? "Sim" : "Não";
-    String material = materialController! ? "Sim" : "Não";
+  ApiService apiService = ApiService();
 
-    String url = "";
+  Future<void> sendContract() async {
+    List<String> selectedServices = [];
+    for (int i = 0; i < serviceType.length; i++) {
+      if (serviceTypeSelected[i]) {
+        selectedServices.add(serviceType[i]);
+      }
+    }
 
+    String? whatsappUrl = await apiService.sendContract(
+      tiposDeServico: selectedServices,
+      tipoLimpeza: cleanTypeSelected,
+      possuiPets: petsController ?? false,
+      possuiMaterialLimpeza: materialController ?? false,
+      quantidadeRoupaLavar: int.tryParse(clothController.text) ?? 0,
+      quantidadeRoupaPassar: int.tryParse(clothCleanController.text) ?? 0,
+      quantidadeLouca: int.tryParse(dishesController.text) ?? 0,
+      quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
+      quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
+      quantidadeSala: int.tryParse(roomController.text) ?? 0,
+      mensagem: obsController.text,
+      id: widget.idDoUser,
+    );
+
+    launchWhatsApp(whatsappUrl!);
+  }
+
+  void launchWhatsApp(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -196,7 +215,7 @@ class _ContractState extends State<Contract> {
                     if (serviceType[index] == 'Passar roupa' &&
                         serviceTypeSelected[index])
                       TextFormField(
-                        controller: clothController,
+                        controller: clothCleanController,
                         decoration: InputDecoration(
                           labelText: 'Quantidade para Passar Roupa',
                           border: OutlineInputBorder(),
@@ -231,7 +250,7 @@ class _ContractState extends State<Contract> {
               width: 350,
               height: 50,
               child: ElevatedButton(
-                onPressed: sendWhatsAppMessage,
+                onPressed: sendContract,
                 child: Text('Enviar contrato'),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.black),

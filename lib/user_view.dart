@@ -128,7 +128,7 @@ class UserView extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Contract()));
+                                    builder: (context) => Contract(idDoUser: usuario.id,)));
                           },
                           icon: Icon(Icons.message, color: Colors.white),
                           label: Text(

@@ -10,9 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
 
-class AddressList extends StatelessWidget {
+class AddressList extends StatefulWidget {
   const AddressList({super.key});
 
+  @override
+  State<AddressList> createState() => _AddressListState();
+}
+
+class _AddressListState extends State<AddressList> {
   @override
   Widget build(BuildContext context) {
     final String token =
@@ -114,9 +119,8 @@ class AddressList extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => EditAddressForm(
-                                  address:
-                                      userAddress)),
+                              builder: (context) =>
+                                  EditAddressForm(address: userAddress)),
                         );
                       } else if (value == 'delete') {
                         _showDeleteConfirmationDialog(context, userAddress.id);

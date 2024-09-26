@@ -5,9 +5,14 @@ import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:flutter/material.dart';
 
-class UserYourself extends StatelessWidget {
+class UserYourself extends StatefulWidget {
   UserYourself();
 
+  @override
+  State<UserYourself> createState() => _UserYourselfState();
+}
+
+class _UserYourselfState extends State<UserYourself> {
   @override
   Widget build(BuildContext context) {
     String getListUserFormatedAddress(Map<String, dynamic> address) {

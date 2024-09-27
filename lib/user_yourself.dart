@@ -1,6 +1,7 @@
 import 'package:broom_main_vscode/address_form.dart';
 import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/edit_user.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:flutter/material.dart';
@@ -149,7 +150,24 @@ class _UserYourselfState extends State<UserYourself> {
                             ),
                           ),
                           ElevatedButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditUserForm(
+                                            usersEdit: EditUser(
+                                              name: snapshot.data?.name,
+                                              lastName: snapshot.data?.lastName,
+                                              email: snapshot.data?.email,
+                                              cellphoneNumber: snapshot
+                                                  .data?.cellphoneNumber,
+                                              description:
+                                                  snapshot.data?.description,
+                                              wantService:
+                                                  snapshot.data?.wantService,
+                                            ),
+                                          )));
+                            },
                             icon: Icon(Icons.edit, color: Colors.white),
                             label: Text(
                               'Editar',

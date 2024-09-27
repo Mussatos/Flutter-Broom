@@ -16,7 +16,6 @@ void main() async {
     home: HomePage(),
     routes: {
       "/list": (_) => UserList(),
-      //"view": (_) => UserView(),
     },
   )));
 }

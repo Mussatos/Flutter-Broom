@@ -193,6 +193,7 @@ class Yourself {
   bool wantService;
   String cpf = '';
   List<dynamic> address;
+  int? userId;
 
   Yourself(
       {required this.name,
@@ -263,4 +264,41 @@ Map<String, dynamic> toJson({
     ],
     'mensagem': observacao,
   };
+}
+
+class EditUser {
+  String? name;
+  String? lastName;
+  String? cellphoneNumber = '';
+  String? description = '';
+  String? email = '';
+  bool? wantService;
+
+  EditUser(
+      {required this.name,
+      required this.lastName,
+      required this.cellphoneNumber,
+      required this.description,
+      required this.wantService,
+      required this.email});
+
+  factory EditUser.fromJson(Map<String, dynamic> json) {
+    return EditUser(
+        description: json['description'],
+        name: json['first_name'],
+        lastName: json['last_name'],
+        cellphoneNumber: json['cellphone_number'],
+        wantService: json['want_service'] ?? false,
+        email: json['email'] ?? '');
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'first_name': name,
+      'description': description,
+      'last_name': lastName,
+      'cellphone_number': cellphoneNumber,
+      'want_service': wantService,
+      'email': email,
+    };
+  }
 }

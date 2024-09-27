@@ -219,12 +219,18 @@ Widget inputFile(
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
             border:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.grey))),
+        style: TextStyle(
+          color: Colors.white,
+        ),
       ),
       SizedBox(
         height: 10,

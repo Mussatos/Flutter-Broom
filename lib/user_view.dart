@@ -1,4 +1,5 @@
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/contract.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'user.dart';
@@ -36,7 +37,7 @@ class UserView extends StatelessWidget {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),
@@ -119,33 +120,19 @@ class UserView extends StatelessWidget {
                       children: [
                         ElevatedButton.icon(
                           onPressed: () async {
+                            /*
                             launchUrl(Uri.parse(
+                            
                                 'https://wa.me/${snapshot.data?.cellphoneNumber}'));
-                          }, //_openWhatsApp,
+                           */ //_openWhatsApp,
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Contract(idDoUser: usuario.id,)));
+                          },
                           icon: Icon(Icons.message, color: Colors.white),
                           label: Text(
-                            'WhatsApp',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF2ECC8F),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            launchUrl(
-                              Uri.parse(
-                                  'mailto:${snapshot.data?.email}?subject=Notificação de Serviço&body=Olá, gostei do seu perfil e gostaria de contratar o seu serviço!'),
-                            );
-                          }, //_sendEmail,
-                          icon: Icon(Icons.email, color: Colors.white),
-                          label: Text(
-                            'Email',
+                            'Criar contrato',
                             style: TextStyle(color: Colors.white),
                           ),
                           style: ElevatedButton.styleFrom(
@@ -164,7 +151,6 @@ class UserView extends StatelessWidget {
               ),
             );
           }
-          ;
         },
       ),
     );

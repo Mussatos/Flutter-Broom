@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:broom_main_vscode/address_form.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/edit_address.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
@@ -8,22 +10,18 @@ import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
 
-class UserList extends StatefulWidget {
-  const UserList({super.key});
+class AddressList extends StatefulWidget {
+  const AddressList({super.key});
 
   @override
-  State<UserList> createState() => _UserListState();
+  State<AddressList> createState() => _AddressListState();
 }
 
-class _UserListState extends State<UserList> {
+class _AddressListState extends State<AddressList> {
   @override
   Widget build(BuildContext context) {
     final String token =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24';
-
-    UserProvider userProvider = UserProvider.of(context) as UserProvider;
-    List<User> users = userProvider.users;
-    int usersLength = users.length;
 
     List<Address> address = [];
 
@@ -54,26 +52,23 @@ class _UserListState extends State<UserList> {
       return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
     }
 
-    String getListUserFullName(ListUsers user) {
-      return '${user.firstName} ${user.lastName}';
+    String getListAddressMore(Address userAddress) {
+      if (userAddress.street == '' || userAddress.number == '') return '';
+
+      return '${userAddress.street}, ${userAddress.number}';
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: Text('Address List'),
         actions: [
           IconButton(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.add),
             color: Colors.white,
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UserYourself()));
+                  MaterialPageRoute(builder: (context) => AddressForm()));
             },
-          ),
-          IconButton(
-            icon: Icon(Icons.settings),
-            color: Colors.grey.shade800,
-            onPressed: () {},
           ),
         ],
         elevation: 0,
@@ -89,22 +84,21 @@ class _UserListState extends State<UserList> {
           ),
         ),
       ),
-      body: FutureBuilder<List<ListUsers>>(
-        future: fetchUsuarios(),
+      body: FutureBuilder<List<Address>>(
+        future: fetchAddress(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: Text('Erro ao carregar usuários'));
+            return const Center(child: Text('Erro ao carregar endereços'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nenhum usuário encontrado'));
+            return const Center(child: Text('Nenhum endereço encontrado'));
           } else {
-            List<ListUsers> usuarios = snapshot.data!;
+            List<Address> address = snapshot.data!;
             return ListView.builder(
-              itemCount: usuarios.length,
+              itemCount: address.length,
               itemBuilder: (context, index) {
-                ListUsers usuario = usuarios[index];
-                addAddressForUser(usuario);
+                Address userAddress = address[index];
                 return ListTile(
                   titleTextStyle: const TextStyle(
                       color: Colors.black87,
@@ -116,17 +110,36 @@ class _UserListState extends State<UserList> {
                       fontWeight: FontWeight.w400,
                       decorationColor: Color(0xFF2ECC8F),
                       decoration: TextDecoration.overline),
-                  leading: UserImage(user: usuario),
-                  title: Text(getListUserFullName(usuario)),
-                  subtitle: Text(getListUserFormatedAddress(address[index])),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserView(usuario: usuario),
-                      ),
-                    );
-                  },
+                  title: Text(getListUserFormatedAddress(userAddress)),
+                  subtitle: Text(getListAddressMore(address[index])),
+                  trailing: PopupMenuButton<String>(
+                    icon: Icon(Icons.more_vert),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  EditAddressForm(address: userAddress)),
+                        );
+                      } else if (value == 'delete') {
+                        _showDeleteConfirmationDialog(context, userAddress.id);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Text('Editar'),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Deletar'),
+                        ),
+                      ];
+                    },
+                  ),
+                  onTap: () {},
                 );
               },
             );
@@ -135,4 +148,31 @@ class _UserListState extends State<UserList> {
       ),
     );
   }
+}
+
+void _showDeleteConfirmationDialog(BuildContext context, int? id) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Confirmação'),
+        content: Text('Tem certeza de que deseja excluir este endereço?'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Cancelar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: Text('Confirmar'),
+            onPressed: () {
+              deleteAddress(id);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

@@ -1,24 +1,29 @@
-import 'package:broom_main_vscode/api/user.api.dart';
-import 'package:broom_main_vscode/utils/user_autentication.dart';
 import 'package:flutter/material.dart';
 import 'user.dart';
+import 'api/user.api.dart';
 
-class AddressForm extends StatefulWidget {
+class EditAddressForm extends StatefulWidget {
+  final Address address;
+
+  EditAddressForm({required this.address});
+
   @override
-  _AddressFormState createState() => _AddressFormState();
+  _EditAddressFormState createState() => _EditAddressFormState();
 }
 
-class _AddressFormState extends State<AddressForm> {
+class _EditAddressFormState extends State<EditAddressForm> {
   final _formKey = GlobalKey<FormState>();
-  UserAutentication autentication = UserAutentication();
 
-  final TextEditingController streetController = TextEditingController();
-  final TextEditingController numberController = TextEditingController();
-  final TextEditingController neighController = TextEditingController();
-  final TextEditingController addressCodeController = TextEditingController();
-  final TextEditingController stateController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final TextEditingController complementController = TextEditingController();
+  late TextEditingController streetController;
+  late TextEditingController numberController;
+  late TextEditingController neighController;
+  late TextEditingController addressCodeController;
+  late TextEditingController stateController;
+  late TextEditingController cityController;
+  late TextEditingController complementController;
+  late int? id;
+  late String? addressTypeSelected;
+
   List<String> addressType = [
     'Residencia',
     'Condominio',
@@ -26,7 +31,24 @@ class _AddressFormState extends State<AddressForm> {
     'Comercio',
     'Studio'
   ];
-  String addressTypeSelected = 'Residencia';
+
+  @override
+  void initState() {
+    super.initState();
+
+    id = widget.address.id;
+    streetController = TextEditingController(text: widget.address.street);
+    numberController =
+        TextEditingController(text: widget.address.number.toString());
+    neighController = TextEditingController(text: widget.address.neighborhood);
+    addressCodeController =
+        TextEditingController(text: widget.address.addressCode);
+    stateController = TextEditingController(text: widget.address.state);
+    cityController = TextEditingController(text: widget.address.city);
+    complementController =
+        TextEditingController(text: widget.address.complement);
+    addressTypeSelected = widget.address.addressType;
+  }
 
   @override
   void dispose() {
@@ -39,10 +61,9 @@ class _AddressFormState extends State<AddressForm> {
     super.dispose();
   }
 
-  void saveAddress() async {
-    int? userId = await autentication.getUserId();
+  void saveAddress() {
     if (_formKey.currentState!.validate()) {
-      Address newAddress = Address(
+      Address updatedAddress = Address(
         city: cityController.text,
         state: stateController.text,
         street: streetController.text,
@@ -51,15 +72,13 @@ class _AddressFormState extends State<AddressForm> {
         addressCode: addressCodeController.text,
         complement: complementController.text,
         number: int.parse(numberController.text),
-        userId: userId,
+        userId: widget.address.userId,
         id: null,
       );
-      if (/*isValidEmail && controllerEmail.text.isNotEmpty*/ true) {
-        createAddress(newAddress.toJson());
-        Navigator.pop(context);
-      } else {
-        Error();
-      }
+
+      updateAddress(id, updatedAddress.toJson());
+
+      Navigator.pop(context);
     }
   }
 
@@ -68,7 +87,7 @@ class _AddressFormState extends State<AddressForm> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Registrar Endereço',
+          'Editar Endereço',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Color(0xFF2ECC8F),
@@ -118,9 +137,7 @@ class _AddressFormState extends State<AddressForm> {
                   },
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               SizedBox(
                 width: 350,
                 child: TextFormField(
@@ -148,9 +165,7 @@ class _AddressFormState extends State<AddressForm> {
                   },
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               SizedBox(
                 width: 350,
                 child: TextFormField(
@@ -308,40 +323,39 @@ class _AddressFormState extends State<AddressForm> {
                 ),
               ),
               SizedBox(
-                width: 350,
-                child: DropdownButton<String>(
-                    value: addressTypeSelected,
-                    underline: Container(
-                      height: 1,
-                      color: Colors.white,
-                    ),
-                    dropdownColor: Colors.black,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    isExpanded: true,
-                    iconSize: 35,
-                    iconEnabledColor: Colors.white,
-                    items: addressType
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                          value: value, child: Text(value));
-                    }).toList(),
-                    onChanged: (String? value) {
-                      setState(() {
-                        addressTypeSelected = value!;
-                      });
-                    }),
-              ),
+                  width: 350,
+                  child: DropdownButton<String>(
+                      value: addressTypeSelected,
+                      underline: Container(
+                        height: 1,
+                        color: Colors.white,
+                      ),
+                      dropdownColor: Colors.black,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      isExpanded: true,
+                      iconSize: 35,
+                      iconEnabledColor: Colors.white,
+                      items: addressType
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                            value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          addressTypeSelected = value!;
+                        });
+                      })),
               SizedBox(height: 10),
               SizedBox(
                 width: 350,
                 height: 50,
                 child: TextButton(
                   onPressed: saveAddress,
-                  child: Text('Salvar Endereço'),
+                  child: Text('Salvar Alterações'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black),
                     foregroundColor: MaterialStateProperty.all(Colors.white),

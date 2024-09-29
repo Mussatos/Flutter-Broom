@@ -273,6 +273,7 @@ class EditUser {
   String? description = '';
   String? email = '';
   bool? wantService;
+  String? userActualImage;
 
   EditUser(
       {required this.name,
@@ -280,7 +281,8 @@ class EditUser {
       required this.cellphoneNumber,
       required this.description,
       required this.wantService,
-      required this.email});
+      required this.email,
+      this.userActualImage});
 
   factory EditUser.fromJson(Map<String, dynamic> json) {
     return EditUser(

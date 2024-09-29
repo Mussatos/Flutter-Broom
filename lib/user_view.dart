@@ -1,165 +1,158 @@
+import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/contract.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import 'user.dart';
+import 'package:broom_main_vscode/ui-components/user_image.dart';
 
 class UserView extends StatelessWidget {
-  UserView({super.key});
+  final ListUsers usuario;
+  final String token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24";
 
-  String title = "Show User";
+  UserView({required this.usuario});
 
   @override
   Widget build(BuildContext context) {
+    final address = (usuario.address != null && usuario.address.isNotEmpty)
+        ? usuario.address[0]
+        : null;
+
+    // Formata o endereço, se existir
+    final formatAddress = address != null
+        ? 'Endereço: Bairro ${address['neighborhood']}, ${address['city']}, ${address['state']}'
+        : 'Endereço não cadastrado';
+
     return Scaffold(
-      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
-        title: Text('Informações'),
-        elevation: 0,
+        title: Text(
+          'Informações do Usuário',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.popAndPushNamed(context, "/list");
+            Navigator.pop(context);
           },
           icon: Icon(
             Icons.arrow_back_ios,
-            size: 20,
+            size: 24,
             color: Colors.black,
           ),
         ),
       ),
-      
-      body: Text("Vini"),
-      /*
-      ListView.builder(
-        itemCount: usersLength,
-        itemBuilder: (BuildContext contextBuilder, indexBuilder) => Container(
-          child: ListTile(
-              title: Text(users[indexBuilder].name),
-              subtitle: Text(users[indexBuilder].sobrenome),
-              leading: Image.asset("assets/Logo_so_o_balde.png"),
-              ),
-        ),
-      ),
-      */
-    );
-  }
-
-/*
-  TextEditingController controllerName = TextEditingController();
-  TextEditingController controllerSobrenome = TextEditingController();
-  TextEditingController controllerEmail = TextEditingController();
-  TextEditingController controllerPassword = TextEditingController();
-  TextEditingController controllerCpf = TextEditingController();
-  TextEditingController controllerDate = TextEditingController();
-  List<int> profileType = [1, 2];
-  int userProfileSelected = 1;
-  DateTime picked = new DateTime(0);
-  bool isValidEmail = true;
-  bool isValidPassword = true;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          SizedBox(
-            width: 120,
-            child: DropdownButton<int>(
-              value: userProfileSelected,
-              underline: Container(
-                height: 1,
-                color: Colors.white,
-              ),
-              dropdownColor: Colors.white,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-              isExpanded: true,
-              iconSize: 35,
-              iconEnabledColor: Colors.white,
-              items: profileType.map<DropdownMenuItem<int>>((int value) {
-                return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value == 1 ? 'Cliente' : 'Diarista'));
-              }).toList(),
-              onChanged: (int? value) {},
-            ),
-          ),
-          SizedBox(
-            width: 350,
-            child: FieldForm(
-                label: 'Name', isPassoword: false, controller: controllerName),
-          ),
-          SizedBox(
-            width: 350,
-            child: FieldForm(
-                label: 'Sobrenome',
-                isPassoword: false,
-                controller: controllerSobrenome),
-          ),
-          SizedBox(
-            width: 350,
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Email',
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              obscureText: false,
-              controller: controllerEmail,
-            ),
-          ),
-          SizedBox(
-            width: 350,
-            child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  filled: true,
-                  fillColor: Colors.white,
+      body: FutureBuilder(
+        future: fetchUsuario(usuario.id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Erro ao carregar usuários'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('Nenhum usuário encontrado'));
+          } else {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey.shade200,
+                      child: UserImage(user: usuario),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      '${snapshot.data?.name} ${snapshot.data?.lastName}',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Serviço: ${snapshot.data?.wantService}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey.shade700,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      formatAddress,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey.shade600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 30),
+                    Divider(thickness: 1, color: Colors.grey.shade300),
+                    SizedBox(height: 20),
+                    Text(
+                      'Descrição:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      '${snapshot.data?.description}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.grey.shade600,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.justify,
+                    ),
+                    SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            /*
+                            launchUrl(Uri.parse(
+                            
+                                'https://wa.me/${snapshot.data?.cellphoneNumber}'));
+                           */ //_openWhatsApp,
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Contract(idDoUser: usuario.id,)));
+                          },
+                          icon: Icon(Icons.message, color: Colors.white),
+                          label: Text(
+                            'Criar contrato',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF2ECC8F),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                obscureText: true,
-                controller: controllerPassword,
               ),
-          ),
-          SizedBox(
-            width: 350,
-            child: FieldForm(
-                label: 'CPF', isPassoword: false, controller: controllerCpf),
-          ),
-          SizedBox(
-            width: 350,
-            child: TextField(
-              controller: controllerDate,
-              decoration: InputDecoration(
-                labelText: 'Date',
-                filled: true,
-                fillColor: Colors.white,
-                prefixIcon: Icon(Icons.calendar_today),
-              ),
-              readOnly: true,
-            ),
-          ),
-          SizedBox(
-            width: 350,
-            height: 50,
-            child: TextButton(
-              onPressed: () {
-                Navigator.popAndPushNamed(context, "/create");
-              },
-              child: Text('Edit'),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.black),
-                foregroundColor: MaterialStateProperty.all(Colors.white),
-              ),
-            ),
-          )
-        ],
+            );
+          }
+        },
       ),
-      
     );
   }
-  */
 }

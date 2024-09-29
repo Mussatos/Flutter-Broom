@@ -305,10 +305,10 @@ Future<void> updateAddress(
   }
 }
 
-Future<void> updateUser(Map<String, dynamic> addressData) async {
+Future<void> updateUser(Map<String, dynamic> usersData) async {
   final token = await autentication.getToken();
-  final id = await autentication.getUserId();
-  final String url = 'http://$host/user/$id';
+  final userId = await autentication.getUserId();
+  final String url = 'http://$host/user/$userId';
 
   try {
     final response = await http.put(
@@ -317,7 +317,7 @@ Future<void> updateUser(Map<String, dynamic> addressData) async {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode(Yourself),
+      body: jsonEncode(usersData),
     );
 
     if (response.statusCode == 200) {

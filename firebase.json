@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "broom-d4d31",
     "public": "build/web",
     "ignore": [
       "firebase.json",

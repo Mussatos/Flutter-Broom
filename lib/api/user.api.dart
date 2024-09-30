@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -12,14 +13,14 @@ import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
 //URL de Prod do backend: https://broom-api.onrender.com/
-const String host = 'localhost:3001';
+const String host = 'localhost:3000';
 Uri urlRegister = Uri.http(host, '/register');
 Uri urlLogin = Uri.http(host, '/login');
 Uri urlListContractors = Uri.http(host, '/list/contractors');
 Uri urlListDiarists = Uri.http(host, '/list/diarists');
 Uri urlViewDiarist = Uri.http(host, '');
 
-Future<void> register(Map<String, dynamic> user) async {
+Future<bool> register(Map<String, dynamic> user) async {
   try {
     var resp = await http.post(urlRegister,
         headers: <String, String>{'Content-Type': 'application/json'},
@@ -27,11 +28,16 @@ Future<void> register(Map<String, dynamic> user) async {
 
     final response = jsonDecode(resp.body) as Map<String, dynamic>;
     if (resp.statusCode == 201) {
+      await autentication.setToken(response['access_token']);
+      await autentication.setProfileId(response['user']['profile_id']);
+      await autentication.setUserId(response['user']['id']);
+      return true;
     } else {
       throw Exception('Falha ao cadastrar usuário');
     }
   } catch (err) {
     print(err);
+    return false;
   }
 }
 
@@ -396,4 +402,20 @@ class ApiService {
       print('Erro ao enviar contrato: $e');
     }
   }
+}
+
+Future sendImage(PlatformFile file) async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  var request =
+      http.MultipartRequest('POST', Uri.http(host, '/user/upload/$userId'));
+  request.headers['Authorization'] = 'Bearer $token';
+  request.files.add(await http.MultipartFile.fromBytes(
+    'file',
+    file.bytes!,
+    filename: file.name,
+  ));
+
+  final res = await request.send();
+  return res.stream.bytesToString();
 }

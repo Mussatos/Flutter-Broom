@@ -97,6 +97,11 @@ class _ContractState extends State<Contract> {
         padding: const EdgeInsets.all(35.0),
         child: Column(
           children: [
+            Text(
+              "Quantos cômodos?",
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 10),
             Row(
               children: [
                 Expanded(

@@ -19,3 +19,9 @@ bool validPassword(String input) {
 
   return input == '' ? true : RegExp(validator).hasMatch(input);
 }
+
+bool validName(String input) {
+  const validator = r"^[a-zA-ZÀ-ÿ\s]{2,}$";
+
+  return input == '' ? false : RegExp(validator).hasMatch(input);
+}

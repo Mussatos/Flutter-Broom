@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
-import 'package:broom_main_vscode/utils/user_autentication.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class EditUserForm extends StatefulWidget {
@@ -20,7 +23,24 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController emailController;
   late TextEditingController cellphoneNumberController;
   late TextEditingController descriptionController;
+  late String userActualImage;
   late bool? wantService;
+  File? userImage;
+  PlatformFile? _selectedFile;
+
+  Future<void> _pickImage() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedFile = result.files.first;
+      });
+    } else {
+      print('Nenhum arquivo selecionado.');
+    }
+  }
 
   @override
   void initState() {
@@ -33,6 +53,7 @@ class _EditUserFormState extends State<EditUserForm> {
     descriptionController =
         TextEditingController(text: widget.usersEdit.description);
     wantService = widget.usersEdit.wantService ?? false;
+    userActualImage = widget.usersEdit.userActualImage!;
   }
 
   @override
@@ -88,6 +109,49 @@ class _EditUserFormState extends State<EditUserForm> {
             key: _formKey,
             child: Column(
               children: [
+                Stack(children: [
+                  GestureDetector(
+                    onTap: () {
+                      _pickImage();
+                    },
+                    child: _selectedFile != null
+                        ? CircleAvatar(
+                            radius: 50,
+                            child: Container(
+                              width: 80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image:
+                                          MemoryImage(_selectedFile!.bytes!))),
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 50,
+                            child: UserImage(
+                                user: ListUsers(
+                                    id: -1,
+                                    address: [],
+                                    firstName: '',
+                                    lastName: '',
+                                    profileId: -1,
+                                    userImage: userActualImage,
+                                    wantService: false)),
+                          ),
+                  ),
+                  Positioned(
+                    bottom: 5,
+                    right: 5,
+                    child: IconButton(
+                        onPressed: () {
+                          _pickImage();
+                        },
+                        icon: const Icon(
+                          Icons.add_a_photo,
+                          color: Color(0xFF2ECC8F),
+                        )),
+                  )
+                ]),
                 TextFormField(
                   controller: nameController,
                   decoration: InputDecoration(
@@ -143,22 +207,6 @@ class _EditUserFormState extends State<EditUserForm> {
                     return null;
                   },
                 ),
-                /*
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: ,
-                  decoration: InputDecoration(
-                    labelText: 'Imagem do usuário (URL)',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe a imagem do usuário';
-                    }
-                    return null;
-                  },
-                ),
-                */
                 SizedBox(height: 10),
                 TextFormField(
                   controller: descriptionController,
@@ -200,7 +248,10 @@ class _EditUserFormState extends State<EditUserForm> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: saveUser,
+                    onPressed: (){
+                        saveUser();
+                        sendImage(_selectedFile!);
+                      },
                     child: Text('Salvar'),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.black),

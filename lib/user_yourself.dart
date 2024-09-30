@@ -165,6 +165,7 @@ class _UserYourselfState extends State<UserYourself> {
                                                   snapshot.data?.description,
                                               wantService:
                                                   snapshot.data?.wantService,
+                                              userActualImage: snapshot.data?.userImage
                                             ),
                                           )));
                             },

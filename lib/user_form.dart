@@ -64,7 +64,7 @@ class _UserFormState extends State<UserForm> {
           description: '',
           cellphone_number: '',
           user_image: '',
-          wantService: null,
+          wantService: true,
           gender: gender);
 
       int usersLength = userProvider.users.length;

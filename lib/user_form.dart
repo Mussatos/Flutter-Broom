@@ -52,13 +52,13 @@ class _UserFormState extends State<UserForm> {
       return false;
     }
 
-    void save(context) {
+    void save(context) async {
       User user = User(
           name: controllerName.text,
           sobrenome: controllerSobrenome.text,
           email: controllerEmail.text,
           password: controllerPassword.text,
-          cpf: controllerCpf.text,
+          cpf: controllerCpf.text.replaceAll(RegExp(r'[\.-]'), ''),
           data: picked,
           profileId: userProfileSelected,
           description: '',
@@ -70,11 +70,9 @@ class _UserFormState extends State<UserForm> {
       int usersLength = userProvider.users.length;
 
       userProvider.users.insert(usersLength, user);
-
-      if (validCredentials()) {
-        register(user.toJson());
+      if (validCredentials() && await register(user.toJson())) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+            context, MaterialPageRoute(builder: (context) => UserList()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

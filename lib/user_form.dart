@@ -313,6 +313,7 @@ class _UserFormState extends State<UserForm> {
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'M',
                             groupValue: gender,
                             onChanged: (value) {
@@ -331,6 +332,7 @@ class _UserFormState extends State<UserForm> {
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'F',
                             groupValue: gender,
                             onChanged: (value) {
@@ -349,6 +351,7 @@ class _UserFormState extends State<UserForm> {
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'O',
                             groupValue: gender,
                             onChanged: (value) {
@@ -394,13 +397,15 @@ class _UserFormState extends State<UserForm> {
   Future<void> _selectDate() async {
     DateTime? _picked = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: DateTime(2000),
         firstDate: DateTime(1950),
         lastDate: DateTime(2500));
 
     if (_picked != null) {
       setState(() {
-        controllerDate.text = _picked.toString().split(" ")[0];
+        print(_picked);
+        List<String> dateToString = _picked.toString().split(" ")[0].split("-");
+        controllerDate.text = '${dateToString[2]}/${dateToString[1]}/${dateToString[0]}';
         picked = _picked;
       });
     }

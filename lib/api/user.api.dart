@@ -340,7 +340,6 @@ class ApiService {
     required bool? possuiMaterialLimpeza,
     required int? quantidadeRoupaLavar,
     required int? quantidadeRoupaPassar,
-    required int? quantidadeLouca,
     required int? quantidadeQuarto,
     required int? quantidadeBanheiro,
     required int? quantidadeSala,
@@ -357,7 +356,6 @@ class ApiService {
       "possuiMaterialLimpeza": possuiMaterialLimpeza,
       "qntRoupaLavar": quantidadeRoupaLavar,
       "qntRoupaPassar": quantidadeRoupaPassar,
-      "qntLouca": quantidadeLouca,
       "comodos": [
         {
           "tipo": "quarto",

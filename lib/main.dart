@@ -8,9 +8,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 void main() async {
+  bool isExpired = true;
   final String? token = await autentication.getToken();
-  bool isExpired = JwtDecoder.isExpired(token!);
-  print('$isExpired + $token');
+  if(token!.isNotEmpty) isExpired = JwtDecoder.isExpired(token!);
   runApp(UserProvider(
     child: MaterialApp(
     debugShowCheckedModeBanner: false,

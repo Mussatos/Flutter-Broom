@@ -250,7 +250,6 @@ Future<List<Address>> fetchAddress() async {
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
-      print(data);
       return data.map((json) => Address.fromJson(json)).toList();
     } else {
       throw Exception('Falha ao carregar dados');
@@ -416,4 +415,26 @@ Future sendImage(PlatformFile file) async {
 
   final res = await request.send();
   return res.stream.bytesToString();
+}
+
+Future<Map<String, dynamic>> fetchCEP(String cep) async {
+  try {
+    var response = await http.get(Uri.https('viacep.com.br', '/ws/$cep/json/'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> CEP = json.decode(response.body);
+      return CEP;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return {
+      "cep": "",
+      "logradouro": "",
+      "complemento": "",
+      "unidade": "",
+      "bairro": "",
+      "localidade": "",
+    };
+  }
 }

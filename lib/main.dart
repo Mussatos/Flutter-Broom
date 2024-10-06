@@ -1,11 +1,9 @@
 import 'package:broom_main_vscode/Login.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user_provider.dart';
-import 'package:broom_main_vscode/user_view.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 

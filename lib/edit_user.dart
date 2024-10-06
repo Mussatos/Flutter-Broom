@@ -120,7 +120,7 @@ class _EditUserFormState extends State<EditUserForm> {
                             child: Container(
                               width: 80,
                               decoration: BoxDecoration(
-                                shape: BoxShape.circle,
+                                  shape: BoxShape.circle,
                                   image: DecorationImage(
                                       image:
                                           MemoryImage(_selectedFile!.bytes!))),
@@ -152,6 +152,7 @@ class _EditUserFormState extends State<EditUserForm> {
                         )),
                   )
                 ]),
+                SizedBox(height: 10),
                 TextFormField(
                   controller: nameController,
                   decoration: InputDecoration(
@@ -248,10 +249,10 @@ class _EditUserFormState extends State<EditUserForm> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: (){
-                        saveUser();
-                        sendImage(_selectedFile!);
-                      },
+                    onPressed: () {
+                      saveUser();
+                      sendImage(_selectedFile!);
+                    },
                     child: Text('Salvar'),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.black),

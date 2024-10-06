@@ -84,7 +84,7 @@ class _UserYourselfState extends State<UserYourself> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        'Serviço: ${snapshot.data?.wantService}',
+                        'Serviço: ${snapshot.data!.wantService ? "Está à procura." : "Não está necessitando."}',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
@@ -94,7 +94,10 @@ class _UserYourselfState extends State<UserYourself> {
                       ),
                       SizedBox(height: 10),
                       Text(
-                        getListUserFormatedAddress(snapshot.data?.address[0]),
+                        snapshot.data!.address.length > 0
+                            ? getListUserFormatedAddress(
+                                snapshot.data?.address[0])
+                            : '',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -156,17 +159,18 @@ class _UserYourselfState extends State<UserYourself> {
                                   MaterialPageRoute(
                                       builder: (context) => EditUserForm(
                                             usersEdit: EditUser(
-                                              name: snapshot.data?.name,
-                                              lastName: snapshot.data?.lastName,
-                                              email: snapshot.data?.email,
-                                              cellphoneNumber: snapshot
-                                                  .data?.cellphoneNumber,
-                                              description:
-                                                  snapshot.data?.description,
-                                              wantService:
-                                                  snapshot.data?.wantService,
-                                              userActualImage: snapshot.data?.userImage
-                                            ),
+                                                name: snapshot.data?.name,
+                                                lastName:
+                                                    snapshot.data?.lastName,
+                                                email: snapshot.data?.email,
+                                                cellphoneNumber: snapshot
+                                                    .data?.cellphoneNumber,
+                                                description:
+                                                    snapshot.data?.description,
+                                                wantService:
+                                                    snapshot.data?.wantService,
+                                                userActualImage:
+                                                    snapshot.data?.userImage),
                                           )));
                             },
                             icon: Icon(Icons.edit, color: Colors.white),

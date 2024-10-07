@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
+import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
@@ -81,7 +82,8 @@ class _EditUserFormState extends State<EditUserForm> {
 
       updateUser(updatedUser.toJson());
 
-      Navigator.pop(context);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => UserYourself()));
     }
   }
 

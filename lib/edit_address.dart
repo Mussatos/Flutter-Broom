@@ -1,4 +1,6 @@
+import 'package:broom_main_vscode/address_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'user.dart';
 import 'api/user.api.dart';
 
@@ -41,8 +43,8 @@ class _EditAddressFormState extends State<EditAddressForm> {
     numberController =
         TextEditingController(text: widget.address.number.toString());
     neighController = TextEditingController(text: widget.address.neighborhood);
-    addressCodeController =
-        TextEditingController(text: widget.address.addressCode);
+    addressCodeController = MaskedTextController(
+        mask: '00000-000', text: widget.address.addressCode);
     stateController = TextEditingController(text: widget.address.state);
     cityController = TextEditingController(text: widget.address.city);
     complementController =
@@ -69,7 +71,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
         street: streetController.text,
         addressType: addressTypeSelected,
         neighborhood: neighController.text,
-        addressCode: addressCodeController.text,
+        addressCode: addressCodeController.text.replaceAll(RegExp(r'-'), ''),
         complement: complementController.text,
         number: int.parse(numberController.text),
         userId: widget.address.userId,
@@ -78,7 +80,8 @@ class _EditAddressFormState extends State<EditAddressForm> {
 
       updateAddress(id, updatedAddress.toJson());
 
-      Navigator.pop(context);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => AddressList()));
     }
   }
 

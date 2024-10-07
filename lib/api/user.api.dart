@@ -20,7 +20,7 @@ Uri urlListContractors = Uri.http(host, '/list/contractors');
 Uri urlListDiarists = Uri.http(host, '/list/diarists');
 Uri urlViewDiarist = Uri.http(host, '');
 
-Future<void> register(Map<String, dynamic> user) async {
+Future<bool> register(Map<String, dynamic> user) async {
   try {
     var resp = await http.post(urlRegister,
         headers: <String, String>{'Content-Type': 'application/json'},
@@ -28,11 +28,16 @@ Future<void> register(Map<String, dynamic> user) async {
 
     final response = jsonDecode(resp.body) as Map<String, dynamic>;
     if (resp.statusCode == 201) {
+      await autentication.setToken(response['access_token']);
+      await autentication.setProfileId(response['user']['profile_id']);
+      await autentication.setUserId(response['user']['id']);
+      return true;
     } else {
       throw Exception('Falha ao cadastrar usuário');
     }
   } catch (err) {
     print(err);
+    return false;
   }
 }
 
@@ -245,7 +250,6 @@ Future<List<Address>> fetchAddress() async {
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
-      print(data);
       return data.map((json) => Address.fromJson(json)).toList();
     } else {
       throw Exception('Falha ao carregar dados');
@@ -411,4 +415,26 @@ Future sendImage(PlatformFile file) async {
 
   final res = await request.send();
   return res.stream.bytesToString();
+}
+
+Future<Map<String, dynamic>> fetchCEP(String cep) async {
+  try {
+    var response = await http.get(Uri.https('viacep.com.br', '/ws/$cep/json/'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> CEP = json.decode(response.body);
+      return CEP;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return {
+      "cep": "",
+      "logradouro": "",
+      "complemento": "",
+      "unidade": "",
+      "bairro": "",
+      "localidade": "",
+    };
+  }
 }

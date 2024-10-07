@@ -7,8 +7,6 @@ import 'package:broom_main_vscode/ui-components/user_image.dart';
 
 class UserView extends StatelessWidget {
   final ListUsers usuario;
-  final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24";
 
   UserView({required this.usuario});
 
@@ -18,7 +16,6 @@ class UserView extends StatelessWidget {
         ? usuario.address[0]
         : null;
 
-    // Formata o endereço, se existir
     final formatAddress = address != null
         ? 'Endereço: Bairro ${address['neighborhood']}, ${address['city']}, ${address['state']}'
         : 'Endereço não cadastrado';
@@ -74,7 +71,7 @@ class UserView extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Serviço: ${snapshot.data?.wantService}',
+                      'Serviço: ${snapshot.data!.wantService ? "Está à procura." : "Não está necessitando."}',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -120,15 +117,12 @@ class UserView extends StatelessWidget {
                       children: [
                         ElevatedButton.icon(
                           onPressed: () async {
-                            /*
-                            launchUrl(Uri.parse(
-                            
-                                'https://wa.me/${snapshot.data?.cellphoneNumber}'));
-                           */ //_openWhatsApp,
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Contract(idDoUser: usuario.id,)));
+                                    builder: (context) => Contract(
+                                          idDoUser: usuario.id,
+                                        )));
                           },
                           icon: Icon(Icons.message, color: Colors.white),
                           label: Text(

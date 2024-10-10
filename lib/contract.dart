@@ -174,60 +174,89 @@ class _ContractState extends State<Contract> {
               ),
               SizedBox(height: 20),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: List.generate(serviceType.length, (index) {
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CheckboxListTile(
-                        title: Text(serviceType[index]),
-                        value: serviceTypeSelected[index],
-                        onChanged: (bool? value) {
-                          setState(() {
-                            serviceTypeSelected[index] = value!;
-                          });
-                        },
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: CheckboxListTile(
+                          title: Text(
+                            serviceType[index],
+                            style: TextStyle(
+                              fontSize: 18, 
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          value: serviceTypeSelected[index],
+                          activeColor: Colors.greenAccent,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              serviceTypeSelected[index] = value!;
+                            });
+                          },
+                        ),
                       ),
-                      if (serviceType[index] == 'Limpeza' &&
-                          serviceTypeSelected[index])
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: DropdownButton<String>(
-                            value: cleanTypeSelected,
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                cleanTypeSelected = newValue!;
-                              });
-                            },
-                            items: cleanType.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                            underline: Container(
-                              height: 2,
-                              color: Colors.greenAccent,
+                      if (serviceType[index] == 'Limpeza' && serviceTypeSelected[index])
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0), 
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: cleanTypeSelected,
+                                isExpanded: true, 
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black, 
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    cleanTypeSelected = newValue!;
+                                  });
+                                },
+                                items: cleanType.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
                             ),
                           ),
                         ),
-                      if (serviceType[index] == 'Lavar roupa' &&
-                          serviceTypeSelected[index])
-                        TextFormField(
-                          controller: clothController,
-                          decoration: InputDecoration(
-                            labelText: 'Quantidade de Roupa',
-                            border: OutlineInputBorder(),
+                      if (serviceType[index] == 'Lavar roupa' && serviceTypeSelected[index])
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: TextFormField(
+                            controller: clothController,
+                            decoration: InputDecoration(
+                              labelText: 'Quantidade de Roupa',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
                           ),
-                          keyboardType: TextInputType.number,
                         ),
-                      if (serviceType[index] == 'Passar roupa' &&
-                          serviceTypeSelected[index])
-                        TextFormField(
-                          controller: clothCleanController,
-                          decoration: InputDecoration(
-                            labelText: 'Quantidade para Passar Roupa',
-                            border: OutlineInputBorder(),
+                      if (serviceType[index] == 'Passar roupa' && serviceTypeSelected[index])
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: TextFormField(
+                            controller: clothCleanController,
+                            decoration: InputDecoration(
+                              labelText: 'Quantidade para Passar Roupa',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.number,
                           ),
-                          keyboardType: TextInputType.number,
                         ),
                     ],
                   );

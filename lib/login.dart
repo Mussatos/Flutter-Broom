@@ -1,9 +1,7 @@
 import 'package:broom_main_vscode/signup.dart';
-import 'package:broom_main_vscode/user_form.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
-import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/utils/validators.dart';
 
 class LoginPage extends StatelessWidget {
@@ -174,20 +172,21 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      /*
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.popAndPushNamed(context, const => SignUpPage());
-                      },
-                    ),
-                    */
                       Text("Ainda não possui uma conta?"),
-                      Text(
-                        " Sign up",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
+                      GestureDetector(
+                        child: Text(
+                          " Sign up",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                          ),
                         ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignUpPage()));
+                        },
                       ),
                     ],
                   ),
@@ -218,12 +217,18 @@ Widget inputFile(
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.white),
             ),
             border:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.grey))),
+        style: TextStyle(
+          color: Colors.white,
+        ),
       ),
       SizedBox(
         height: 10,

@@ -1,11 +1,14 @@
 import 'package:broom_main_vscode/field_form.dart';
+import 'package:broom_main_vscode/login.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
+import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/utils/validators.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class UserForm extends StatefulWidget {
   const UserForm({super.key, required List<Container> children});
@@ -19,42 +22,71 @@ class _UserFormState extends State<UserForm> {
   TextEditingController controllerSobrenome = TextEditingController();
   TextEditingController controllerEmail = TextEditingController();
   TextEditingController controllerPassword = TextEditingController();
-  TextEditingController controllerCpf = TextEditingController();
+  MaskedTextController controllerCpf =
+      MaskedTextController(mask: '000.000.000-00');
   TextEditingController controllerDate = TextEditingController();
   List<int> profileType = [1, 2];
   int userProfileSelected = 1;
   DateTime picked = new DateTime(0);
   bool isValidEmail = true;
   String gender = '';
+  bool isValidName = true;
 
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
 
-    void save() {
+    bool validCredentials() {
+      if (controllerEmail!.text.isNotEmpty &&
+          controllerPassword!.text.isNotEmpty &&
+          controllerCpf!.text.isNotEmpty &&
+          controllerName!.text.isNotEmpty &&
+          controllerSobrenome!.text.isNotEmpty &&
+          controllerDate!.text.isNotEmpty &&
+          gender!.isNotEmpty) {
+        return validEmail(controllerEmail!.text) &&
+            validName(controllerName!.text) &&
+            validName(controllerSobrenome!.text);
+      }
+
+      return false;
+    }
+
+    void save(context) async {
       User user = User(
           name: controllerName.text,
           sobrenome: controllerSobrenome.text,
           email: controllerEmail.text,
           password: controllerPassword.text,
-          cpf: controllerCpf.text,
+          cpf: controllerCpf.text.replaceAll(RegExp(r'[\.-]'), ''),
           data: picked,
           profileId: userProfileSelected,
           description: '',
           cellphone_number: '',
           user_image: '',
-          wantService: null,
+          wantService: true,
           gender: gender);
 
       int usersLength = userProvider.users.length;
 
       userProvider.users.insert(usersLength, user);
-
-      if (isValidEmail && controllerEmail.text.isNotEmpty) {
-        register(user.toJson());
-        Navigator.popAndPushNamed(context, "/list");
+      if (validCredentials() && await register(user.toJson())) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => UserList()));
       } else {
-        Error();
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Credenciais inválidas.',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black),
+              ),
+              backgroundColor: Colors.white,
+            ),
+            snackBarAnimationStyle:
+                AnimationStyle(duration: const Duration(milliseconds: 500)));
       }
     }
 
@@ -85,9 +117,9 @@ class _UserFormState extends State<UserForm> {
                         height: 1,
                         color: Colors.white,
                       ),
-                      dropdownColor: Colors.white,
+                      dropdownColor: Colors.black,
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -117,28 +149,33 @@ class _UserFormState extends State<UserForm> {
               child: SizedBox(
                 width: 350,
                 child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Nome',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Placeholder branco
-                    filled: true,
-                    fillColor: Colors.transparent,
-                    enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Borda branca
+                    decoration: InputDecoration(
+                      labelText: 'Nome',
+                      labelStyle: TextStyle(color: Colors.white),
+                      filled: true,
+                      fillColor: Colors.transparent,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                    style: TextStyle(
+                      color: Colors.white,
                     ),
-                  ),  
-                  controller: controllerName,
-                ),
+                    controller: controllerName,
+                    onChanged: (value) {
+                      setState(() {
+                        isValidName = validName(controllerName.text);
+                      });
+                    }),
               ),
             ),
             SizedBox(
               height: 10,
             ),
-             Container(
+            Container(
               color: Color(0xFF2ECC8F),
               padding: EdgeInsets.all(5),
               child: SizedBox(
@@ -146,19 +183,25 @@ class _UserFormState extends State<UserForm> {
                 child: TextField(
                   decoration: InputDecoration(
                     labelText: 'Sobrenome',
-                    labelStyle:
-                        TextStyle(color: Colors.white), // Placeholder branco
+                    labelStyle: TextStyle(color: Colors.white),
                     filled: true,
                     fillColor: Colors.transparent,
                     enabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: Colors.white), // Borda branca
+                      borderSide: BorderSide(color: Colors.white),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
-                  ),  
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                   controller: controllerSobrenome,
+                  onChanged: (value) {
+                    setState(() {
+                      isValidName = validName(controllerSobrenome.text);
+                    });
+                  },
                 ),
               ),
             ),
@@ -184,6 +227,9 @@ class _UserFormState extends State<UserForm> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                   obscureText: false,
                   controller: controllerEmail,
@@ -216,6 +262,9 @@ class _UserFormState extends State<UserForm> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                   obscureText: true,
                   controller: controllerPassword,
                 ),
@@ -241,6 +290,9 @@ class _UserFormState extends State<UserForm> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                     ),
+                  ),
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
                   obscureText: false,
                   controller: controllerCpf,
@@ -270,6 +322,9 @@ class _UserFormState extends State<UserForm> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                   ),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                   readOnly: true,
                   onTap: () {
                     _selectDate();
@@ -295,6 +350,7 @@ class _UserFormState extends State<UserForm> {
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'M',
                             groupValue: gender,
                             onChanged: (value) {
@@ -309,10 +365,11 @@ class _UserFormState extends State<UserForm> {
                           ),
                         ],
                       ),
-                      SizedBox(width: 20), // Espaço entre as opções
+                      SizedBox(width: 20),
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'F',
                             groupValue: gender,
                             onChanged: (value) {
@@ -327,10 +384,11 @@ class _UserFormState extends State<UserForm> {
                           ),
                         ],
                       ),
-                      SizedBox(width: 20), // Espaço entre as opções
+                      SizedBox(width: 20),
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'O',
                             groupValue: gender,
                             onChanged: (value) {
@@ -350,8 +408,6 @@ class _UserFormState extends State<UserForm> {
                 ],
               ),
             ),
-
-
             SizedBox(
               height: 10,
             ),
@@ -359,7 +415,7 @@ class _UserFormState extends State<UserForm> {
               width: 350,
               height: 50,
               child: TextButton(
-                onPressed: () => save(),
+                onPressed: () => save(context),
                 child: Text('Salvar'),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.black),
@@ -376,13 +432,15 @@ class _UserFormState extends State<UserForm> {
   Future<void> _selectDate() async {
     DateTime? _picked = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: DateTime(2000),
         firstDate: DateTime(1950),
         lastDate: DateTime(2500));
 
     if (_picked != null) {
       setState(() {
-        controllerDate.text = _picked.toString().split(" ")[0];
+        print(_picked);
+        List<String> dateToString = _picked.toString().split(" ")[0].split("-");
+        controllerDate.text = '${dateToString[2]}/${dateToString[1]}/${dateToString[0]}';
         picked = _picked;
       });
     }

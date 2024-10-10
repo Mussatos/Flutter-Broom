@@ -1,24 +1,26 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
-final String host = dotenv.env['API_URL']!;
+//URL de Prod do backend: https://broom-api.onrender.com/
+const String host = 'localhost:3000';
 Uri urlRegister = Uri.http(host, '/register');
 Uri urlLogin = Uri.http(host, '/login');
 Uri urlListContractors = Uri.http(host, '/list/contractors');
 Uri urlListDiarists = Uri.http(host, '/list/diarists');
-//URL de Prod do backend: https://broom-api.onrender.com/
 Uri urlViewDiarist = Uri.http(host, '');
 
-Future<void> register(Map<String, dynamic> user) async {
+Future<bool> register(Map<String, dynamic> user) async {
   try {
     var resp = await http.post(urlRegister,
         headers: <String, String>{'Content-Type': 'application/json'},
@@ -26,12 +28,16 @@ Future<void> register(Map<String, dynamic> user) async {
 
     final response = jsonDecode(resp.body) as Map<String, dynamic>;
     if (resp.statusCode == 201) {
-      print(response);
+      await autentication.setToken(response['access_token']);
+      await autentication.setProfileId(response['user']['profile_id']);
+      await autentication.setUserId(response['user']['id']);
+      return true;
     } else {
       throw Exception('Falha ao cadastrar usuário');
     }
   } catch (err) {
     print(err);
+    return false;
   }
 }
 
@@ -119,7 +125,6 @@ Future<UserModel> fetchUsuario(int? id) async {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      print(data);
       return UserModel.fromJson(data);
     } else {
       throw Exception('Falha ao carregar dados');
@@ -143,4 +148,293 @@ Uri getViewUrl(int? userProfileId, int? id) {
   return userProfileId == 1
       ? Uri.http(host, '/diarist/${id}')
       : Uri.http(host, '/contractor/${id}');
+}
+
+Future<void> createAddress(Map<String, dynamic> payload) async {
+  final token = await autentication.getToken();
+  final String url = 'http://$host/address';
+
+  try {
+    final http.Response response = await http.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(payload),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Endereço criado com sucesso!');
+      print('Resposta: ${response.body}');
+    } else {
+      print('Falha ao criar endereço. Código: ${response.statusCode}');
+      print('Erro: ${response.body}');
+    }
+  } catch (e) {
+    print('Ocorreu um erro: $e');
+  }
+}
+
+Future<Address?> getAddressByUserId() async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+  final String url = '/address/$userId';
+
+  try {
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> addressData = jsonDecode(response.body);
+      return Address.fromJson(addressData);
+    } else {
+      print('Falha ao obter o endereço. Código: ${response.statusCode}');
+      print('Erro: ${response.body}');
+      return null;
+    }
+  } catch (e) {
+    print('Ocorreu um erro: $e');
+    return null;
+  }
+}
+
+Future<Yourself?> getUserById() async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+
+  final String url = 'http://$host/user/$userId';
+
+  try {
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print(response);
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> userData = jsonDecode(response.body);
+      return Yourself.fromJson(userData);
+    } else {
+      print(
+          'Falha ao obter os dados do usuário. Código: ${response.statusCode}');
+      print('Erro: ${response.body}');
+    }
+  } catch (e) {
+    print('Ocorreu um erro: $e');
+  }
+}
+
+Future<List<Address>> fetchAddress() async {
+  final id = await autentication.getUserId();
+  final token = await autentication.getToken();
+
+  final String url = 'http://$host/address/$id';
+
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => Address.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return [];
+  }
+}
+
+Future<void> deleteAddress(int? idDoEndereco) async {
+  final token = await autentication.getToken();
+  final String url = 'http://$host/address/$idDoEndereco';
+
+  try {
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("Endereço deletado com sucesso!");
+    } else {
+      print("Erro ao deletar o endereço: ${response.statusCode}");
+      print("Mensagem do servidor: ${response.body}");
+    }
+  } catch (e) {
+    print("Ocorreu um erro: $e");
+  }
+}
+
+Future<void> updateAddress(
+    int? addressId, Map<String, dynamic> addressData) async {
+  final token = await autentication.getToken();
+  final String url = 'http://$host/address/$addressId';
+
+  try {
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(addressData),
+    );
+
+    if (response.statusCode == 200) {
+      print("Endereço atualizado com sucesso!");
+    } else {
+      print("Erro ao atualizar o endereço: ${response.statusCode}");
+      print("Mensagem do servidor: ${response.body}");
+    }
+  } catch (e) {
+    print("Ocorreu um erro: $e");
+  }
+}
+
+Future<void> updateUser(Map<String, dynamic> usersData) async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  final String url = 'http://$host/user/$userId';
+
+  try {
+    final response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(usersData),
+    );
+
+    if (response.statusCode == 200) {
+      print("Perfil atualizado com sucesso!");
+    } else {
+      print("Erro ao atualizar o perfil: ${response.statusCode}");
+      print("Mensagem do servidor: ${response.body}");
+    }
+  } catch (e) {
+    print("Ocorreu um erro: $e");
+  }
+}
+
+class ApiService {
+  Future<String?> sendContract({
+    required List<String?> tiposDeServico,
+    required String? tipoLimpeza,
+    required bool? possuiPets,
+    required bool? possuiMaterialLimpeza,
+    required int? quantidadeRoupaLavar,
+    required int? quantidadeRoupaPassar,
+    required int? quantidadeQuarto,
+    required int? quantidadeBanheiro,
+    required int? quantidadeSala,
+    required String mensagem,
+    required int id,
+  }) async {
+    final token = await autentication.getToken();
+    final String url = 'http://$host/contract/sendContract/$id';
+
+    Map<String, dynamic> body = {
+      "tiposDeServico": tiposDeServico,
+      "tipoLimpeza": tipoLimpeza,
+      "possuiPets": possuiPets,
+      "possuiMaterialLimpeza": possuiMaterialLimpeza,
+      "qntRoupaLavar": quantidadeRoupaLavar,
+      "qntRoupaPassar": quantidadeRoupaPassar,
+      "comodos": [
+        {
+          "tipo": "quarto",
+          "quantidade": quantidadeQuarto,
+        },
+        {
+          "tipo": "banheiro",
+          "quantidade": quantidadeBanheiro,
+        },
+        {
+          "tipo": "sala",
+          "quantidade": quantidadeSala,
+        },
+      ],
+      "mensagem": mensagem,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201) {
+        print('Contrato enviado com sucesso!');
+        var link = jsonDecode(response.body);
+        return link['link'];
+      } else {
+        print('Falha ao enviar contrato. Código: ${response.statusCode}');
+        print('Mensagem: ${response.body}');
+      }
+    } catch (e) {
+      print('Erro ao enviar contrato: $e');
+    }
+  }
+}
+
+Future sendImage(PlatformFile file) async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  var request =
+      http.MultipartRequest('POST', Uri.http(host, '/user/upload/$userId'));
+  request.headers['Authorization'] = 'Bearer $token';
+  request.files.add(await http.MultipartFile.fromBytes(
+    'file',
+    file.bytes!,
+    filename: file.name,
+  ));
+
+  final res = await request.send();
+  return res.stream.bytesToString();
+}
+
+Future<Map<String, dynamic>> fetchCEP(String cep) async {
+  try {
+    var response = await http.get(Uri.https('viacep.com.br', '/ws/$cep/json/'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> CEP = json.decode(response.body);
+      return CEP;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return {
+      "cep": "",
+      "logradouro": "",
+      "complemento": "",
+      "unidade": "",
+      "bairro": "",
+      "localidade": "",
+    };
+  }
 }

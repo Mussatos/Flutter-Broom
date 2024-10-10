@@ -1,25 +1,31 @@
 import 'dart:typed_data';
 
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/main.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
+import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
 
-class UserList extends StatelessWidget {
+class UserList extends StatefulWidget {
   const UserList({super.key});
 
   @override
+  State<UserList> createState() => _UserListState();
+}
+
+class _UserListState extends State<UserList> {
+  @override
   Widget build(BuildContext context) {
-    final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24';
 
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
 
     List<Address> address = [];
+
     void addAddressForUser(ListUsers user) {
       if (user.address.isNotEmpty) {
         address.add(Address.fromJson(user.address[0]));
@@ -30,6 +36,11 @@ class UserList extends StatelessWidget {
           neighborhood: '',
           addressType: '',
           street: '',
+          addressCode: '',
+          complement: '',
+          number: -1,
+          userId: null,
+          id: null,
         ));
       }
     }
@@ -53,7 +64,10 @@ class UserList extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.white,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UserYourself()));
+            },
           ),
           IconButton(
             icon: Icon(Icons.settings),
@@ -65,7 +79,8 @@ class UserList extends StatelessWidget {
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => HomePage()));
           },
           icon: const Icon(
             Icons.arrow_back_ios,
@@ -105,9 +120,6 @@ class UserList extends StatelessWidget {
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
                   onTap: () {
-                    print(index);
-                    print(usuario.id);
-                    print(usuario.wantService);
                     Navigator.push(
                       context,
                       MaterialPageRoute(

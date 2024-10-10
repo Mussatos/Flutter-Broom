@@ -204,7 +204,7 @@ class _ContractState extends State<Contract> {
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10)
+                              borderRadius: BorderRadius.circular(4)
                             ),
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: DropdownButtonHideUnderline(

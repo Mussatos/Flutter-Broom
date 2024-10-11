@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
+import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class EditUserForm extends StatefulWidget {
   final EditUser usersEdit;
@@ -48,8 +50,8 @@ class _EditUserFormState extends State<EditUserForm> {
     nameController = TextEditingController(text: widget.usersEdit.name);
     lastNameController = TextEditingController(text: widget.usersEdit.lastName);
     emailController = TextEditingController(text: widget.usersEdit.email);
-    cellphoneNumberController =
-        TextEditingController(text: widget.usersEdit.cellphoneNumber);
+    cellphoneNumberController = MaskedTextController(
+        mask: '(00)0 0000-0000', text: widget.usersEdit.cellphoneNumber);
     descriptionController =
         TextEditingController(text: widget.usersEdit.description);
     wantService = widget.usersEdit.wantService ?? false;
@@ -72,14 +74,16 @@ class _EditUserFormState extends State<EditUserForm> {
         name: nameController.text,
         lastName: lastNameController.text,
         email: emailController.text,
-        cellphoneNumber: cellphoneNumberController.text,
+        cellphoneNumber:
+            cellphoneNumberController.text.replaceAll(RegExp(r'[\(\)\s-]'), ''),
         description: descriptionController.text,
         wantService: wantService ?? false,
       );
 
       updateUser(updatedUser.toJson());
 
-      Navigator.pop(context);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => UserYourself()));
     }
   }
 

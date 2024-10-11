@@ -306,12 +306,6 @@ class _AddressFormState extends State<AddressForm> {
                   style: TextStyle(
                     color: Colors.white,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe o complemento';
-                    }
-                    return null;
-                  },
                 ),
               ),
               SizedBox(height: 10),

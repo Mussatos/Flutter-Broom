@@ -44,52 +44,62 @@ class _UserFormState extends State<UserForm> {
   Widget build(BuildContext context) {
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
 
-  bool validCredentials() {
-    setState(() {
-      emailError = validEmail(controllerEmail.text) && controllerEmail.text.isNotEmpty ? null : 'Preencha o campo Email corretamente';
-      nameError = validName(controllerName.text) ? null : 'Preencha o campo Nome corretamente';
-      lastNameError = validName(controllerSobrenome.text)
-          ? null
-          : 'Preencha o campo Sobrenome corretamente';
-      cpfError = controllerCpf.text.isNotEmpty && controllerCpf.text.length == 14
-          ? null
-          : 'Preencha o campo CPF corretamente';
-      passwordError = controllerPassword.text.isNotEmpty
-          ? null
-          : 'Preencha o campo senha corretamente';
-      dateError = controllerDate.text.isNotEmpty ? null : 'Preencha o campo Data de Nascimento corretamente';
-      genderError = gender.isNotEmpty ? null : 'Preencha o campo genero corretamente';
-    });
+    bool validCredentials() {
+      setState(() {
+        emailError =
+            validEmail(controllerEmail.text) && controllerEmail.text.isNotEmpty
+                ? null
+                : 'Preencha o campo Email corretamente';
+        nameError = validName(controllerName.text)
+            ? null
+            : 'Preencha o campo Nome corretamente';
+        lastNameError = validName(controllerSobrenome.text)
+            ? null
+            : 'Preencha o campo Sobrenome corretamente';
+        cpfError = controllerCpf.text.isNotEmpty &&
+                controllerCpf.text.length == 14 &&
+                validCpf(controllerCpf.text.replaceAll(RegExp(r'[\.-]'), ''))
+            ? null
+            : 'Preencha o campo CPF corretamente';
+        passwordError = controllerPassword.text.isNotEmpty
+            ? null
+            : 'Preencha o campo senha corretamente';
+        dateError = controllerDate.text.isNotEmpty
+            ? null
+            : 'Preencha o campo Data de Nascimento corretamente';
+        genderError =
+            gender.isNotEmpty ? null : 'Preencha o campo genero corretamente';
+      });
 
-    return emailError == null &&
-        nameError == null &&
-        lastNameError == null &&
-        cpfError == null &&
-        passwordError == null &&
-        dateError == null &&
-        genderError == null;
-  }
+      return emailError == null &&
+          nameError == null &&
+          lastNameError == null &&
+          cpfError == null &&
+          passwordError == null &&
+          dateError == null &&
+          genderError == null;
+    }
+
     void save(context) async {
       if (!validCredentials()) {
         return;
       }
 
-        User user = User(
-            name: controllerName.text,
-            sobrenome: controllerSobrenome.text,
-            email: controllerEmail.text,
-            password: controllerPassword.text,
-            cpf: controllerCpf.text.replaceAll(RegExp(r'[\.-]'), ''),
-            data: picked,
-            profileId: userProfileSelected,
-            description: '',
-            cellphone_number: '',
-            user_image: '',
-            wantService: true,
-            gender: gender);
+      User user = User(
+          name: controllerName.text,
+          sobrenome: controllerSobrenome.text,
+          email: controllerEmail.text,
+          password: controllerPassword.text,
+          cpf: controllerCpf.text.replaceAll(RegExp(r'[\.-]'), ''),
+          data: picked,
+          profileId: userProfileSelected,
+          description: '',
+          cellphone_number: '',
+          user_image: '',
+          wantService: true,
+          gender: gender);
 
-
-          userProvider.users.add(user);
+      userProvider.users.add(user);
 
       if (await register(user.toJson())) {
         Navigator.push(
@@ -100,8 +110,8 @@ class _UserFormState extends State<UserForm> {
             content: Text('Falha ao registrar usuário.'),
           ),
         );
-      } 
-  }
+      }
+    }
 
     return Center(
       child: SingleChildScrollView(
@@ -211,8 +221,8 @@ class _UserFormState extends State<UserForm> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
                   ),
                   style: TextStyle(
                     color: Colors.white,
@@ -250,8 +260,8 @@ class _UserFormState extends State<UserForm> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
                   ),
                   style: TextStyle(
                     color: Colors.white,
@@ -288,8 +298,8 @@ class _UserFormState extends State<UserForm> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
                   ),
                   style: TextStyle(
                     color: Colors.white,
@@ -321,8 +331,8 @@ class _UserFormState extends State<UserForm> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
                   ),
                   style: TextStyle(
                     color: Colors.white,
@@ -356,8 +366,8 @@ class _UserFormState extends State<UserForm> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     errorBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
-                      ),
+                      borderSide: BorderSide(color: Colors.red),
+                    ),
                   ),
                   style: TextStyle(
                     color: Colors.white,
@@ -442,10 +452,10 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ],
                   ),
-                   Text(
-                        genderError ?? '', 
-                        style: TextStyle(color: Colors.red, fontSize: 12),
-                      ),
+                  Text(
+                    genderError ?? '',
+                    style: TextStyle(color: Colors.red, fontSize: 12),
+                  ),
                 ],
               ),
             ),
@@ -481,7 +491,8 @@ class _UserFormState extends State<UserForm> {
       setState(() {
         print(_picked);
         List<String> dateToString = _picked.toString().split(" ")[0].split("-");
-        controllerDate.text = '${dateToString[2]}/${dateToString[1]}/${dateToString[0]}';
+        controllerDate.text =
+            '${dateToString[2]}/${dateToString[1]}/${dateToString[0]}';
         picked = _picked;
       });
     }

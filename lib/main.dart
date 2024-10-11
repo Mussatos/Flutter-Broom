@@ -8,11 +8,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   bool isExpired = true;
   final String? token = await autentication.getToken();
-  if(token!.isNotEmpty) isExpired = JwtDecoder.isExpired(token!);
+  if (token!.isNotEmpty) isExpired = JwtDecoder.isExpired(token!);
+
   runApp(UserProvider(
-    child: MaterialApp(
+      child: MaterialApp(
     debugShowCheckedModeBanner: false,
     localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
     supportedLocales: const [Locale('pt')],
@@ -23,7 +26,24 @@ void main() async {
   )));
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  bool? loggedOut;
+
+  HomePage({this.loggedOut});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.loggedOut != null) {
+      autentication.setToken('');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

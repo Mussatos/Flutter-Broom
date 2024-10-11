@@ -392,11 +392,10 @@ class ApiService {
         var link = jsonDecode(response.body);
         return link['link'];
       } else {
-        print('Falha ao enviar contrato. Código: ${response.statusCode}');
-        print('Mensagem: ${response.body}');
+        throw Exception('Falha ao enviar contrato');
       }
     } catch (e) {
-      print('Erro ao enviar contrato: $e');
+      return '';
     }
   }
 }

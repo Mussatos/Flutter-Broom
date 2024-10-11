@@ -19,7 +19,6 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
-
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
@@ -79,8 +78,29 @@ class _UserListState extends State<UserList> {
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => HomePage()));
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Confirmação'),
+                    content: Text('Você realmente deseja sair?'),
+                    actions: [
+                      TextButton(
+                          child: Text('Cancelar'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          }),
+                      TextButton(
+                          child: Text('Sim'),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomePage()));
+                          })
+                    ],
+                  );
+                });
           },
           icon: const Icon(
             Icons.arrow_back_ios,

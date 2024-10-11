@@ -117,6 +117,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                 width: 350,
                 child: TextFormField(
                   controller: addressCodeController,
+                  enabled: false,
                   decoration: InputDecoration(
                     labelText: 'CEP',
                     labelStyle: TextStyle(color: Colors.white),
@@ -306,12 +307,6 @@ class _EditAddressFormState extends State<EditAddressForm> {
                   style: TextStyle(
                     color: Colors.white,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe o complemento';
-                    }
-                    return null;
-                  },
                 ),
               ),
               SizedBox(height: 10),

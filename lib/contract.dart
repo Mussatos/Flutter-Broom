@@ -45,6 +45,15 @@ class _ContractState extends State<Contract> {
       }
     }
 
+    if(kitchenController.text.isEmpty && bedroomController.text.isEmpty && roomController.text.isEmpty && toiletController.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por Favor, inserir ao menos um comodo com quantidade válida para prosseguir com o contrato.'),
+        ),
+      );
+      return ;
+    }
+
     String? whatsappUrl = await apiService.sendContract(
       tiposDeServico: selectedServices,
       tipoLimpeza: cleanTypeSelected,
@@ -59,7 +68,15 @@ class _ContractState extends State<Contract> {
       id: widget.idDoUser,
     );
 
-    launchWhatsApp(whatsappUrl!);
+    if (whatsappUrl!.isNotEmpty) {
+      launchWhatsApp(whatsappUrl!);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
+        ),
+      );
+    }
   }
 
   void launchWhatsApp(String url) async {
@@ -97,15 +114,16 @@ class _ContractState extends State<Contract> {
           child: Column(
             children: [
               Text(
-              "Quantos cômodos?",
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 10),
-            Row(
+                "Quantos cômodos?",
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 10),
+              Row(
                 children: [
                   Expanded(
                     child: TextFormField(
                       controller: bedroomController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         labelText: 'Quarto',
                         border: OutlineInputBorder(),
@@ -116,6 +134,7 @@ class _ContractState extends State<Contract> {
                   Expanded(
                     child: TextFormField(
                       controller: kitchenController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         labelText: 'Cozinha',
                         border: OutlineInputBorder(),
@@ -130,6 +149,7 @@ class _ContractState extends State<Contract> {
                   Expanded(
                     child: TextFormField(
                       controller: toiletController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         labelText: 'Banheiro',
                         border: OutlineInputBorder(),
@@ -140,6 +160,7 @@ class _ContractState extends State<Contract> {
                   Expanded(
                     child: TextFormField(
                       controller: roomController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         labelText: 'Sala',
                         border: OutlineInputBorder(),
@@ -185,7 +206,7 @@ class _ContractState extends State<Contract> {
                           title: Text(
                             serviceType[index],
                             style: TextStyle(
-                              fontSize: 18, 
+                              fontSize: 18,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -198,26 +219,26 @@ class _ContractState extends State<Contract> {
                           },
                         ),
                       ),
-                      if (serviceType[index] == 'Limpeza' && serviceTypeSelected[index])
+                      if (serviceType[index] == 'Limpeza' &&
+                          serviceTypeSelected[index])
                         Padding(
-                          padding: const EdgeInsets.only(top: 8.0), 
+                          padding: const EdgeInsets.only(top: 8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(10)
-                            ),
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(4)),
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 value: cleanTypeSelected,
-                                isExpanded: true, 
+                                isExpanded: true,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.black,
                                 ),
                                 icon: Icon(
                                   Icons.arrow_drop_down,
-                                  color: Colors.black, 
+                                  color: Colors.black,
                                 ),
                                 onChanged: (String? newValue) {
                                   setState(() {
@@ -234,7 +255,8 @@ class _ContractState extends State<Contract> {
                             ),
                           ),
                         ),
-                      if (serviceType[index] == 'Lavar roupa' && serviceTypeSelected[index])
+                      if (serviceType[index] == 'Lavar roupa' &&
+                          serviceTypeSelected[index])
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0),
                           child: TextFormField(
@@ -246,7 +268,8 @@ class _ContractState extends State<Contract> {
                             keyboardType: TextInputType.number,
                           ),
                         ),
-                      if (serviceType[index] == 'Passar roupa' && serviceTypeSelected[index])
+                      if (serviceType[index] == 'Passar roupa' &&
+                          serviceTypeSelected[index])
                         Padding(
                           padding: const EdgeInsets.only(top: 16.0),
                           child: TextFormField(

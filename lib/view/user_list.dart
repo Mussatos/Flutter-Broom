@@ -80,7 +80,7 @@ class _UserListState extends State<UserList> {
         leading: IconButton(
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => HomePage()));
+                                builder: (context) => HomePage(loggedOut: true,)));
           },
           icon: const Icon(
             Icons.arrow_back_ios,

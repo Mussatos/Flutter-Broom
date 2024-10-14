@@ -32,27 +32,59 @@ class _UserFormState extends State<UserForm> {
   String gender = '';
   bool isValidName = true;
 
+  String? cpfError;
+  String? emailError;
+  String? nameError;
+  String? lastNameError;
+  String? passwordError;
+  String? dateError;
+  String? genderError;
+
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
 
     bool validCredentials() {
-      if (controllerEmail!.text.isNotEmpty &&
-          controllerPassword!.text.isNotEmpty &&
-          controllerCpf!.text.isNotEmpty &&
-          controllerName!.text.isNotEmpty &&
-          controllerSobrenome!.text.isNotEmpty &&
-          controllerDate!.text.isNotEmpty &&
-          gender!.isNotEmpty) {
-        return validEmail(controllerEmail!.text) &&
-            validName(controllerName!.text) &&
-            validName(controllerSobrenome!.text);
-      }
+      setState(() {
+        emailError =
+            validEmail(controllerEmail.text) && controllerEmail.text.isNotEmpty
+                ? null
+                : 'Preencha o campo Email corretamente';
+        nameError = validName(controllerName.text)
+            ? null
+            : 'Preencha o campo Nome corretamente';
+        lastNameError = validName(controllerSobrenome.text)
+            ? null
+            : 'Preencha o campo Sobrenome corretamente';
+        cpfError = controllerCpf.text.isNotEmpty &&
+                controllerCpf.text.length == 14 &&
+                validCpf(controllerCpf.text.replaceAll(RegExp(r'[\.-]'), ''))
+            ? null
+            : 'Preencha o campo CPF corretamente';
+        passwordError = controllerPassword.text.isNotEmpty
+            ? null
+            : 'Preencha o campo senha corretamente';
+        dateError = controllerDate.text.isNotEmpty
+            ? null
+            : 'Preencha o campo Data de Nascimento corretamente';
+        genderError =
+            gender.isNotEmpty ? null : 'Preencha o campo genero corretamente';
+      });
 
-      return false;
+      return emailError == null &&
+          nameError == null &&
+          lastNameError == null &&
+          cpfError == null &&
+          passwordError == null &&
+          dateError == null &&
+          genderError == null;
     }
 
     void save(context) async {
+      if (!validCredentials()) {
+        return;
+      }
+
       User user = User(
           name: controllerName.text,
           sobrenome: controllerSobrenome.text,
@@ -67,26 +99,17 @@ class _UserFormState extends State<UserForm> {
           wantService: true,
           gender: gender);
 
-      int usersLength = userProvider.users.length;
+      userProvider.users.add(user);
 
-      userProvider.users.insert(usersLength, user);
-      if (validCredentials() && await register(user.toJson())) {
+      if (await register(user.toJson())) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => UserList()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Credenciais inválidas.',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black),
-              ),
-              backgroundColor: Colors.white,
-            ),
-            snackBarAnimationStyle:
-                AnimationStyle(duration: const Duration(milliseconds: 500)));
+          const SnackBar(
+            content: Text('Falha ao registrar usuário.'),
+          ),
+        );
       }
     }
 
@@ -151,6 +174,7 @@ class _UserFormState extends State<UserForm> {
                 child: TextField(
                     decoration: InputDecoration(
                       labelText: 'Nome',
+                      errorText: nameError,
                       labelStyle: TextStyle(color: Colors.white),
                       filled: true,
                       fillColor: Colors.transparent,
@@ -159,6 +183,9 @@ class _UserFormState extends State<UserForm> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.red),
                       ),
                     ),
                     style: TextStyle(
@@ -183,6 +210,7 @@ class _UserFormState extends State<UserForm> {
                 child: TextField(
                   decoration: InputDecoration(
                     labelText: 'Sobrenome',
+                    errorText: lastNameError,
                     labelStyle: TextStyle(color: Colors.white),
                     filled: true,
                     fillColor: Colors.transparent,
@@ -191,6 +219,9 @@ class _UserFormState extends State<UserForm> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
                     ),
                   ),
                   style: TextStyle(
@@ -216,6 +247,7 @@ class _UserFormState extends State<UserForm> {
                 child: TextField(
                   decoration: InputDecoration(
                     labelText: 'Email',
+                    errorText: emailError,
                     labelStyle:
                         TextStyle(color: Colors.white), // Placeholder branco
                     filled: true,
@@ -226,6 +258,9 @@ class _UserFormState extends State<UserForm> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
                     ),
                   ),
                   style: TextStyle(
@@ -252,6 +287,7 @@ class _UserFormState extends State<UserForm> {
                 child: TextField(
                   decoration: InputDecoration(
                     labelText: 'Senha',
+                    errorText: passwordError,
                     labelStyle: TextStyle(color: Colors.white),
                     filled: true,
                     fillColor: Colors.transparent,
@@ -260,6 +296,9 @@ class _UserFormState extends State<UserForm> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
                     ),
                   ),
                   style: TextStyle(
@@ -281,6 +320,7 @@ class _UserFormState extends State<UserForm> {
                 child: TextField(
                   decoration: InputDecoration(
                     labelText: 'CPF',
+                    errorText: cpfError,
                     labelStyle: TextStyle(color: Colors.white),
                     filled: true,
                     fillColor: Colors.transparent,
@@ -289,6 +329,9 @@ class _UserFormState extends State<UserForm> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
                     ),
                   ),
                   style: TextStyle(
@@ -311,6 +354,7 @@ class _UserFormState extends State<UserForm> {
                   controller: controllerDate,
                   decoration: InputDecoration(
                     labelText: 'Data de Nascimento',
+                    errorText: dateError,
                     labelStyle: TextStyle(color: Colors.white),
                     filled: true,
                     fillColor: Colors.transparent,
@@ -320,6 +364,9 @@ class _UserFormState extends State<UserForm> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.red),
                     ),
                   ),
                   style: TextStyle(
@@ -350,6 +397,7 @@ class _UserFormState extends State<UserForm> {
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'M',
                             groupValue: gender,
                             onChanged: (value) {
@@ -368,6 +416,7 @@ class _UserFormState extends State<UserForm> {
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'F',
                             groupValue: gender,
                             onChanged: (value) {
@@ -386,6 +435,7 @@ class _UserFormState extends State<UserForm> {
                       Row(
                         children: [
                           Radio(
+                            activeColor: Colors.white,
                             value: 'O',
                             groupValue: gender,
                             onChanged: (value) {
@@ -401,6 +451,10 @@ class _UserFormState extends State<UserForm> {
                         ],
                       ),
                     ],
+                  ),
+                  Text(
+                    genderError ?? '',
+                    style: TextStyle(color: Colors.red, fontSize: 12),
                   ),
                 ],
               ),
@@ -429,13 +483,16 @@ class _UserFormState extends State<UserForm> {
   Future<void> _selectDate() async {
     DateTime? _picked = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: DateTime(2000),
         firstDate: DateTime(1950),
         lastDate: DateTime(2500));
 
     if (_picked != null) {
       setState(() {
-        controllerDate.text = _picked.toString().split(" ")[0];
+        print(_picked);
+        List<String> dateToString = _picked.toString().split(" ")[0].split("-");
+        controllerDate.text =
+            '${dateToString[2]}/${dateToString[1]}/${dateToString[0]}';
         picked = _picked;
       });
     }

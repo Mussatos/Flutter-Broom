@@ -2,8 +2,10 @@ import 'package:broom_main_vscode/address_form.dart';
 import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/edit_user.dart';
+import 'package:broom_main_vscode/main.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
+import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 
 class UserYourself extends StatefulWidget {
@@ -34,7 +36,8 @@ class _UserYourselfState extends State<UserYourself> {
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => UserList()));
           },
           icon: Icon(
             Icons.arrow_back_ios,

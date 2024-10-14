@@ -20,10 +20,14 @@ class AddressList extends StatefulWidget {
 class _AddressListState extends State<AddressList> {
   @override
   Widget build(BuildContext context) {
-    final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24';
 
     List<Address> address = [];
+
+    removeAddressAt(int index) {
+      setState(() {
+        address.removeAt(index);
+      });
+    }
 
     void addAddressForUser(ListUsers user) {
       if (user.address.isNotEmpty) {
@@ -94,7 +98,7 @@ class _AddressListState extends State<AddressList> {
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(child: Text('Nenhum endereço encontrado'));
           } else {
-            List<Address> address = snapshot.data!;
+            address = snapshot.data!;
             return ListView.builder(
               itemCount: address.length,
               itemBuilder: (context, index) {
@@ -123,7 +127,8 @@ class _AddressListState extends State<AddressList> {
                                   EditAddressForm(address: userAddress)),
                         );
                       } else if (value == 'delete') {
-                        _showDeleteConfirmationDialog(context, userAddress.id);
+                        _showDeleteConfirmationDialog(context, userAddress.id,
+                            () => removeAddressAt(index));
                       }
                     },
                     itemBuilder: (BuildContext context) {
@@ -150,7 +155,8 @@ class _AddressListState extends State<AddressList> {
   }
 }
 
-void _showDeleteConfirmationDialog(BuildContext context, int? id) {
+void _showDeleteConfirmationDialog(
+    BuildContext context, int? id, Function removeAddressAt) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -167,6 +173,7 @@ void _showDeleteConfirmationDialog(BuildContext context, int? id) {
           TextButton(
             child: Text('Confirmar'),
             onPressed: () {
+              removeAddressAt();
               deleteAddress(id);
               Navigator.of(context).pop();
             },

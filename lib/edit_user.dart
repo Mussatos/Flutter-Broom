@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
@@ -19,7 +19,6 @@ class EditUserForm extends StatefulWidget {
 
 class _EditUserFormState extends State<EditUserForm> {
   final _formKey = GlobalKey<FormState>();
-
   late TextEditingController nameController;
   late TextEditingController lastNameController;
   late TextEditingController emailController;
@@ -29,6 +28,20 @@ class _EditUserFormState extends State<EditUserForm> {
   late bool? wantService;
   File? userImage;
   PlatformFile? _selectedFile;
+  String _urlImagem = '';
+
+  // Future<void> _pickImage() async {
+  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //     type: FileType.image,
+  //   );
+  //   if (result != null) {
+  //     setState(() {
+  //       _selectedFile = result.files.first;
+  //     });
+  //   } else {
+  //     print('Nenhum arquivo selecionado.');
+  //   }
+  // }
 
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -42,6 +55,46 @@ class _EditUserFormState extends State<EditUserForm> {
     } else {
       print('Nenhum arquivo selecionado.');
     }
+  }
+
+  Future<void> _uploadImagem() async {
+    if (_selectedFile != null && _selectedFile!.path != null) {
+      File file = File(_selectedFile!.path!);
+
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference pastaRaiz = storage.ref();
+      Reference arquivo = pastaRaiz
+          .child("image-profile")
+          .child("image-${widget.usersEdit.email}.jpg"); //coloquei email apenas para teste 
+
+      UploadTask task = arquivo.putFile(file);
+
+      task.snapshotEvents.listen((TaskSnapshot snapshot) {
+        if (snapshot.state == TaskState.running) {
+          double progress = snapshot.bytesTransferred.toDouble() /
+              snapshot.totalBytes.toDouble();
+          print('Progresso: ${progress * 100} %');
+        }
+      }, onError: (e) {
+        print('Erro durante o upload: $e');
+      });
+
+      await task.whenComplete(() async {
+        print('Upload concluído: ${_selectedFile!.name}');
+        await _recuperaUrlImagem(arquivo); // Passa a referência do arquivo
+      });
+    } else {
+      print(
+          'Nenhum arquivo selecionado para upload ou o caminho do arquivo é nulo.');
+    }
+  }
+
+  Future<void> _recuperaUrlImagem(Reference ref) async {
+    String url = await ref.getDownloadURL();
+
+    setState(() {
+      _urlImagem = url;
+    });
   }
 
   @override
@@ -116,20 +169,29 @@ class _EditUserFormState extends State<EditUserForm> {
                 Stack(children: [
                   GestureDetector(
                     onTap: () {
-                      _pickImage();
+                      _uploadImagem();
                     },
+                    // child: _selectedFile != null
+                    //     ? CircleAvatar(
+                    //         radius: 50,
+                    //         child: Container(
+                    //           width: 80,
+                    //           decoration: BoxDecoration(
+                    //               shape: BoxShape.circle,
+                    //               image: DecorationImage(
+                    //                   image:
+                    //                       MemoryImage(_selectedFile!.bytes!))),
+                    //         ),
+                    //       )
                     child: _selectedFile != null
                         ? CircleAvatar(
                             radius: 50,
-                            child: Container(
-                              width: 80,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      image:
-                                          MemoryImage(_selectedFile!.bytes!))),
-                            ),
-                          )
+                            backgroundImage: _urlImagem.isNotEmpty
+                                ? NetworkImage(_urlImagem)
+                                : null,
+                            child: _urlImagem.isEmpty
+                                ? Icon(Icons.person)
+                                : null,                          )
                         : CircleAvatar(
                             radius: 50,
                             child: UserImage(
@@ -253,9 +315,10 @@ class _EditUserFormState extends State<EditUserForm> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async{
+                     await  _uploadImagem();
                       saveUser();
-                      sendImage(_selectedFile!);
+                      // sendImage(_selectedFile!);
                     },
                     child: Text('Salvar'),
                     style: ButtonStyle(

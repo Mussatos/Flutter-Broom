@@ -47,6 +47,7 @@ dependencies:
   image_picker: ^1.1.2
   file_picker: ^8.1.2
   jwt_decoder: ^2.0.1
+  firebase_storage: ^12.3.3
 
 dev_dependencies:
   flutter_test:

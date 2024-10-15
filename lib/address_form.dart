@@ -1,6 +1,7 @@
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 import 'user.dart';
 
 class AddressForm extends StatefulWidget {
@@ -15,10 +16,13 @@ class _AddressFormState extends State<AddressForm> {
   final TextEditingController streetController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
   final TextEditingController neighController = TextEditingController();
-  final TextEditingController addressCodeController = TextEditingController();
+  final TextEditingController addressCodeController =
+      MaskedTextController(mask: '00000-000');
   final TextEditingController stateController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController complementController = TextEditingController();
+  late Map<String, dynamic> cep;
+  bool isUnique = true;
   List<String> addressType = [
     'Residencia',
     'Condominio',
@@ -48,18 +52,15 @@ class _AddressFormState extends State<AddressForm> {
         street: streetController.text,
         addressType: addressTypeSelected,
         neighborhood: neighController.text,
-        addressCode: addressCodeController.text,
+        addressCode: addressCodeController.text.replaceAll(RegExp(r'-'), ''),
         complement: complementController.text,
         number: int.parse(numberController.text),
         userId: userId,
         id: null,
       );
-      if (/*isValidEmail && controllerEmail.text.isNotEmpty*/ true) {
-        createAddress(newAddress.toJson());
-        Navigator.pop(context);
-      } else {
-        Error();
-      }
+
+      createAddress(newAddress.toJson());
+      Navigator.pop(context);
     }
   }
 
@@ -116,6 +117,19 @@ class _AddressFormState extends State<AddressForm> {
                     }
                     return null;
                   },
+                  onChanged: (value) async {
+                    if (value.length == 9) {
+                      cep = await fetchCEP(value);
+                      cityController.text = cep['localidade'] ?? '';
+                      stateController.text = cep['uf'] ?? '';
+                      streetController.text = cep['logradouro'] ?? '';
+                      neighController.text = cep['bairro'] ?? '';
+                      setState(() {
+                        isUnique = neighController.text.isEmpty &&
+                            streetController.text.isEmpty;
+                      });
+                    }
+                  },
                 ),
               ),
               SizedBox(
@@ -124,6 +138,7 @@ class _AddressFormState extends State<AddressForm> {
               SizedBox(
                 width: 350,
                 child: TextFormField(
+                  enabled: false,
                   controller: stateController,
                   decoration: InputDecoration(
                     labelText: 'Estado',
@@ -156,6 +171,7 @@ class _AddressFormState extends State<AddressForm> {
                 child: TextFormField(
                   controller: cityController,
                   decoration: InputDecoration(
+                    enabled: false,
                     labelText: 'Cidade',
                     labelStyle: TextStyle(color: Colors.white),
                     filled: true,
@@ -184,6 +200,7 @@ class _AddressFormState extends State<AddressForm> {
               SizedBox(
                 width: 350,
                 child: TextFormField(
+                  enabled: isUnique,
                   controller: streetController,
                   decoration: InputDecoration(
                     labelText: 'Rua',
@@ -214,6 +231,7 @@ class _AddressFormState extends State<AddressForm> {
               SizedBox(
                 width: 350,
                 child: TextFormField(
+                  enabled: isUnique,
                   controller: neighController,
                   decoration: InputDecoration(
                     labelText: 'Bairro',
@@ -288,12 +306,6 @@ class _AddressFormState extends State<AddressForm> {
                   style: TextStyle(
                     color: Colors.white,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe o complemento';
-                    }
-                    return null;
-                  },
                 ),
               ),
               SizedBox(height: 10),

@@ -246,7 +246,6 @@ Future<List<Address>> fetchAddress() async {
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
-      print(data);
       return data.map((json) => Address.fromJson(json)).toList();
     } else {
       throw Exception('Falha ao carregar dados');
@@ -340,7 +339,6 @@ class ApiService {
     required bool? possuiMaterialLimpeza,
     required int? quantidadeRoupaLavar,
     required int? quantidadeRoupaPassar,
-    required int? quantidadeLouca,
     required int? quantidadeQuarto,
     required int? quantidadeBanheiro,
     required int? quantidadeSala,
@@ -356,7 +354,6 @@ class ApiService {
       "possuiMaterialLimpeza": possuiMaterialLimpeza,
       "qntRoupaLavar": quantidadeRoupaLavar,
       "qntRoupaPassar": quantidadeRoupaPassar,
-      "qntLouca": quantidadeLouca,
       "comodos": [
         {
           "tipo": "quarto",
@@ -389,11 +386,10 @@ class ApiService {
         var link = jsonDecode(response.body);
         return link['link'];
       } else {
-        print('Falha ao enviar contrato. Código: ${response.statusCode}');
-        print('Mensagem: ${response.body}');
+        throw Exception('Falha ao enviar contrato');
       }
     } catch (e) {
-      print('Erro ao enviar contrato: $e');
+      return '';
     }
   }
 }
@@ -412,4 +408,26 @@ Future sendImage(PlatformFile file) async {
 
   final res = await request.send();
   return res.stream.bytesToString();
+}
+
+Future<Map<String, dynamic>> fetchCEP(String cep) async {
+  try {
+    var response = await http.get(Uri.https('viacep.com.br', '/ws/$cep/json/'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> CEP = json.decode(response.body);
+      return CEP;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return {
+      "cep": "",
+      "logradouro": "",
+      "complemento": "",
+      "unidade": "",
+      "bairro": "",
+      "localidade": "",
+    };
+  }
 }

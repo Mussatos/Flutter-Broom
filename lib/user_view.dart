@@ -7,8 +7,6 @@ import 'package:broom_main_vscode/ui-components/user_image.dart';
 
 class UserView extends StatelessWidget {
   final ListUsers usuario;
-  final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24";
 
   UserView({required this.usuario});
 

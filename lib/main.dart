@@ -1,27 +1,52 @@
 import 'package:broom_main_vscode/Login.dart';
+import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_web/webview_flutter_web.dart';
 
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  bool isExpired = true;
+  final String? token = await autentication.getToken();
+  if (token!.isNotEmpty) isExpired = JwtDecoder.isExpired(token!);
+
   runApp(UserProvider(
       child: MaterialApp(
     debugShowCheckedModeBanner: false,
     localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
     supportedLocales: const [Locale('pt')],
-    home: HomePage(),
+    home: isExpired ? HomePage() : UserList(),
     routes: {
       "/list": (_) => UserList(),
     },
   )));
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  bool? loggedOut;
+
+  HomePage({this.loggedOut});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.loggedOut != null) {
+      autentication.setToken('');
+    }
+  }
+
 
   final PlatformWebViewController _controller = PlatformWebViewController(
     const PlatformWebViewControllerCreationParams(),

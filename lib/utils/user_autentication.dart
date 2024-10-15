@@ -1,10 +1,11 @@
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserAutentication {
   String _tokenKey = 'token';
   String _userIdKey = 'user_id';
   String _profileIdKey = 'profile_id';
- 
+
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   UserAutentication();
@@ -39,4 +40,10 @@ class UserAutentication {
     return prefs.getInt(_profileIdKey) ?? -1;
   }
 
+  Future<bool> tokenExpired() async {
+    final String? token = await getToken();
+    if (token!.isNotEmpty) return JwtDecoder.isExpired(token!);
+
+    return true;
+  }
 }

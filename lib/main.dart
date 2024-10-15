@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+import 'package:webview_flutter_web/webview_flutter_web.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +47,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+
+  final PlatformWebViewController _controller = PlatformWebViewController(
+    const PlatformWebViewControllerCreationParams(),
+  )..loadHtmlString("<!DOCTYPE html><html lang='en'><head>    <meta charset='UTF-8'>    <meta name='viewport' content='width=device-width, initial-scale=1.0'>    <title>Document</title>    <script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6989823415291958'     crossorigin='anonymous'></script></head><body>    </body></html>"); 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,6 +65,13 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                Container(
+                  width: 60,
+                  height: 30,
+                  child: PlatformWebViewWidget(
+                      PlatformWebViewWidgetCreationParams(controller: _controller),
+                  ).build(context),
+                ),
                 Column(
                   children: <Widget>[
                     Text(

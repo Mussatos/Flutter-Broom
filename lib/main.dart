@@ -1,5 +1,6 @@
 import 'package:broom_main_vscode/Login.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/resetPassword.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ void main() async {
     home: isExpired ? HomePage() : UserList(),
     routes: {
       "/list": (_) => UserList(),
+      'reset-password': (context) => ResetPasswordScreen()
     },
   )));
 }

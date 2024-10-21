@@ -12,9 +12,6 @@ class UserList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24';
-
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
@@ -49,6 +46,7 @@ class UserList extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('User List'),
+        leading: null,
         actions: [
           IconButton(
             icon: Icon(Icons.person),
@@ -63,16 +61,6 @@ class UserList extends StatelessWidget {
         ],
         elevation: 0,
         backgroundColor: Color(0xFF2ECC8F),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-            color: Colors.black,
-          ),
-        ),
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: fetchUsuarios(),

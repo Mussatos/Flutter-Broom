@@ -1,6 +1,7 @@
 import 'package:broom_main_vscode/Login.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/resetPassword.dart';
+import 'package:broom_main_vscode/user_form.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   bool isExpired = true;
   final String? token = await autentication.getToken();
   if (token!.isNotEmpty) isExpired = JwtDecoder.isExpired(token!);
@@ -20,10 +21,14 @@ void main() async {
     debugShowCheckedModeBanner: false,
     localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
     supportedLocales: const [Locale('pt')],
-    home: isExpired ? HomePage() : UserList(),
+    // home: isExpired ? HomePage() : UserList(),
+    initialRoute: '/',
     routes: {
+      "/": (context) => isExpired ? HomePage() : UserList(),
+      "/login": (context) => LoginPage(),
+      "/register": (context) => SignUpPage(),
       "/list": (_) => UserList(),
-      'reset-password': (context) => ResetPasswordScreen()
+      "/reset-password": (context) => ResetPasswordScreen()
     },
   )));
 }
@@ -95,10 +100,7 @@ class _HomePageState extends State<HomePage> {
                       height: 60,
                       //color: Colors.black,
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
+                        Navigator.pushNamed(context, '/login');
                       },
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.black),
@@ -118,10 +120,7 @@ class _HomePageState extends State<HomePage> {
                       height: 60,
                       color: Colors.black,
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignUpPage()));
+                        Navigator.pushNamed(context, '/register');
                       },
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.black),
@@ -133,7 +132,14 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 18,
                             color: Colors.white),
                       ),
-                    )
+                    ),
+                    MaterialButton(
+                        minWidth: double.infinity,
+                        height: 60,
+                        color: Colors.black,
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/reset-password');
+                        })
                   ],
                 )
               ],

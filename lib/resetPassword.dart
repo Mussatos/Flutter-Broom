@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -9,7 +11,8 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _isLoading = false;
   late String token;
@@ -19,20 +22,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     super.didChangeDependencies();
     final Uri uri = Uri.base;
     token = uri.queryParameters['token'] ?? '';
+    print("Token capturado: $token"); // Adicione isso para ver o token no log
   }
-  
+
   Future<void> _resetPassword() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
-      
+
       final response = await http.post(
-        Uri.parse('http://localhost:3000/reset'), 
-        body: {
-          'token': token, 
-          'password': _passwordController.text,
+        Uri.parse('http://localhost:3000/reset'),
+        headers: {
+          'Content-Type': 'application/json', // Define que o conteúdo é JSON
         },
+        body: jsonEncode({
+          'token': token,
+          'password': _passwordController.text,
+        }),
       );
 
       setState(() {

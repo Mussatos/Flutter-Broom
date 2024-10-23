@@ -5,7 +5,7 @@ import 'package:broom_main_vscode/user_form.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
-import 'package:broom_main_vscode/signup.dart';
+import 'package:broom_main_vscode/signup.dart';   
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -15,18 +15,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   bool isExpired = true;
+
   final String? token = await autentication.getToken();
-  if (token!.isNotEmpty) isExpired = JwtDecoder.isExpired(token!);
+  if (token != null && token.isNotEmpty) isExpired = JwtDecoder.isExpired(token);
+
+  final String initialLocation = isExpired ? '/' : '/List';
 
   runApp(UserProvider(
       child: MaterialApp.router(
-    debugShowCheckedModeBanner: false,
-    localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
-    supportedLocales: const [Locale('pt')],
-    // home: isExpired ? HomePage() : UserList(),
-    routerDelegate: routes.routerDelegate,
-    routeInformationParser: routes.routeInformationParser,
-    routeInformationProvider: routes.routeInformationProvider,
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+      supportedLocales: const [Locale('pt')],
+      routerConfig: createRouter(initialLocation),
   )));
 }
 

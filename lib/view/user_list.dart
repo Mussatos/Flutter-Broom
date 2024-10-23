@@ -19,7 +19,6 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
-
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
@@ -78,17 +77,6 @@ class _UserListState extends State<UserList> {
         ],
         elevation: 0,
         backgroundColor: Color(0xFF2ECC8F),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => HomePage(loggedOut: true,)));
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-            color: Colors.black,
-          ),
-        ),
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: fetchUsuarios(),

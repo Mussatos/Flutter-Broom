@@ -48,4 +48,8 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+
+      <data android:scheme="http"
+              android:host="localhost:59563/"
+              android:pathPrefix="#/reset-password"/> 
 </manifest>

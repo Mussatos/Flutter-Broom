@@ -1,9 +1,12 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class ResetPasswordScreen extends StatefulWidget {
+  final String? token;
+
+  ResetPasswordScreen({Key? key, required this.token}) : super(key: key);
+
   @override
   _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
 }
@@ -15,45 +18,55 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       TextEditingController();
 
   bool _isLoading = false;
-  late String token;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final Uri uri = Uri.base;
-    token = uri.queryParameters['token'] ?? '';
-    print("Token capturado: $token"); // Adicione isso para ver o token no log
-  }
 
   Future<void> _resetPassword() async {
     if (_formKey.currentState!.validate()) {
+      // Usando o token passado como argumento
+      String token = widget.token ?? '';
+
+      print("token"+token);
+      if (token.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Token inválido ou ausente.'),
+        ));
+        return;
+      }
+
       setState(() {
         _isLoading = true;
       });
 
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/reset'),
-        headers: {
-          'Content-Type': 'application/json', // Define que o conteúdo é JSON
-        },
-        body: jsonEncode({
-          'token': token,
-          'password': _passwordController.text,
-        }),
-      );
+      try {
+        final response = await http.post(
+          Uri.parse('http://localhost:3000/reset'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'token': token,
+            'password': _passwordController.text,
+          }),
+        );
 
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (response.statusCode == 200) {
+        if (response.statusCode == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Senha alterada com sucesso!'),
+          ));
+        } else {
+          print("Erro: ${response.body}"); // Log de erro
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Falha ao alterar a senha. Tente novamente.'),
+          ));
+        }
+      } catch (e) {
+        print("Erro na requisição: $e"); // Log de erro
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Senha alterada com sucesso!'),
+          content: Text('Erro na conexão. Tente novamente.'),
         ));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Falha ao alterar a senha. Tente novamente.'),
-        ));
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }

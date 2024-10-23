@@ -4,8 +4,4 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
-
-     <!-- <data android:scheme="http"
-              android:host="localhost:59563/"
-              android:pathPrefix="#/reset-password"/> -->
 </manifest>

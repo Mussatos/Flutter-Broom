@@ -7,7 +7,9 @@ import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:broom_main_vscode/utils/routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,25 +19,18 @@ void main() async {
   if (token!.isNotEmpty) isExpired = JwtDecoder.isExpired(token!);
 
   runApp(UserProvider(
-      child: MaterialApp(
+      child: MaterialApp.router(
     debugShowCheckedModeBanner: false,
     localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
     supportedLocales: const [Locale('pt')],
-    // home: isExpired ? HomePage() : UserList(),
-    initialRoute: '/',
-    routes: {
-      "/": (context) => isExpired ? HomePage() : UserList(),
-      "/login": (context) => LoginPage(),
-      "/register": (context) => SignUpPage(),
-      "/list": (_) => UserList(),
-      "/reset-password": (context) => ResetPasswordScreen()
-    },
+    routerDelegate: routes.routerDelegate,
+    routeInformationParser: routes.routeInformationParser,
+    routeInformationProvider: routes.routeInformationProvider,
   )));
 }
 
 class HomePage extends StatefulWidget {
   bool? loggedOut;
-
   HomePage({this.loggedOut});
 
   @override
@@ -98,10 +93,7 @@ class _HomePageState extends State<HomePage> {
                     MaterialButton(
                       minWidth: double.infinity,
                       height: 60,
-                      //color: Colors.black,
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/login');
-                      },
+                      onPressed: () => GoRouter.of(context).push('/login'),
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),
@@ -119,9 +111,7 @@ class _HomePageState extends State<HomePage> {
                       minWidth: double.infinity,
                       height: 60,
                       color: Colors.black,
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/register');
-                      },
+                      onPressed: () => GoRouter.of(context).push('/login'),
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),
@@ -133,13 +123,6 @@ class _HomePageState extends State<HomePage> {
                             color: Colors.white),
                       ),
                     ),
-                    MaterialButton(
-                        minWidth: double.infinity,
-                        height: 60,
-                        color: Colors.black,
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/reset-password');
-                        })
                   ],
                 )
               ],

@@ -21,7 +21,6 @@ class _ContractState extends State<Contract> {
   final TextEditingController obsController = TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
-  bool isPaymentMade = false;
 
   List<String> serviceType = [
     'Limpeza',
@@ -40,58 +39,43 @@ class _ContractState extends State<Contract> {
 
   Future<void> sendContract() async {
     List<String> selectedServices = [];
-    if (!isPaymentMade) {
+    for (int i = 0; i < serviceType.length; i++) {
+      if (serviceTypeSelected[i]) {
+        selectedServices.add(serviceType[i]);
+      }
+    }
+
+    if(kitchenController.text.isEmpty && bedroomController.text.isEmpty && roomController.text.isEmpty && toiletController.text.isEmpty){
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('Por favor, faça o pagamento antes de enviar o contrato.'),
+          content: Text('Por Favor, inserir ao menos um comodo com quantidade válida para prosseguir com o contrato.'),
         ),
       );
-      return;
+      return ;
+    }
+
+    String? whatsappUrl = await apiService.sendContract(
+      tiposDeServico: selectedServices,
+      tipoLimpeza: cleanTypeSelected,
+      possuiPets: petsController ?? false,
+      possuiMaterialLimpeza: materialController ?? false,
+      quantidadeRoupaLavar: int.tryParse(clothController.text) ?? 0,
+      quantidadeRoupaPassar: int.tryParse(clothCleanController.text) ?? 0,
+      quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
+      quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
+      quantidadeSala: int.tryParse(roomController.text) ?? 0,
+      mensagem: obsController.text,
+      id: widget.idDoUser,
+    );
+
+    if (whatsappUrl!.isNotEmpty) {
+      launchWhatsApp(whatsappUrl!);
     } else {
-      for (int i = 0; i < serviceType.length; i++) {
-        if (serviceTypeSelected[i]) {
-          selectedServices.add(serviceType[i]);
-        }
-      }
-
-      if (kitchenController.text.isEmpty &&
-          bedroomController.text.isEmpty &&
-          roomController.text.isEmpty &&
-          toiletController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Por Favor, inserir ao menos um comodo com quantidade válida para prosseguir com o contrato.'),
-          ),
-        );
-        return;
-      }
-
-      String? whatsappUrl = await apiService.sendContract(
-        tiposDeServico: selectedServices,
-        tipoLimpeza: cleanTypeSelected,
-        possuiPets: petsController ?? false,
-        possuiMaterialLimpeza: materialController ?? false,
-        quantidadeRoupaLavar: int.tryParse(clothController.text) ?? 0,
-        quantidadeRoupaPassar: int.tryParse(clothCleanController.text) ?? 0,
-        quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
-        quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
-        quantidadeSala: int.tryParse(roomController.text) ?? 0,
-        mensagem: obsController.text,
-        id: widget.idDoUser,
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
+        ),
       );
-
-      if (whatsappUrl!.isNotEmpty) {
-        launchWhatsApp(whatsappUrl!);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
-          ),
-        );
-      }
     }
   }
 
@@ -315,26 +299,7 @@ class _ContractState extends State<Contract> {
                 width: 350,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      isPaymentMade = true;
-                    });
-                  },
-                  child: Text('Pagamento'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.black),
-                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                width: 350,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: isPaymentMade ? sendContract : null,
+                  onPressed: sendContract,
                   child: Text('Enviar contrato'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black),

@@ -1,4 +1,5 @@
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/contract.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'user.dart';
@@ -6,8 +7,6 @@ import 'package:broom_main_vscode/ui-components/user_image.dart';
 
 class UserView extends StatelessWidget {
   final ListUsers usuario;
-  final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhZmFAZ21haWwuY29tIiwiaWQiOjQsImlhdCI6MTcyNjQ1NzU5MiwiZXhwIjoxNzI2NDcxOTkyLCJpc3MiOiJsb2dpbiIsInN1YiI6IjQifQ.aJN3DFH5pC1hjHkVMjgBM25L3O9ofAMbFabPZ2twz24";
 
   UserView({required this.usuario});
 
@@ -17,7 +16,6 @@ class UserView extends StatelessWidget {
         ? usuario.address[0]
         : null;
 
-    // Formata o endereço, se existir
     final formatAddress = address != null
         ? 'Endereço: Bairro ${address['neighborhood']}, ${address['city']}, ${address['state']}'
         : 'Endereço não cadastrado';
@@ -36,7 +34,7 @@ class UserView extends StatelessWidget {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),
@@ -73,7 +71,7 @@ class UserView extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Serviço: ${snapshot.data?.wantService}',
+                      'Serviço: ${snapshot.data!.wantService ? "Está à procura." : "Não está necessitando."}',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -119,33 +117,16 @@ class UserView extends StatelessWidget {
                       children: [
                         ElevatedButton.icon(
                           onPressed: () async {
-                            launchUrl(Uri.parse(
-                                'https://wa.me/${snapshot.data?.cellphoneNumber}'));
-                          }, //_openWhatsApp,
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Contract(
+                                          idDoUser: usuario.id,
+                                        )));
+                          },
                           icon: Icon(Icons.message, color: Colors.white),
                           label: Text(
-                            'WhatsApp',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF2ECC8F),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            launchUrl(
-                              Uri.parse(
-                                  'mailto:${snapshot.data?.email}?subject=Notificação de Serviço&body=Olá, gostei do seu perfil e gostaria de contratar o seu serviço!'),
-                            );
-                          }, //_sendEmail,
-                          icon: Icon(Icons.email, color: Colors.white),
-                          label: Text(
-                            'Email',
+                            'Criar contrato',
                             style: TextStyle(color: Colors.white),
                           ),
                           style: ElevatedButton.styleFrom(
@@ -164,7 +145,6 @@ class UserView extends StatelessWidget {
               ),
             );
           }
-          ;
         },
       ),
     );

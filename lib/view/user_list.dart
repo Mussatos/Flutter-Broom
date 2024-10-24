@@ -8,6 +8,7 @@ import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
+import 'package:go_router/go_router.dart';
 
 class UserList extends StatefulWidget {
   const UserList({super.key});
@@ -19,7 +20,6 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
-
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
@@ -59,28 +59,34 @@ class _UserListState extends State<UserList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: Text('Listagem de usuários',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.white,
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UserYourself()));
+              GoRouter.of(context).push('/account/view');
             },
           ),
           IconButton(
             icon: Icon(Icons.settings),
             color: Colors.grey.shade800,
-            onPressed: () {},
+            onPressed: () {
+              GoRouter.of(context).push('/account/settings');
+            },
           ),
         ],
         elevation: 0,
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => HomePage(loggedOut: true,)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomePage(
+                          loggedOut: true,
+                        )));
           },
           icon: const Icon(
             Icons.arrow_back_ios,

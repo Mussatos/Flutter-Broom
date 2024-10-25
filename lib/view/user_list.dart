@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/configUser.dart';
 import 'package:broom_main_vscode/main.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
@@ -72,7 +73,10 @@ class _UserListState extends State<UserList> {
           IconButton(
             icon: Icon(Icons.settings),
             color: Colors.grey.shade800,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ConfigUser()));
+            },
           ),
         ],
         elevation: 0,

@@ -1,49 +1,37 @@
-import 'package:broom_main_vscode/confirmEmail.dart';
+import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/resetPassword.dart';
 import 'package:broom_main_vscode/signup.dart';
-import 'package:broom_main_vscode/view/user_list.dart';
-import 'package:flutter/material.dart';
-import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/utils/validators.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatelessWidget {
-  TextEditingController? emailController = TextEditingController(text: '');
-  TextEditingController? passwordController = TextEditingController(text: '');
-  bool isLogged = false;
+class ConfirmEmail extends StatefulWidget {
+  const ConfirmEmail({super.key});
 
-  void userLogged(context) async {
-    if (await login(emailController!.text, passwordController!.text)) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => UserList()));
-      return;
-    }
+  @override
+  State<ConfirmEmail> createState() => _ConfirmEmailState();
+}
 
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Credenciais inválidas.',
-            style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black),
-          ),
-          backgroundColor: Colors.white,
-        ),
-        snackBarAnimationStyle:
-            AnimationStyle(duration: const Duration(milliseconds: 500)));
+TextEditingController? emailController = TextEditingController(text: '');
+
+//implementar o valid email aqui < >
+/*
+  Navigator.push(
+    context,
+      MaterialPageRoute(
+        builder: (context) => ResetPasswordScreen()));*/
+
+bool validCredentials() {
+  if (emailController!.text.isNotEmpty) {
+    return validEmail(emailController!.text);
   }
+  return false;
+}
 
-  bool validCredentials() {
-    if (emailController!.text.isNotEmpty &&
-        passwordController!.text.isNotEmpty) {
-      return validEmail(emailController!.text);
-    }
-
-    return false;
-  }
-
+class _ConfirmEmailState extends State<ConfirmEmail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         elevation: 0,
@@ -94,7 +82,7 @@ class LoginPage extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        "Faça o seu login",
+                        "Recupere sua conta!",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -108,33 +96,6 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         inputFile(label: "Email", controller: emailController),
-                        inputFile(
-                            label: "Password",
-                            controller: passwordController,
-                            obscureText: true)
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          child: Text(
-                            " Forget Password?",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ConfirmEmail()));
-                          },
-                        ),
                       ],
                     ),
                   ),
@@ -158,12 +119,12 @@ class LoginPage extends StatelessWidget {
                           height: 60,
                           onPressed: () {
                             if (validCredentials()) {
-                              userLogged(context);
+                              (context);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'Preencha os campos de e-mail e senha corretamente.',
+                                      'Preencha o campo e-mail corretamente.',
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -182,7 +143,7 @@ class LoginPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(50),
                           ),
                           child: Text(
-                            "Login",
+                            "Enviar",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 18,
@@ -206,12 +167,7 @@ class LoginPage extends StatelessWidget {
                             fontSize: 18,
                           ),
                         ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignUpPage()));
-                        },
+                        onTap: () => GoRouter.of(context).push('reset-password'),
                       ),
                     ],
                   ),

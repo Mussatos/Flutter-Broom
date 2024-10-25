@@ -21,6 +21,7 @@ class _ContractState extends State<Contract> {
   final TextEditingController obsController = TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
+  bool isPaymentMade = false;
 
   List<String> serviceType = [
     'Limpeza',
@@ -38,6 +39,16 @@ class _ContractState extends State<Contract> {
   ApiService apiService = ApiService();
 
   Future<void> sendContract() async {
+    if (!isPaymentMade) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('Por favor, faça o pagamento antes de enviar o contrato.'),
+        ),
+      );
+      return;
+    }
+
     List<String> selectedServices = [];
     for (int i = 0; i < serviceType.length; i++) {
       if (serviceTypeSelected[i]) {
@@ -45,13 +56,17 @@ class _ContractState extends State<Contract> {
       }
     }
 
-    if(kitchenController.text.isEmpty && bedroomController.text.isEmpty && roomController.text.isEmpty && toiletController.text.isEmpty){
+    if (kitchenController.text.isEmpty &&
+        bedroomController.text.isEmpty &&
+        roomController.text.isEmpty &&
+        toiletController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Por Favor, inserir ao menos um comodo com quantidade válida para prosseguir com o contrato.'),
+          content: Text(
+              'Por Favor, inserir ao menos um comodo com quantidade válida para prosseguir com o contrato.'),
         ),
       );
-      return ;
+      return;
     }
 
     String? whatsappUrl = await apiService.sendContract(
@@ -73,7 +88,8 @@ class _ContractState extends State<Contract> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
+          content: Text(
+              'Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
         ),
       );
     }
@@ -299,7 +315,27 @@ class _ContractState extends State<Contract> {
                 width: 350,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: sendContract,
+                  onPressed: () {
+                    setState(() {
+                      isPaymentMade = true;
+                    });
+                  },
+                  child: Text(
+                    'Pagamento',
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(Color(0xFF2ECC8F)),
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              SizedBox(
+                width: 350,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: isPaymentMade ? sendContract : null,
                   child: Text('Enviar contrato'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black),

@@ -176,29 +176,38 @@ class _ContractState extends State<Contract> {
                 ],
               ),
               SizedBox(height: 20),
-              Row(
+             Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Checkbox(
-                    value: petsController,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        petsController = value;
-                      });
-                    },
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: petsController,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            petsController = value!;
+                          });
+                        },
+                      ),
+                      Text('Possui pets'),
+                    ],
                   ),
-                  Text('Possui Pets'),
-                  SizedBox(width: 20),
-                  Checkbox(
-                    value: materialController,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        materialController = value;
-                      });
-                    },
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: materialController,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            materialController = value!;
+                          });
+                        },
+                      ),
+                      Text('Possui material de limpeza'),
+                    ],
                   ),
-                  Text('Possui Material de Limpeza'),
                 ],
               ),
+
               SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

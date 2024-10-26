@@ -122,9 +122,11 @@ class _UserListState extends State<UserList> {
                       color: isFavoriteList[index] ? Colors.red : Colors.grey,
                     ),
                     onPressed: () {
-                      isFavoriteList[index] = !isFavoriteList[index];
-                      print(
-                          "Favorito do usuário ${getListUserFullName(usuario)} mudou para: ${isFavoriteList[index]}");
+                      setState(() {
+                        isFavoriteList[index] = !isFavoriteList[index];
+                        print(
+                            "Favorito do usuário ${getListUserFullName(usuario)} mudou para: ${isFavoriteList[index]}");
+                      });
                     },
                   ),
                   onTap: () {

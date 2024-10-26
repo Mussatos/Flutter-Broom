@@ -167,7 +167,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                             fontSize: 18,
                           ),
                         ),
-                        onTap: () => GoRouter.of(context).push('reset-password'),
+                        onTap: () => GoRouter.of(context).push('/register'),
                       ),
                     ],
                   ),

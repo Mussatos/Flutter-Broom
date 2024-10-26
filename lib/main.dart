@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                       minWidth: double.infinity,
                       height: 60,
                       color: Colors.black,
-                      onPressed: () => GoRouter.of(context).push('/login'),
+                      onPressed: () => GoRouter.of(context).push('/register'),
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),

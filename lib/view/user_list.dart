@@ -9,6 +9,7 @@ import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
+import 'package:go_router/go_router.dart';
 
 class UserList extends StatefulWidget {
   const UserList({super.key});
@@ -60,23 +61,21 @@ class _UserListState extends State<UserList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
-        leading: null,
+        title: Text('Listagem de usuários',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.white,
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UserYourself()));
+              GoRouter.of(context).push('/account/view');
             },
           ),
           IconButton(
             icon: Icon(Icons.settings),
             color: Colors.grey.shade800,
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ConfigUser()));
+              GoRouter.of(context).push('/account/settings');
             },
           ),
         ],

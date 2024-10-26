@@ -9,9 +9,10 @@ import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+import 'package:go_router/go_router.dart';
 
 class UserForm extends StatefulWidget {
-  const UserForm({super.key, required List<Container> children});
+  const UserForm({super.key});
 
   @override
   State<UserForm> createState() => _UserFormState();
@@ -102,8 +103,7 @@ class _UserFormState extends State<UserForm> {
       userProvider.users.add(user);
 
       if (await register(user.toJson())) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => UserList()));
+        GoRouter.of(context).push('/List');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

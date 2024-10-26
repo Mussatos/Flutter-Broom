@@ -35,6 +35,12 @@ class _ContractState extends State<Contract> {
 
   List<String> cleanType = ['Leve', 'Média', 'Pesada'];
   String cleanTypeSelected = 'Leve';
+  
+  String cleanBasketTypeSelected = 'Cesto pequeno'; //Lavar roupa 
+  List<String> cleanBasketType = ['Cesto pequeno', 'Cesto médio', 'Cesto grande']; //Lavar roupa
+  
+  String ironingBasketTypeSelected = 'Cesto pequeno'; //Passar roupa 
+  List<String> ironingBasketType = ['Cesto pequeno', 'Cesto médio', 'Cesto grande']; //Passar roupa
 
   ApiService apiService = ApiService();
 
@@ -186,29 +192,38 @@ class _ContractState extends State<Contract> {
                 ],
               ),
               SizedBox(height: 20),
-              Row(
+             Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Checkbox(
-                    value: petsController,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        petsController = value;
-                      });
-                    },
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: petsController,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            petsController = value!;
+                          });
+                        },
+                      ),
+                      Text('Possui pets'),
+                    ],
                   ),
-                  Text('Possui Pets'),
-                  SizedBox(width: 20),
-                  Checkbox(
-                    value: materialController,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        materialController = value;
-                      });
-                    },
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: materialController,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            materialController = value!;
+                          });
+                        },
+                      ),
+                      Text('Possui material de limpeza'),
+                    ],
                   ),
-                  Text('Possui Material de Limpeza'),
                 ],
               ),
+
               SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,30 +286,76 @@ class _ContractState extends State<Contract> {
                             ),
                           ),
                         ),
-                      if (serviceType[index] == 'Lavar roupa' &&
+                       if (serviceType[index] == 'Lavar roupa' &&
                           serviceTypeSelected[index])
                         Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: TextFormField(
-                            controller: clothController,
-                            decoration: InputDecoration(
-                              labelText: 'Quantidade de Roupa',
-                              border: OutlineInputBorder(),
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(4)),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: cleanBasketTypeSelected,
+                                isExpanded: true,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black,
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    cleanBasketTypeSelected = newValue!;
+                                  });
+                                },
+                                items: cleanBasketType.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
                             ),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
                       if (serviceType[index] == 'Passar roupa' &&
                           serviceTypeSelected[index])
                         Padding(
-                          padding: const EdgeInsets.only(top: 16.0),
-                          child: TextFormField(
-                            controller: clothCleanController,
-                            decoration: InputDecoration(
-                              labelText: 'Quantidade para Passar Roupa',
-                              border: OutlineInputBorder(),
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(4)),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: ironingBasketTypeSelected,
+                                isExpanded: true,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black,
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    ironingBasketTypeSelected = newValue!;
+                                  });
+                                },
+                                items: ironingBasketType.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
                             ),
-                            keyboardType: TextInputType.number,
                           ),
                         ),
                     ],

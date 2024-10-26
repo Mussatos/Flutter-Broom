@@ -30,19 +30,6 @@ class _EditUserFormState extends State<EditUserForm> {
   PlatformFile? _selectedFile;
   String _urlImagem = '';
 
-  // Future<void> _pickImage() async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles(
-  //     type: FileType.image,
-  //   );
-  //   if (result != null) {
-  //     setState(() {
-  //       _selectedFile = result.files.first;
-  //     });
-  //   } else {
-  //     print('Nenhum arquivo selecionado.');
-  //   }
-  // }
-
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -57,45 +44,6 @@ class _EditUserFormState extends State<EditUserForm> {
     }
   }
 
-  Future<void> _uploadImagem() async {
-    if (_selectedFile != null && _selectedFile!.path != null) {
-      File file = File(_selectedFile!.path!);
-
-      FirebaseStorage storage = FirebaseStorage.instance;
-      Reference pastaRaiz = storage.ref();
-      Reference arquivo = pastaRaiz
-          .child("image-profile")
-          .child("image-${widget.usersEdit.email}.jpg"); //coloquei email apenas para teste 
-
-      UploadTask task = arquivo.putFile(file);
-
-      task.snapshotEvents.listen((TaskSnapshot snapshot) {
-        if (snapshot.state == TaskState.running) {
-          double progress = snapshot.bytesTransferred.toDouble() /
-              snapshot.totalBytes.toDouble();
-          print('Progresso: ${progress * 100} %');
-        }
-      }, onError: (e) {
-        print('Erro durante o upload: $e');
-      });
-
-      await task.whenComplete(() async {
-        print('Upload concluído: ${_selectedFile!.name}');
-        await _recuperaUrlImagem(arquivo); // Passa a referência do arquivo
-      });
-    } else {
-      print(
-          'Nenhum arquivo selecionado para upload ou o caminho do arquivo é nulo.');
-    }
-  }
-
-  Future<void> _recuperaUrlImagem(Reference ref) async {
-    String url = await ref.getDownloadURL();
-
-    setState(() {
-      _urlImagem = url;
-    });
-  }
 
   @override
   void initState() {
@@ -169,29 +117,20 @@ class _EditUserFormState extends State<EditUserForm> {
                 Stack(children: [
                   GestureDetector(
                     onTap: () {
-                      _uploadImagem();
+                      _pickImage();
                     },
-                    // child: _selectedFile != null
-                    //     ? CircleAvatar(
-                    //         radius: 50,
-                    //         child: Container(
-                    //           width: 80,
-                    //           decoration: BoxDecoration(
-                    //               shape: BoxShape.circle,
-                    //               image: DecorationImage(
-                    //                   image:
-                    //                       MemoryImage(_selectedFile!.bytes!))),
-                    //         ),
-                    //       )
                     child: _selectedFile != null
                         ? CircleAvatar(
                             radius: 50,
-                            backgroundImage: _urlImagem.isNotEmpty
-                                ? NetworkImage(_urlImagem)
-                                : null,
-                            child: _urlImagem.isEmpty
-                                ? Icon(Icons.person)
-                                : null,                          )
+                            child: Container(
+                              width: 80,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image:
+                                          MemoryImage(_selectedFile!.bytes!))),
+                            ),
+                          )
                         : CircleAvatar(
                             radius: 50,
                             child: UserImage(
@@ -315,10 +254,9 @@ class _EditUserFormState extends State<EditUserForm> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async{
-                     await  _uploadImagem();
+                    onPressed: () async {
                       saveUser();
-                      // sendImage(_selectedFile!);
+                      sendImage(_selectedFile!);
                     },
                     child: Text('Salvar'),
                     style: ButtonStyle(

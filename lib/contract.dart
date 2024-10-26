@@ -1,5 +1,6 @@
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Contract extends StatefulWidget {
@@ -21,7 +22,7 @@ class _ContractState extends State<Contract> {
   final TextEditingController obsController = TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
-  bool isPaymentMade = false;
+  bool _ready = false;
 
   List<String> serviceType = [
     'Limpeza',
@@ -35,26 +36,55 @@ class _ContractState extends State<Contract> {
 
   List<String> cleanType = ['Leve', 'Média', 'Pesada'];
   String cleanTypeSelected = 'Leve';
-  
-  String cleanBasketTypeSelected = 'Cesto pequeno'; //Lavar roupa 
-  List<String> cleanBasketType = ['Cesto pequeno', 'Cesto médio', 'Cesto grande']; //Lavar roupa
-  
-  String ironingBasketTypeSelected = 'Cesto pequeno'; //Passar roupa 
-  List<String> ironingBasketType = ['Cesto pequeno', 'Cesto médio', 'Cesto grande']; //Passar roupa
+
+  String cleanBasketTypeSelected = 'Cesto pequeno'; //Lavar roupa
+  List<String> cleanBasketType = [
+    'Cesto pequeno',
+    'Cesto médio',
+    'Cesto grande'
+  ]; //Lavar roupa
+
+  String ironingBasketTypeSelected = 'Cesto pequeno'; //Passar roupa
+  List<String> ironingBasketType = [
+    'Cesto pequeno',
+    'Cesto médio',
+    'Cesto grande'
+  ]; //Passar roupa
 
   ApiService apiService = ApiService();
 
-  Future<void> sendContract() async {
-    if (!isPaymentMade) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content:
-              Text('Por favor, faça o pagamento antes de enviar o contrato.'),
+  Future<void> initPaymentSheet() async {
+    try {
+      final data = await payment();
+
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          customFlow: false,
+          merchantDisplayName: 'Broom Payment',
+          paymentIntentClientSecret: data['paymentIntent'],
+          applePay: const PaymentSheetApplePay(
+            merchantCountryCode: 'BRL',
+          ),
+          googlePay: const PaymentSheetGooglePay(
+            merchantCountryCode: 'BRL',
+            testEnv: true,
+          ),
+          style: ThemeMode.dark,
         ),
       );
-      return;
+      await Stripe.instance.confirmPaymentSheetPayment();
+      setState(() {
+        _ready = true;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+      rethrow;
     }
+  }
 
+  Future<void> sendContract() async {
     List<String> selectedServices = [];
     for (int i = 0; i < serviceType.length; i++) {
       if (serviceTypeSelected[i]) {
@@ -192,7 +222,7 @@ class _ContractState extends State<Contract> {
                 ],
               ),
               SizedBox(height: 20),
-             Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -223,7 +253,6 @@ class _ContractState extends State<Contract> {
                   ),
                 ],
               ),
-
               SizedBox(height: 20),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,7 +315,7 @@ class _ContractState extends State<Contract> {
                             ),
                           ),
                         ),
-                       if (serviceType[index] == 'Lavar roupa' &&
+                      if (serviceType[index] == 'Lavar roupa' &&
                           serviceTypeSelected[index])
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
@@ -376,10 +405,9 @@ class _ContractState extends State<Contract> {
                 width: 350,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      isPaymentMade = true;
-                    });
+                  onPressed: () async {
+                    await initPaymentSheet();
+                    // await Stripe.instance.presentPaymentSheet();
                   },
                   child: Text(
                     'Pagamento',
@@ -396,7 +424,7 @@ class _ContractState extends State<Contract> {
                 width: 350,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: isPaymentMade ? sendContract : null,
+                  onPressed: sendContract,
                   child: Text('Enviar contrato'),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(Colors.black),

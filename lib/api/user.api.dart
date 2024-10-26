@@ -437,3 +437,18 @@ Future<Map<String, dynamic>> fetchCEP(String cep) async {
     };
   }
 }
+
+Future<Map<String, dynamic>> payment() async {
+  try {
+    var response = await http.get(Uri.http(host, '/payment'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+      return data;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return {"paymentIntent": ""};
+  }
+}

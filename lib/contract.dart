@@ -62,25 +62,55 @@ class _ContractState extends State<Contract> {
           customFlow: false,
           merchantDisplayName: 'Broom Payment',
           paymentIntentClientSecret: data['paymentIntent'],
-          applePay: const PaymentSheetApplePay(
-            merchantCountryCode: 'BRL',
-          ),
-          googlePay: const PaymentSheetGooglePay(
-            merchantCountryCode: 'BRL',
-            testEnv: true,
-          ),
+          customerEphemeralKeySecret: data['ephemeralKey'],
+          customerId: data['customer'],
+          billingDetails: BillingDetails(
+              address: Address(
+                  city: null,
+                  country: "BR",
+                  line1: null,
+                  line2: null,
+                  postalCode: null,
+                  state: null)),
           style: ThemeMode.dark,
         ),
       );
-      await Stripe.instance.confirmPaymentSheetPayment();
       setState(() {
         _ready = true;
       });
+      await confirmPayment();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
       rethrow;
+    }
+  }
+
+   Future<void> confirmPayment() async {
+    try {
+      // 3. display the payment sheet.
+      await Stripe.instance.presentPaymentSheet();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pagamento realizado com sucesso'),
+        ),
+      );
+    } on Exception catch (e) {
+      if (e is StripeException) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro de pagamento: ${e.error.localizedMessage}'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro desconhecido: ${e}'),
+          ),
+        );
+      }
     }
   }
 
@@ -407,7 +437,6 @@ class _ContractState extends State<Contract> {
                 child: ElevatedButton(
                   onPressed: () async {
                     await initPaymentSheet();
-                    // await Stripe.instance.presentPaymentSheet();
                   },
                   child: Text(
                     'Pagamento',

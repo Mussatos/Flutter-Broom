@@ -13,7 +13,7 @@ import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
 //URL de Prod do backend: https://broom-api.onrender.com/
-const String host = 'localhost:3000';
+const String host = '10.0.2.2:3000';
 Uri urlRegister = Uri.http(host, '/register');
 Uri urlLogin = Uri.http(host, '/login');
 Uri urlListContractors = Uri.http(host, '/list/contractors');
@@ -440,15 +440,28 @@ Future<Map<String, dynamic>> fetchCEP(String cep) async {
 
 Future<Map<String, dynamic>> payment() async {
   try {
-    var response = await http.get(Uri.http(host, '/payment'));
+    final token = await autentication.getToken();
+    var response = await http.post(
+      Uri.http(host, '/payment'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
 
-    if (response.statusCode == 200) {
+    print(response.body);
+    print(response.statusCode);
+
+    if (response.statusCode == 201) {
       Map<String, dynamic> data = json.decode(response.body);
+      print('sexo bom');
+      print(data);
       return data;
     } else {
       throw Exception();
     }
   } catch (e) {
+    print('sexo Erro');
     return {"paymentIntent": ""};
   }
 }

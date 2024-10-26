@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
@@ -19,7 +19,6 @@ class EditUserForm extends StatefulWidget {
 
 class _EditUserFormState extends State<EditUserForm> {
   final _formKey = GlobalKey<FormState>();
-
   late TextEditingController nameController;
   late TextEditingController lastNameController;
   late TextEditingController emailController;
@@ -29,6 +28,7 @@ class _EditUserFormState extends State<EditUserForm> {
   late bool? wantService;
   File? userImage;
   PlatformFile? _selectedFile;
+  String _urlImagem = '';
 
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -43,6 +43,7 @@ class _EditUserFormState extends State<EditUserForm> {
       print('Nenhum arquivo selecionado.');
     }
   }
+
 
   @override
   void initState() {
@@ -253,7 +254,7 @@ class _EditUserFormState extends State<EditUserForm> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       saveUser();
                       sendImage(_selectedFile!);
                     },

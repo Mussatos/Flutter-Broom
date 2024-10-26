@@ -3,6 +3,7 @@ import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/utils/validators.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatelessWidget {
   TextEditingController? emailController = TextEditingController(text: '');
@@ -11,8 +12,7 @@ class LoginPage extends StatelessWidget {
 
   void userLogged(context) async {
     if (await login(emailController!.text, passwordController!.text)) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => UserList()));
+      GoRouter.of(context).push('/List');
       return;
     }
 
@@ -182,10 +182,7 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignUpPage()));
+                          GoRouter.of(context).push('/register');
                         },
                       ),
                     ],

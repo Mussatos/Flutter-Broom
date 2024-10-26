@@ -1,4 +1,5 @@
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/stripe_checkout_web.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,7 +23,7 @@ class _ContractState extends State<Contract> {
   final TextEditingController obsController = TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
-  bool _ready = false;
+  // bool _ready = false;
 
   List<String> serviceType = [
     'Limpeza',
@@ -53,36 +54,38 @@ class _ContractState extends State<Contract> {
 
   ApiService apiService = ApiService();
 
-  Future<void> initPaymentSheet() async {
-    try {
-      final data = await payment();
+  // Future<void> initPaymentSheet() async {
+  //   try {
+  //     final data = await payment();
 
-      await Stripe.instance.initPaymentSheet(
-        paymentSheetParameters: SetupPaymentSheetParameters(
-          customFlow: false,
-          merchantDisplayName: 'Broom Payment',
-          paymentIntentClientSecret: data['paymentIntent'],
-          applePay: const PaymentSheetApplePay(
-            merchantCountryCode: 'BRL',
-          ),
-          googlePay: const PaymentSheetGooglePay(
-            merchantCountryCode: 'BRL',
-            testEnv: true,
-          ),
-          style: ThemeMode.dark,
-        ),
-      );
-      await Stripe.instance.confirmPaymentSheetPayment();
-      setState(() {
-        _ready = true;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
-      rethrow;
-    }
-  }
+  //     await Stripe.instance.initPaymentSheet(
+  //       paymentSheetParameters: SetupPaymentSheetParameters(
+  //         customFlow: false,
+  //         merchantDisplayName: 'Broom Payment',
+  //         paymentIntentClientSecret: data['paymentIntent'],
+  //         /*
+  //         applePay: const PaymentSheetApplePay(
+  //           merchantCountryCode: 'BRL',
+  //         ),*/
+  //         /*
+  //         googlePay: const PaymentSheetGooglePay(
+  //           merchantCountryCode: 'BRL',
+  //           testEnv: true,
+  //         ),*/
+  //         style: ThemeMode.dark,
+  //       ),
+  //     );
+  //     await Stripe.instance.confirmPaymentSheetPayment();
+  //     setState(() {
+  //       _ready = true;
+  //     });
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error: $e')),
+  //     );
+  //     return;
+  //   }
+  // }
 
   Future<void> sendContract() async {
     List<String> selectedServices = [];
@@ -405,10 +408,9 @@ class _ContractState extends State<Contract> {
                 width: 350,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () async {
-                    await initPaymentSheet();
-                    // await Stripe.instance.presentPaymentSheet();
-                  },
+                  onPressed: () => redirectToCheckout(context),
+                  // await initPaymentSheet();
+                  // await Stripe.instance.presentPaymentSheet();
                   child: Text(
                     'Pagamento',
                   ),

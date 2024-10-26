@@ -47,6 +47,7 @@ dependencies:
   flutter_stripe: ^11.2.0
   splash_view: ^2.0.1
   flutter_stripe_web: ^6.2.0
+  js: ^0.7.1
   
 dev_dependencies:
   flutter_test:

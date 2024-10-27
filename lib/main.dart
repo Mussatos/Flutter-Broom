@@ -5,28 +5,38 @@ import 'package:broom_main_vscode/user_form.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
-import 'package:broom_main_vscode/signup.dart';   
+import 'package:broom_main_vscode/signup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:broom_main_vscode/utils/routes.dart';
+import 'package:splash_view/source/presentation/pages/pages.dart';
+import 'package:splash_view/splash_view.dart';
 
 void main() async {
+  String stripePublishableKey =
+      "pk_test_51Plexm08Kz6lXWDqBKmn4sBXxiQkiH85DuU3BDV4Zi8Zib7qRKMHviqMn9wwTNiDimlf5TBJ3X2MhXVxQoN1itlm009JR1umMA";
+
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = stripePublishableKey;
+  Stripe.merchantIdentifier = 'any string works';
+  await Stripe.instance.applySettings();
 
   bool isExpired = true;
 
   final String? token = await autentication.getToken();
-  if (token != null && token.isNotEmpty) isExpired = JwtDecoder.isExpired(token);
+  if (token != null && token.isNotEmpty)
+    isExpired = JwtDecoder.isExpired(token);
 
   final String initialLocation = isExpired ? '/' : '/List';
 
   runApp(UserProvider(
       child: MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
-      supportedLocales: const [Locale('pt')],
-      routerConfig: createRouter(initialLocation),
+    debugShowCheckedModeBanner: false,
+    localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+    supportedLocales: const [Locale('pt')],
+    routerConfig: createRouter(initialLocation),
   )));
 }
 

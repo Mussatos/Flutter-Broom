@@ -13,12 +13,14 @@ import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
 //URL de Prod do backend: https://broom-api.onrender.com/
-const String host = '10.0.2.2:3000';
+const String host = 'localhost:3000';
 Uri urlRegister = Uri.http(host, '/register');
 Uri urlLogin = Uri.http(host, '/login');
 Uri urlListContractors = Uri.http(host, '/list/contractors');
 Uri urlListDiarists = Uri.http(host, '/list/diarists');
 Uri urlViewDiarist = Uri.http(host, '');
+Uri urlForgetPassword = Uri.http(host, '/forget');
+Uri urlResetPassword = Uri.http(host, '/reset');
 
 Future<bool> register(Map<String, dynamic> user) async {
   try {
@@ -62,6 +64,45 @@ Future<bool> login(String email, String password) async {
     }
   } catch (err) {
     return isLogged;
+  }
+}
+
+Future<bool> forgetPassword(String email) async {
+  try {
+    var resp = await http.post(urlForgetPassword,
+        headers: <String, String>{'Content-Type': 'application/json'},
+        body: jsonEncode(<String, String>{'email': email}));
+
+    if (resp.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (err) {
+    return false;
+  }
+}
+
+Future<bool> resetPassword(String token, String password) async {
+  try {
+    final response = await http.post(
+      urlResetPassword,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'token': token,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return false;
   }
 }
 

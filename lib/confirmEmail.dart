@@ -1,6 +1,7 @@
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/resetPassword.dart';
 import 'package:broom_main_vscode/signup.dart';
+import 'package:broom_main_vscode/ui-components/modal.dart';
 import 'package:broom_main_vscode/utils/validators.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -14,18 +15,41 @@ class ConfirmEmail extends StatefulWidget {
 
 TextEditingController? emailController = TextEditingController(text: '');
 
-//implementar o valid email aqui < >
-/*
-  Navigator.push(
-    context,
-      MaterialPageRoute(
-        builder: (context) => ResetPasswordScreen()));*/
-
 bool validCredentials() {
   if (emailController!.text.isNotEmpty) {
     return validEmail(emailController!.text);
   }
   return false;
+}
+
+void sendEmailToUser(context) async {
+  final isEmailSend = await forgetPassword(emailController!.text);
+  if (isEmailSend) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Modal(
+            title: 'Troca de senha confirmada! :)',
+            message:
+                'Por favor, cheque seu email para continuar com o processo de alteração e senha.',
+            click: () => GoRouter.of(context).push('/'),
+            showOneButton: true,
+            mainButtonTitle: 'Ok',
+          );
+        });
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Por favor, insira o email utilizado no seu cadastro para continuar com a alteração.',
+            style: TextStyle(
+                fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+        ),
+        snackBarAnimationStyle:
+            AnimationStyle(duration: const Duration(milliseconds: 500)));
+  }
 }
 
 class _ConfirmEmailState extends State<ConfirmEmail> {
@@ -119,7 +143,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                           height: 60,
                           onPressed: () {
                             if (validCredentials()) {
-                              (context);
+                              sendEmailToUser(context);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(

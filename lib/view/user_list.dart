@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:broom_main_vscode/api/user.api.dart';
-import 'package:broom_main_vscode/configUser.dart';
 import 'package:broom_main_vscode/main.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';

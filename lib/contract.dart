@@ -1,7 +1,9 @@
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Contract extends StatefulWidget {
   int idDoUser;
@@ -87,9 +89,8 @@ class _ContractState extends State<Contract> {
     }
   }
 
-   Future<void> confirmPayment() async {
+  Future<void> confirmPayment() async {
     try {
-      // 3. display the payment sheet.
       await Stripe.instance.presentPaymentSheet();
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -112,6 +113,22 @@ class _ContractState extends State<Contract> {
         );
       }
     }
+  }
+
+  Future<void> initCheckout() async {
+    Map<String, dynamic> priceData = {
+      'currency': 'brl',
+      'product_data': {
+        'name': 'Contratação de serviço de limpeza doméstica',
+      },
+      'unit_amount': 20000,
+    };
+    int quantity = 1;
+
+    final data = await paymentCheckout(priceData, quantity);
+
+  if(data.isNotEmpty)
+    await launchUrlString(data);
   }
 
   Future<void> sendContract() async {
@@ -436,7 +453,10 @@ class _ContractState extends State<Contract> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () async {
-                    await initPaymentSheet();
+                    if (kIsWeb)
+                      initCheckout();
+                    else
+                      await initPaymentSheet();
                   },
                   child: Text(
                     'Pagamento',

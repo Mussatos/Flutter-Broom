@@ -79,7 +79,7 @@ class _AddressListState extends State<AddressList> {
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            GoRouter.of(context).push('/account/view');
           },
           icon: const Icon(
             Icons.arrow_back_ios,

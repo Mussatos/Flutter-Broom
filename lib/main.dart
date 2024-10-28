@@ -16,10 +16,9 @@ import 'package:splash_view/splash_view.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_web/webview_flutter_web.dart';
 
-
 void main() async {
   String stripePublishableKey =
-       "pk_test_51Plexm08Kz6lXWDqBKmn4sBXxiQkiH85DuU3BDV4Zi8Zib7qRKMHviqMn9wwTNiDimlf5TBJ3X2MhXVxQoN1itlm009JR1umMA";
+      "pk_live_51Plexm08Kz6lXWDqdCco7V1icaeMZTQBZJEdDt1jeZLOB38iG15vgJOSlvFb8YTF5Q2DQLzl7BqUx57WDJb9Tr2100ydrJ3YUw";
 
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = stripePublishableKey;
@@ -60,10 +59,10 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
   final PlatformWebViewController _controller = PlatformWebViewController(
     const PlatformWebViewControllerCreationParams(),
-  )..loadHtmlString("<!DOCTYPE html><html lang='en'><head>    <meta charset='UTF-8'>    <meta name='viewport' content='width=device-width, initial-scale=1.0'>    <title>Document</title>    <script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6989823415291958'     crossorigin='anonymous'></script></head><body>    </body></html>"); 
+  )..loadHtmlString(
+      "<!DOCTYPE html><html lang='en'><head>    <meta charset='UTF-8'>    <meta name='viewport' content='width=device-width, initial-scale=1.0'>    <title>Document</title>    <script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6989823415291958'     crossorigin='anonymous'></script></head><body>    </body></html>");
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +81,8 @@ class _HomePageState extends State<HomePage> {
                   width: 60,
                   height: 30,
                   child: PlatformWebViewWidget(
-                      PlatformWebViewWidgetCreationParams(controller: _controller),
+                    PlatformWebViewWidgetCreationParams(
+                        controller: _controller),
                   ).build(context),
                 ),
                 Column(

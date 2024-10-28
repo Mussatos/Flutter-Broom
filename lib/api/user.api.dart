@@ -12,18 +12,18 @@ import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
-//URL de Prod do backend: https://broom-api.onrender.com/
-const String host = 'localhost:3000';
-Uri urlRegister = Uri.http(host, '/register');
-Uri urlLogin = Uri.http(host, '/login');
-Uri urlListContractors = Uri.http(host, '/list/contractors');
-Uri urlListDiarists = Uri.http(host, '/list/diarists');
-Uri urlViewDiarist = Uri.http(host, '');
-Uri urlForgetPassword = Uri.http(host, '/forget');
-Uri urlResetPassword = Uri.http(host, '/reset');
-Uri urlPaymentIntent = Uri.http(host, '/payment');
-Uri urlPaymentCheckout = Uri.http(host, '/payment/checkout');
-Uri urlAddress = Uri.http(host, '/address');
+//URL de Prod do backend: https://broom-api.onrender.com/ //localhost:3000
+const String host = 'https://broom-api.onrender.com/';
+Uri urlRegister = Uri.https(host, '/register');
+Uri urlLogin = Uri.https(host, '/login');
+Uri urlListContractors = Uri.https(host, '/list/contractors');
+Uri urlListDiarists = Uri.https(host, '/list/diarists');
+Uri urlViewDiarist = Uri.https(host, '');
+Uri urlForgetPassword = Uri.https(host, '/forget');
+Uri urlResetPassword = Uri.https(host, '/reset');
+Uri urlPaymentIntent = Uri.https(host, '/payment');
+Uri urlPaymentCheckout = Uri.https(host, '/payment/checkout');
+Uri urlAddress = Uri.https(host, '/address');
 
 Future<bool> register(Map<String, dynamic> user) async {
   try {
@@ -222,7 +222,7 @@ Future<void> createAddress(Map<String, dynamic> payload) async {
 Future<Address?> getAddressByUserId() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http(host, '/address/$userId');
+  final url = Uri.https(host, '/address/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -250,7 +250,7 @@ Future<Address?> getAddressByUserId() async {
 Future<Yourself?> getUserById() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http(host,'/user/$userId');
+  final url = Uri.https(host, '/user/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -278,7 +278,7 @@ Future<Yourself?> getUserById() async {
 Future<List<Address>> fetchAddress() async {
   final id = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http('host', '/address/$id'); 
+  final url = Uri.https('host', '/address/$id');
 
   try {
     final response = await http.get(
@@ -303,7 +303,7 @@ Future<List<Address>> fetchAddress() async {
 
 Future<void> deleteAddress(int? idDoEndereco) async {
   final token = await autentication.getToken();
-  final url = Uri.http(host,'/address/$idDoEndereco'); 
+  final url = Uri.https(host, '/address/$idDoEndereco');
 
   try {
     final response = await http.delete(
@@ -328,7 +328,7 @@ Future<void> deleteAddress(int? idDoEndereco) async {
 Future<void> updateAddress(
     int? addressId, Map<String, dynamic> addressData) async {
   final token = await autentication.getToken();
-  final url = Uri.http(host, '/address/$addressId');
+  final url = Uri.https(host, '/address/$addressId');
 
   try {
     final response = await http.put(
@@ -354,7 +354,7 @@ Future<void> updateAddress(
 Future<void> updateUser(Map<String, dynamic> usersData) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
-  final url = Uri.http(host, '/user/$userId');
+  final url = Uri.https(host, '/user/$userId');
 
   try {
     final response = await http.put(
@@ -392,7 +392,7 @@ class ApiService {
     required int id,
   }) async {
     final token = await autentication.getToken();
-    final url = Uri.http(host, '/contract/sendContract/$id');
+    final url = Uri.https(host, '/contract/sendContract/$id');
 
     Map<String, dynamic> body = {
       "tiposDeServico": tiposDeServico,

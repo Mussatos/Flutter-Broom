@@ -14,6 +14,7 @@ class AccountSettings extends StatelessWidget {
             message:
                 'Você será redirecionado para a tela principal, tem certeza disso?',
             click: () => GoRouter.of(context).push('/logout'),
+            showOneButton: false,
           );
         });
   }

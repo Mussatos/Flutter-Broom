@@ -15,11 +15,13 @@ import 'package:splash_view/source/presentation/pages/pages.dart';
 import 'package:splash_view/splash_view.dart';
 
 void main() async {
-  // String stripePublishableKey =
-  //     "pk_test_51Plexm08Kz6lXWDqBKmn4sBXxiQkiH85DuU3BDV4Zi8Zib7qRKMHviqMn9wwTNiDimlf5TBJ3X2MhXVxQoN1itlm009JR1umMA";
+  String stripePublishableKey =
+       "pk_test_51Plexm08Kz6lXWDqBKmn4sBXxiQkiH85DuU3BDV4Zi8Zib7qRKMHviqMn9wwTNiDimlf5TBJ3X2MhXVxQoN1itlm009JR1umMA";
 
   WidgetsFlutterBinding.ensureInitialized();
-  // Stripe.publishableKey = stripePublishableKey;
+  Stripe.publishableKey = stripePublishableKey;
+  Stripe.merchantIdentifier = 'any string works';
+  await Stripe.instance.applySettings();
 
   bool isExpired = true;
 

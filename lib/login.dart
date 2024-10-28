@@ -129,10 +129,7 @@ class LoginPage extends StatelessWidget {
                             ),
                           ),
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ConfirmEmail()));
+                            GoRouter.of(context).push('/forget-password');
                           },
                         ),
                       ],

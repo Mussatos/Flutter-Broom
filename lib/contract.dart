@@ -1,8 +1,9 @@
 import 'package:broom_main_vscode/api/user.api.dart';
-import 'package:broom_main_vscode/stripe_checkout_web.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Contract extends StatefulWidget {
   int idDoUser;
@@ -23,7 +24,7 @@ class _ContractState extends State<Contract> {
   final TextEditingController obsController = TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
-  // bool _ready = false;
+  bool _ready = false;
 
   List<String> serviceType = [
     'Limpeza',
@@ -54,38 +55,80 @@ class _ContractState extends State<Contract> {
 
   ApiService apiService = ApiService();
 
-  // Future<void> initPaymentSheet() async {
-  //   try {
-  //     final data = await payment();
+  Future<void> initPaymentSheet() async {
+    try {
+      final data = await payment();
 
-  //     await Stripe.instance.initPaymentSheet(
-  //       paymentSheetParameters: SetupPaymentSheetParameters(
-  //         customFlow: false,
-  //         merchantDisplayName: 'Broom Payment',
-  //         paymentIntentClientSecret: data['paymentIntent'],
-  //         /*
-  //         applePay: const PaymentSheetApplePay(
-  //           merchantCountryCode: 'BRL',
-  //         ),*/
-  //         /*
-  //         googlePay: const PaymentSheetGooglePay(
-  //           merchantCountryCode: 'BRL',
-  //           testEnv: true,
-  //         ),*/
-  //         style: ThemeMode.dark,
-  //       ),
-  //     );
-  //     await Stripe.instance.confirmPaymentSheetPayment();
-  //     setState(() {
-  //       _ready = true;
-  //     });
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Error: $e')),
-  //     );
-  //     return;
-  //   }
-  // }
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          customFlow: false,
+          merchantDisplayName: 'Broom Payment',
+          paymentIntentClientSecret: data['paymentIntent'],
+          customerEphemeralKeySecret: data['ephemeralKey'],
+          customerId: data['customer'],
+          billingDetails: BillingDetails(
+              address: Address(
+                  city: null,
+                  country: "BR",
+                  line1: null,
+                  line2: null,
+                  postalCode: null,
+                  state: null)),
+          style: ThemeMode.dark,
+        ),
+      );
+      setState(() {
+        _ready = true;
+      });
+      await confirmPayment();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+      rethrow;
+    }
+  }
+
+  Future<void> confirmPayment() async {
+    try {
+      await Stripe.instance.presentPaymentSheet();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pagamento realizado com sucesso'),
+        ),
+      );
+    } on Exception catch (e) {
+      if (e is StripeException) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro de pagamento: ${e.error.localizedMessage}'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro desconhecido: ${e}'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> initCheckout() async {
+    Map<String, dynamic> priceData = {
+      'currency': 'brl',
+      'product_data': {
+        'name': 'Contratação de serviço de limpeza doméstica',
+      },
+      'unit_amount': 20000,
+    };
+    int quantity = 1;
+
+    final data = await paymentCheckout(priceData, quantity);
+
+    if (data.isNotEmpty) await launchUrlString(data);
+  }
 
   Future<void> sendContract() async {
     List<String> selectedServices = [];
@@ -408,9 +451,12 @@ class _ContractState extends State<Contract> {
                 width: 350,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () => redirectToCheckout(context),
-                  // await initPaymentSheet();
-                  // await Stripe.instance.presentPaymentSheet();
+                  onPressed: () async {
+                    if (kIsWeb)
+                      initCheckout();
+                    else
+                      await initPaymentSheet();
+                  },
                   child: Text(
                     'Pagamento',
                   ),

@@ -1,37 +1,50 @@
 import 'package:broom_main_vscode/Login.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/resetPassword.dart';
+import 'package:broom_main_vscode/user_form.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/signup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:broom_main_vscode/utils/routes.dart';
+import 'package:splash_view/source/presentation/pages/pages.dart';
+import 'package:splash_view/splash_view.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_web/webview_flutter_web.dart';
 
 
 void main() async {
+  String stripePublishableKey =
+       "pk_test_51Plexm08Kz6lXWDqBKmn4sBXxiQkiH85DuU3BDV4Zi8Zib7qRKMHviqMn9wwTNiDimlf5TBJ3X2MhXVxQoN1itlm009JR1umMA";
+
   WidgetsFlutterBinding.ensureInitialized();
-  
+  Stripe.publishableKey = stripePublishableKey;
+  Stripe.merchantIdentifier = 'any string works';
+  await Stripe.instance.applySettings();
+
   bool isExpired = true;
+
   final String? token = await autentication.getToken();
-  if (token!.isNotEmpty) isExpired = JwtDecoder.isExpired(token!);
+  if (token != null && token.isNotEmpty)
+    isExpired = JwtDecoder.isExpired(token);
+
+  final String initialLocation = isExpired ? '/' : '/List';
 
   runApp(UserProvider(
-      child: MaterialApp(
+      child: MaterialApp.router(
     debugShowCheckedModeBanner: false,
     localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
     supportedLocales: const [Locale('pt')],
-    home: isExpired ? HomePage() : UserList(),
-    routes: {
-      "/list": (_) => UserList(),
-    },
+    routerConfig: createRouter(initialLocation),
   )));
 }
 
 class HomePage extends StatefulWidget {
   bool? loggedOut;
-
   HomePage({this.loggedOut});
 
   @override
@@ -106,13 +119,7 @@ class _HomePageState extends State<HomePage> {
                     MaterialButton(
                       minWidth: double.infinity,
                       height: 60,
-                      //color: Colors.black,
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-                      },
+                      onPressed: () => GoRouter.of(context).push('/login'),
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),
@@ -130,12 +137,7 @@ class _HomePageState extends State<HomePage> {
                       minWidth: double.infinity,
                       height: 60,
                       color: Colors.black,
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignUpPage()));
-                      },
+                      onPressed: () => GoRouter.of(context).push('/register'),
                       shape: RoundedRectangleBorder(
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),
@@ -146,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 18,
                             color: Colors.white),
                       ),
-                    )
+                    ),
                   ],
                 )
               ],

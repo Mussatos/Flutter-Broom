@@ -9,6 +9,7 @@ import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
+import 'package:go_router/go_router.dart';
 
 class AddressList extends StatefulWidget {
   const AddressList({super.key});
@@ -20,7 +21,6 @@ class AddressList extends StatefulWidget {
 class _AddressListState extends State<AddressList> {
   @override
   Widget build(BuildContext context) {
-
     List<Address> address = [];
 
     removeAddressAt(int index) {
@@ -64,14 +64,14 @@ class _AddressListState extends State<AddressList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Address List'),
+        title: Text('Seus endereços',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
             color: Colors.white,
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => AddressForm()));
+              GoRouter.of(context).push("/address/form");
             },
           ),
         ],
@@ -79,7 +79,7 @@ class _AddressListState extends State<AddressList> {
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            GoRouter.of(context).push('/account/view');
           },
           icon: const Icon(
             Icons.arrow_back_ios,

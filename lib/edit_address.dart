@@ -1,6 +1,7 @@
 import 'package:broom_main_vscode/address_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+import 'package:go_router/go_router.dart';
 import 'user.dart';
 import 'api/user.api.dart';
 
@@ -80,8 +81,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
 
       updateAddress(id, updatedAddress.toJson());
 
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => AddressList()));
+      GoRouter.of(context).push('/address/list');
     }
   }
 

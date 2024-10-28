@@ -8,6 +8,7 @@ import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user_view.dart';
+import 'package:go_router/go_router.dart';
 
 class UserList extends StatefulWidget {
   const UserList({super.key});
@@ -19,10 +20,10 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
-
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
+    List<bool> isFavoriteList = [];
 
     List<Address> address = [];
 
@@ -59,35 +60,26 @@ class _UserListState extends State<UserList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: Text('Listagem de usuários',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.white,
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UserYourself()));
+              GoRouter.of(context).push('/account/view');
             },
           ),
           IconButton(
             icon: Icon(Icons.settings),
             color: Colors.grey.shade800,
-            onPressed: () {},
+            onPressed: () {
+              GoRouter.of(context).push('/account/settings');
+            },
           ),
         ],
         elevation: 0,
         backgroundColor: Color(0xFF2ECC8F),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(
-                                builder: (context) => HomePage(loggedOut: true,)));
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-            color: Colors.black,
-          ),
-        ),
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: fetchUsuarios(),
@@ -104,6 +96,9 @@ class _UserListState extends State<UserList> {
               itemCount: usuarios.length,
               itemBuilder: (context, index) {
                 ListUsers usuario = usuarios[index];
+                if (isFavoriteList.length != usuarios.length) {
+                  isFavoriteList = List.filled(usuarios.length, false);
+                }
                 addAddressForUser(usuario);
                 return ListTile(
                   titleTextStyle: const TextStyle(
@@ -119,6 +114,19 @@ class _UserListState extends State<UserList> {
                   leading: UserImage(user: usuario),
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
+                  trailing: IconButton(
+                    icon: Icon(
+                      Icons.favorite,
+                      color: isFavoriteList[index] ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isFavoriteList[index] = !isFavoriteList[index];
+                        print(
+                            "Favorito do usuário ${getListUserFullName(usuario)} mudou para: ${isFavoriteList[index]}");
+                      });
+                    },
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,

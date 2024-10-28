@@ -1,27 +1,47 @@
-import 'package:broom_main_vscode/confirmEmail.dart';
+import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/resetPassword.dart';
 import 'package:broom_main_vscode/signup.dart';
-import 'package:broom_main_vscode/view/user_list.dart';
-import 'package:flutter/material.dart';
-import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/ui-components/modal.dart';
 import 'package:broom_main_vscode/utils/validators.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatelessWidget {
-  TextEditingController? emailController = TextEditingController(text: '');
-  TextEditingController? passwordController = TextEditingController(text: '');
-  bool isLogged = false;
+class ConfirmEmail extends StatefulWidget {
+  const ConfirmEmail({super.key});
 
-  void userLogged(context) async {
-    if (await login(emailController!.text, passwordController!.text)) {
-      GoRouter.of(context).push('/List');
-      return;
-    }
+  @override
+  State<ConfirmEmail> createState() => _ConfirmEmailState();
+}
 
+TextEditingController? emailController = TextEditingController(text: '');
+
+bool validCredentials() {
+  if (emailController!.text.isNotEmpty) {
+    return validEmail(emailController!.text);
+  }
+  return false;
+}
+
+void sendEmailToUser(context) async {
+  final isEmailSend = await forgetPassword(emailController!.text);
+  if (isEmailSend) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Modal(
+            title: 'Troca de senha confirmada! :)',
+            message:
+                'Por favor, cheque seu email para continuar com o processo de alteração e senha.',
+            click: () => GoRouter.of(context).push('/'),
+            showOneButton: true,
+            mainButtonTitle: 'Ok',
+          );
+        });
+  } else {
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Credenciais inválidas.',
+            'Por favor, insira o email utilizado no seu cadastro para continuar com a alteração.',
             style: TextStyle(
                 fontSize: 16, fontWeight: FontWeight.w400, color: Colors.black),
           ),
@@ -30,20 +50,12 @@ class LoginPage extends StatelessWidget {
         snackBarAnimationStyle:
             AnimationStyle(duration: const Duration(milliseconds: 500)));
   }
+}
 
-  bool validCredentials() {
-    if (emailController!.text.isNotEmpty &&
-        passwordController!.text.isNotEmpty) {
-      return validEmail(emailController!.text);
-    }
-
-    return false;
-  }
-
+class _ConfirmEmailState extends State<ConfirmEmail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         elevation: 0,
@@ -94,7 +106,7 @@ class LoginPage extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        "Faça o seu login",
+                        "Recupere sua conta!",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -108,30 +120,6 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         inputFile(label: "Email", controller: emailController),
-                        inputFile(
-                            label: "Password",
-                            controller: passwordController,
-                            obscureText: true)
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 40),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          child: Text(
-                            " Forget Password?",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                          onTap: () {
-                            GoRouter.of(context).push('/forget-password');
-                          },
-                        ),
                       ],
                     ),
                   ),
@@ -155,12 +143,12 @@ class LoginPage extends StatelessWidget {
                           height: 60,
                           onPressed: () {
                             if (validCredentials()) {
-                              userLogged(context);
+                              sendEmailToUser(context);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'Preencha os campos de e-mail e senha corretamente.',
+                                      'Preencha o campo e-mail corretamente.',
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w400,
@@ -179,7 +167,7 @@ class LoginPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(50),
                           ),
                           child: Text(
-                            "Login",
+                            "Enviar",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 18,
@@ -203,9 +191,7 @@ class LoginPage extends StatelessWidget {
                             fontSize: 18,
                           ),
                         ),
-                        onTap: () {
-                          GoRouter.of(context).push('/register');
-                        },
+                        onTap: () => GoRouter.of(context).push('/register'),
                       ),
                     ],
                   ),

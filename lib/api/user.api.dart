@@ -12,8 +12,9 @@ import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
-//URL de Prod do backend: https://broom-api.onrender.com/ //localhost:3000
-const String host = 'https://broom-api.onrender.com/';
+//URL de Prod do backend: broom-api.onrender.com
+//localhost:3000
+const String host = 'broom-api.onrender.com';
 Uri urlRegister = Uri.https(host, '/register');
 Uri urlLogin = Uri.https(host, '/login');
 Uri urlListContractors = Uri.https(host, '/list/contractors');

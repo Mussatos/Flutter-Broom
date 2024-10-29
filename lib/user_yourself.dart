@@ -7,6 +7,7 @@ import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class UserYourself extends StatefulWidget {
   UserYourself();
@@ -30,14 +31,13 @@ class _UserYourselfState extends State<UserYourself> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Your Profile',
+          'Seu Perfil',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
         ),
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => UserList()));
+            Navigator.pop(context);
           },
           icon: Icon(
             Icons.arrow_back_ios,
@@ -136,10 +136,7 @@ class _UserYourselfState extends State<UserYourself> {
                         children: [
                           ElevatedButton.icon(
                             onPressed: () async {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AddressList()));
+                              GoRouter.of(context).push('/address/list');
                             },
                             icon: Icon(Icons.location_on, color: Colors.white),
                             label: Text(

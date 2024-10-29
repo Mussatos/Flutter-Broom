@@ -1,4 +1,10 @@
+import 'package:broom_main_vscode/address_form.dart';
+import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/edit_address.dart';
+import 'package:broom_main_vscode/user.dart';
+import 'package:broom_main_vscode/user_yourself.dart';
+import 'package:broom_main_vscode/view/account_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:broom_main_vscode/Login.dart';
@@ -15,6 +21,12 @@ GoRouter createRouter(String initialLocation) {
       GoRoute(
         path: '/',
         builder: (context, state) => HomePage(),
+      ),
+      GoRoute(
+        path: '/logout',
+        builder: (context, state) => HomePage(
+          loggedOut: true,
+        ),
       ),
       GoRoute(
         path: '/List',
@@ -45,6 +57,18 @@ GoRouter createRouter(String initialLocation) {
           final token = state.uri.queryParameters['token'];
           return ResetPasswordScreen(token: token);
         },
+      ),
+      GoRoute(
+          path: '/account/view', builder: (context, state) => UserYourself()),
+      GoRoute(
+        path: '/account/settings',
+        builder: (context, state) => AccountSettings(),
+      ),
+      GoRoute(
+          path: '/address/form', builder: (context, state) => AddressForm()),
+      GoRoute(
+        path: '/address/list',
+        builder: (context, state) => AddressList(),
       ),
     ],
   );

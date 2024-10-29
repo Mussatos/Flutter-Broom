@@ -384,8 +384,8 @@ class ApiService {
     required String? tipoLimpeza,
     required bool? possuiPets,
     required bool? possuiMaterialLimpeza,
-    required int? quantidadeRoupaLavar,
-    required int? quantidadeRoupaPassar,
+    required String? tipoCestoLavar,
+    required String? tipoCestoPassar,
     required int? quantidadeQuarto,
     required int? quantidadeBanheiro,
     required int? quantidadeSala,
@@ -400,8 +400,8 @@ class ApiService {
       "tipoLimpeza": tipoLimpeza,
       "possuiPets": possuiPets,
       "possuiMaterialLimpeza": possuiMaterialLimpeza,
-      "qntRoupaLavar": quantidadeRoupaLavar,
-      "qntRoupaPassar": quantidadeRoupaPassar,
+      "tipoCestoLavar": tipoCestoLavar,
+      "tipoCestoPassar": tipoCestoPassar,
       "comodos": [
         {
           "tipo": "quarto",

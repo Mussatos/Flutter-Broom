@@ -240,7 +240,7 @@ Future<List<Address>> fetchAddress() async {
 
   try {
     final response = await http.get(
-      Uri.parse(url),
+      url,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

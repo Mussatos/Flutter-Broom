@@ -16,8 +16,6 @@ class _ContractState extends State<Contract> {
   final TextEditingController kitchenController = TextEditingController();
   final TextEditingController toiletController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
-  final TextEditingController clothController = TextEditingController();
-  final TextEditingController clothCleanController = TextEditingController();
   final TextEditingController obsController = TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
@@ -65,8 +63,8 @@ class _ContractState extends State<Contract> {
       tipoLimpeza: cleanTypeSelected,
       possuiPets: petsController ?? false,
       possuiMaterialLimpeza: materialController ?? false,
-      tipoCestoLavar: clothController.text,
-      tipoCestoPassar: clothCleanController.text,
+      tipoCestoLavar: cleanBasketTypeSelected,
+      tipoCestoPassar: ironingBasketTypeSelected,
       quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
       quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
       quantidadeSala: int.tryParse(roomController.text) ?? 0,

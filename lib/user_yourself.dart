@@ -140,7 +140,7 @@ class _UserYourselfState extends State<UserYourself> {
                             },
                             icon: Icon(Icons.location_on, color: Colors.white),
                             label: Text(
-                              'Address',
+                              'Endereços',
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(

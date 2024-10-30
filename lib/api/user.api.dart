@@ -12,19 +12,18 @@ import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
-//URL de Prod do backend: broom-api.onrender.com
-//localhost:3000
-const String host = 'broom-api.onrender.com';
-Uri urlRegister = Uri.https(host, '/register');
-Uri urlLogin = Uri.https(host, '/login');
-Uri urlListContractors = Uri.https(host, '/list/contractors');
-Uri urlListDiarists = Uri.https(host, '/list/diarists');
-Uri urlViewDiarist = Uri.https(host, '');
-Uri urlForgetPassword = Uri.https(host, '/forget');
-Uri urlResetPassword = Uri.https(host, '/reset');
-Uri urlPaymentIntent = Uri.https(host, '/payment');
-Uri urlPaymentCheckout = Uri.https(host, '/payment/checkout');
-Uri urlAddress = Uri.https(host, '/address');
+//URL de Prod do backend: https://broom-api.onrender.com/
+const String host = 'localhost:3000';
+Uri urlRegister = Uri.http(host, '/register');
+Uri urlLogin = Uri.http(host, '/login');
+Uri urlListContractors = Uri.http(host, '/list/contractors');
+Uri urlListDiarists = Uri.http(host, '/list/diarists');
+Uri urlViewDiarist = Uri.http(host, '');
+Uri urlForgetPassword = Uri.http(host, '/forget');
+Uri urlResetPassword = Uri.http(host, '/reset');
+Uri urlPaymentIntent = Uri.http(host, '/payment');
+Uri urlPaymentCheckout = Uri.http(host, '/payment/checkout');
+Uri urlAddress = Uri.http(host, '/address');
 
 Future<bool> register(Map<String, dynamic> user) async {
   try {
@@ -142,7 +141,7 @@ Future<Uint8List?> fetchUserImage(String imageName) async {
   final token = await autentication.getToken();
 
   try {
-    final response = await http.get(Uri.https(host, '/file/$imageName'),
+    final response = await http.get(Uri.http(host, '/file/$imageName'),
         headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
@@ -191,8 +190,8 @@ Future<UserModel> fetchUsuario(int? id) async {
 
 Uri getViewUrl(int? userProfileId, int? id) {
   return userProfileId == 1
-      ? Uri.https(host, '/diarist/${id}')
-      : Uri.https(host, '/contractor/${id}');
+      ? Uri.http(host, '/diarist/${id}')
+      : Uri.http(host, '/contractor/${id}');
 }
 
 Future<void> createAddress(Map<String, dynamic> payload) async {
@@ -223,7 +222,7 @@ Future<void> createAddress(Map<String, dynamic> payload) async {
 Future<Address?> getAddressByUserId() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/address/$userId');
+  final url = Uri.http(host, '/address/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -251,7 +250,7 @@ Future<Address?> getAddressByUserId() async {
 Future<Yourself?> getUserById() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/user/$userId');
+  final url = Uri.http(host,'/user/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -279,7 +278,7 @@ Future<Yourself?> getUserById() async {
 Future<List<Address>> fetchAddress() async {
   final id = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/address/$id');
+  final url = Uri.http('host', '/address/$id'); 
 
   try {
     final response = await http.get(
@@ -304,7 +303,7 @@ Future<List<Address>> fetchAddress() async {
 
 Future<void> deleteAddress(int? idDoEndereco) async {
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/address/$idDoEndereco');
+  final url = Uri.http(host,'/address/$idDoEndereco'); 
 
   try {
     final response = await http.delete(
@@ -329,7 +328,7 @@ Future<void> deleteAddress(int? idDoEndereco) async {
 Future<void> updateAddress(
     int? addressId, Map<String, dynamic> addressData) async {
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/address/$addressId');
+  final url = Uri.http(host, '/address/$addressId');
 
   try {
     final response = await http.put(
@@ -355,7 +354,7 @@ Future<void> updateAddress(
 Future<void> updateUser(Map<String, dynamic> usersData) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
-  final url = Uri.https(host, '/user/$userId');
+  final url = Uri.http(host, '/user/$userId');
 
   try {
     final response = await http.put(
@@ -386,6 +385,8 @@ class ApiService {
     required bool? possuiMaterialLimpeza,
     required String? tipoCestoLavar,
     required String? tipoCestoPassar,
+    required int? qntCestoLavar,
+    required int? qntCestoPassar,
     required int? quantidadeQuarto,
     required int? quantidadeBanheiro,
     required int? quantidadeSala,
@@ -393,7 +394,7 @@ class ApiService {
     required int id,
   }) async {
     final token = await autentication.getToken();
-    final url = Uri.https(host, '/contract/sendContract/$id');
+    final url = Uri.http(host, '/contract/sendContract/$id');
 
     Map<String, dynamic> body = {
       "tiposDeServico": tiposDeServico,
@@ -402,6 +403,8 @@ class ApiService {
       "possuiMaterialLimpeza": possuiMaterialLimpeza,
       "tipoCestoLavar": tipoCestoLavar,
       "tipoCestoPassar": tipoCestoPassar,
+      "qntCestoLavar": qntCestoLavar,
+	    "qntCestoPassar": qntCestoPassar,
       "comodos": [
         {
           "tipo": "quarto",
@@ -446,7 +449,7 @@ Future sendImage(PlatformFile file) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
   var request =
-      http.MultipartRequest('POST', Uri.https(host, '/user/upload/$userId'));
+      http.MultipartRequest('POST', Uri.http(host, '/user/upload/$userId'));
   request.headers['Authorization'] = 'Bearer $token';
   request.files.add(await http.MultipartFile.fromBytes(
     'file',

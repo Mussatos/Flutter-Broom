@@ -20,6 +20,8 @@ class _ContractState extends State<Contract> {
   final TextEditingController toiletController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
   final TextEditingController obsController = TextEditingController();
+  final TextEditingController basketCleanQuantityController = TextEditingController(); 
+  final TextEditingController basketIroningQuantityController = TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
   bool _ready = false;
@@ -156,6 +158,8 @@ class _ContractState extends State<Contract> {
       possuiMaterialLimpeza: materialController ?? false,
       tipoCestoLavar: cleanBasketTypeSelected,
       tipoCestoPassar: ironingBasketTypeSelected,
+      qntCestoLavar: int.tryParse(basketCleanQuantityController.text) ?? 0,
+      qntCestoPassar: int.tryParse(basketIroningQuantityController.text) ?? 0,
       quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
       quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
       quantidadeSala: int.tryParse(roomController.text) ?? 0,
@@ -359,77 +363,97 @@ class _ContractState extends State<Contract> {
                             ),
                           ),
                         ),
-                      if (serviceType[index] == 'Lavar roupa' &&
+                        if (serviceType[index] == 'Lavar roupa' &&
                           serviceTypeSelected[index])
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4)),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: cleanBasketTypeSelected,
-                                isExpanded: true,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
+                        Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(4)),
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: cleanBasketTypeSelected,
+                                  isExpanded: true,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black,
+                                  ),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      cleanBasketTypeSelected = newValue!;
+                                    });
+                                  },
+                                  items: cleanBasketType.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                 ),
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black,
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    cleanBasketTypeSelected = newValue!;
-                                  });
-                                },
-                                items: cleanBasketType.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              controller: basketCleanQuantityController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Quantidade de cestos para lavar',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ],
                         ),
                       if (serviceType[index] == 'Passar roupa' &&
                           serviceTypeSelected[index])
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4)),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: ironingBasketTypeSelected,
-                                isExpanded: true,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
+                        Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(4)),
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: ironingBasketTypeSelected,
+                                  isExpanded: true,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black,
+                                  ),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      ironingBasketTypeSelected = newValue!;
+                                    });
+                                  },
+                                  items: ironingBasketType.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                 ),
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black,
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    ironingBasketTypeSelected = newValue!;
-                                  });
-                                },
-                                items: ironingBasketType.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              controller: basketIroningQuantityController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Quantidade de cestos para passar',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ],
                         ),
                     ],
                   );

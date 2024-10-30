@@ -37,7 +37,7 @@ class _UserYourselfState extends State<UserYourself> {
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            GoRouter.of(context).push("/List");
           },
           icon: Icon(
             Icons.arrow_back_ios,
@@ -140,7 +140,7 @@ class _UserYourselfState extends State<UserYourself> {
                             },
                             icon: Icon(Icons.location_on, color: Colors.white),
                             label: Text(
-                              'Address',
+                              'Endereços',
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(

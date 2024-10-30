@@ -5,28 +5,40 @@ import 'package:broom_main_vscode/user_form.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
-import 'package:broom_main_vscode/signup.dart';   
+import 'package:broom_main_vscode/signup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:broom_main_vscode/utils/routes.dart';
+import 'package:splash_view/source/presentation/pages/pages.dart';
+import 'package:splash_view/splash_view.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+import 'package:webview_flutter_web/webview_flutter_web.dart';
 
 void main() async {
+  String stripePublishableKey =
+      "pk_live_51Plexm08Kz6lXWDqdCco7V1icaeMZTQBZJEdDt1jeZLOB38iG15vgJOSlvFb8YTF5Q2DQLzl7BqUx57WDJb9Tr2100ydrJ3YUw";
+
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = stripePublishableKey;
+  Stripe.merchantIdentifier = 'any string works';
+  await Stripe.instance.applySettings();
 
   bool isExpired = true;
 
   final String? token = await autentication.getToken();
-  if (token != null && token.isNotEmpty) isExpired = JwtDecoder.isExpired(token);
+  if (token != null && token.isNotEmpty)
+    isExpired = JwtDecoder.isExpired(token);
 
   final String initialLocation = isExpired ? '/' : '/List';
 
   runApp(UserProvider(
       child: MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
-      supportedLocales: const [Locale('pt')],
-      routerConfig: createRouter(initialLocation),
+    debugShowCheckedModeBanner: false,
+    localizationsDelegates: const [GlobalMaterialLocalizations.delegate],
+    supportedLocales: const [Locale('pt')],
+    routerConfig: createRouter(initialLocation),
   )));
 }
 
@@ -47,6 +59,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  final PlatformWebViewController _controller = PlatformWebViewController(
+    const PlatformWebViewControllerCreationParams(),
+  )..loadHtmlString(
+      "<!DOCTYPE html><html lang='en'><head>    <meta charset='UTF-8'>    <meta name='viewport' content='width=device-width, initial-scale=1.0'>    <title>Document</title>    <script async src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6989823415291958'     crossorigin='anonymous'></script></head><body>    </body></html>");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,6 +77,14 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                Container(
+                  width: 60,
+                  height: 30,
+                  child: PlatformWebViewWidget(
+                    PlatformWebViewWidgetCreationParams(
+                        controller: _controller),
+                  ).build(context),
+                ),
                 Column(
                   children: <Widget>[
                     Text(

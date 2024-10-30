@@ -1,6 +1,7 @@
 import 'package:broom_main_vscode/address_form.dart';
 import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/confirmEmail.dart';
 import 'package:broom_main_vscode/edit_address.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
@@ -50,6 +51,10 @@ GoRouter createRouter(String initialLocation) {
       GoRoute(
         path: '/register',
         builder: (context, state) => SignUpPage(),
+      ),
+      GoRoute(
+        path: '/forget-password',
+        builder: (context, state) => ConfirmEmail(),
       ),
       GoRoute(
         path: '/reset-password',

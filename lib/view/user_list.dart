@@ -23,6 +23,7 @@ class _UserListState extends State<UserList> {
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
+    List<bool> isFavoriteList = [];
 
     List<Address> address = [];
 
@@ -79,21 +80,6 @@ class _UserListState extends State<UserList> {
         ],
         elevation: 0,
         backgroundColor: Color(0xFF2ECC8F),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => HomePage(
-                          loggedOut: true,
-                        )));
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-            color: Colors.black,
-          ),
-        ),
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: fetchUsuarios(),
@@ -110,6 +96,9 @@ class _UserListState extends State<UserList> {
               itemCount: usuarios.length,
               itemBuilder: (context, index) {
                 ListUsers usuario = usuarios[index];
+                if (isFavoriteList.length != usuarios.length) {
+                  isFavoriteList = List.filled(usuarios.length, false);
+                }
                 addAddressForUser(usuario);
                 return ListTile(
                   titleTextStyle: const TextStyle(
@@ -125,6 +114,19 @@ class _UserListState extends State<UserList> {
                   leading: UserImage(user: usuario),
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
+                  trailing: IconButton(
+                    icon: Icon(
+                      Icons.favorite,
+                      color: isFavoriteList[index] ? Colors.red : Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isFavoriteList[index] = !isFavoriteList[index];
+                        print(
+                            "Favorito do usuário ${getListUserFullName(usuario)} mudou para: ${isFavoriteList[index]}");
+                      });
+                    },
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,

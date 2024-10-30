@@ -12,13 +12,19 @@ import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
-//URL de Prod do backend: https://broom-api.onrender.com/
-const String host = 'localhost:3000';
-Uri urlRegister = Uri.http(host, '/register');
-Uri urlLogin = Uri.http(host, '/login');
-Uri urlListContractors = Uri.http(host, '/list/contractors');
-Uri urlListDiarists = Uri.http(host, '/list/diarists');
-Uri urlViewDiarist = Uri.http(host, '');
+//URL de Prod do backend: broom-api.onrender.com
+//localhost:3000
+const String host = 'broom-api.onrender.com';
+Uri urlRegister = Uri.https(host, '/register');
+Uri urlLogin = Uri.https(host, '/login');
+Uri urlListContractors = Uri.https(host, '/list/contractors');
+Uri urlListDiarists = Uri.https(host, '/list/diarists');
+Uri urlViewDiarist = Uri.https(host, '');
+Uri urlForgetPassword = Uri.https(host, '/forget');
+Uri urlResetPassword = Uri.https(host, '/reset');
+Uri urlPaymentIntent = Uri.https(host, '/payment');
+Uri urlPaymentCheckout = Uri.https(host, '/payment/checkout');
+Uri urlAddress = Uri.https(host, '/address');
 
 Future<bool> register(Map<String, dynamic> user) async {
   try {
@@ -65,6 +71,45 @@ Future<bool> login(String email, String password) async {
   }
 }
 
+Future<bool> forgetPassword(String email) async {
+  try {
+    var resp = await http.post(urlForgetPassword,
+        headers: <String, String>{'Content-Type': 'application/json'},
+        body: jsonEncode(<String, String>{'email': email}));
+
+    if (resp.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (err) {
+    return false;
+  }
+}
+
+Future<bool> resetPassword(String token, String password) async {
+  try {
+    final response = await http.post(
+      urlResetPassword,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'token': token,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
 Future<List<ListUsers>> fetchUsuarios() async {
   final token = await autentication.getToken();
   final userProfileId = await autentication.getProfileId();
@@ -97,7 +142,7 @@ Future<Uint8List?> fetchUserImage(String imageName) async {
   final token = await autentication.getToken();
 
   try {
-    final response = await http.get(Uri.http(host, '/file/$imageName'),
+    final response = await http.get(Uri.https(host, '/file/$imageName'),
         headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
@@ -146,17 +191,16 @@ Future<UserModel> fetchUsuario(int? id) async {
 
 Uri getViewUrl(int? userProfileId, int? id) {
   return userProfileId == 1
-      ? Uri.http(host, '/diarist/${id}')
-      : Uri.http(host, '/contractor/${id}');
+      ? Uri.https(host, '/diarist/${id}')
+      : Uri.https(host, '/contractor/${id}');
 }
 
 Future<void> createAddress(Map<String, dynamic> payload) async {
   final token = await autentication.getToken();
-  final String url = 'http://$host/address';
 
   try {
     final http.Response response = await http.post(
-      Uri.parse(url),
+      urlAddress,
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -179,11 +223,11 @@ Future<void> createAddress(Map<String, dynamic> payload) async {
 Future<Address?> getAddressByUserId() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final String url = '/address/$userId';
+  final url = Uri.https(host, '/address/$userId');
 
   try {
     final http.Response response = await http.get(
-      Uri.parse(url),
+      url,
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -207,12 +251,11 @@ Future<Address?> getAddressByUserId() async {
 Future<Yourself?> getUserById() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-
-  final String url = 'http://$host/user/$userId';
+  final url = Uri.https(host, '/user/$userId');
 
   try {
     final http.Response response = await http.get(
-      Uri.parse(url),
+      url,
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -261,11 +304,11 @@ Future<List<Address>> fetchAddress() async {
 
 Future<void> deleteAddress(int? idDoEndereco) async {
   final token = await autentication.getToken();
-  final String url = 'http://$host/address/$idDoEndereco';
+  final url = Uri.https(host, '/address/$idDoEndereco');
 
   try {
     final response = await http.delete(
-      Uri.parse(url),
+      url,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -286,11 +329,11 @@ Future<void> deleteAddress(int? idDoEndereco) async {
 Future<void> updateAddress(
     int? addressId, Map<String, dynamic> addressData) async {
   final token = await autentication.getToken();
-  final String url = 'http://$host/address/$addressId';
+  final url = Uri.https(host, '/address/$addressId');
 
   try {
     final response = await http.put(
-      Uri.parse(url),
+      url,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -312,11 +355,11 @@ Future<void> updateAddress(
 Future<void> updateUser(Map<String, dynamic> usersData) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
-  final String url = 'http://$host/user/$userId';
+  final url = Uri.https(host, '/user/$userId');
 
   try {
     final response = await http.put(
-      Uri.parse(url),
+      url,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -350,7 +393,7 @@ class ApiService {
     required int id,
   }) async {
     final token = await autentication.getToken();
-    final String url = 'http://$host/contract/sendContract/$id';
+    final url = Uri.https(host, '/contract/sendContract/$id');
 
     Map<String, dynamic> body = {
       "tiposDeServico": tiposDeServico,
@@ -378,7 +421,7 @@ class ApiService {
 
     try {
       final response = await http.post(
-        Uri.parse(url),
+        url,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -403,7 +446,7 @@ Future sendImage(PlatformFile file) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
   var request =
-      http.MultipartRequest('POST', Uri.http(host, '/user/upload/$userId'));
+      http.MultipartRequest('POST', Uri.https(host, '/user/upload/$userId'));
   request.headers['Authorization'] = 'Bearer $token';
   request.files.add(await http.MultipartFile.fromBytes(
     'file',
@@ -434,5 +477,51 @@ Future<Map<String, dynamic>> fetchCEP(String cep) async {
       "bairro": "",
       "localidade": "",
     };
+  }
+}
+
+Future<Map<String, dynamic>> payment() async {
+  try {
+    final token = await autentication.getToken();
+    var response = await http.post(
+      urlPaymentIntent,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 201) {
+      Map<String, dynamic> data = json.decode(response.body);
+
+      return data;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return {"paymentIntent": "", "ephemeralKey": "", "customer": ""};
+  }
+}
+
+Future<String> paymentCheckout(
+    Map<String, dynamic> priceData, int quantity) async {
+  try {
+    final token = await autentication.getToken();
+    var response = await http.post(urlPaymentCheckout,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'price_data': priceData, 'quantity': quantity}));
+
+    if (response.statusCode == 201) {
+      var resp = jsonDecode(response.body);
+      return resp['checkoutUrl'];
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    print(e);
+    return "";
   }
 }

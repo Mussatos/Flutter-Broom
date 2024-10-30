@@ -14,6 +14,7 @@ class AccountSettings extends StatelessWidget {
             message:
                 'Você será redirecionado para a tela principal, tem certeza disso?',
             click: () => GoRouter.of(context).push('/logout'),
+            showOneButton: false,
           );
         });
   }
@@ -21,6 +22,7 @@ class AccountSettings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
           appBar: AppBar(
             title: const Text(

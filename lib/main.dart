@@ -73,7 +73,6 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                    WebViewWidget(controller: controller),
                     Text(
                       "Bem vindo!",
                       style: TextStyle(

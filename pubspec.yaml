@@ -48,7 +48,6 @@ dependencies:
   splash_view: ^2.0.1
   flutter_stripe_web: ^6.2.0
   js: ^0.7.1
-  webview_flutter_web: ^0.2.3+2
 
 dev_dependencies:
   flutter_test:

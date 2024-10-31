@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/main.dart';
+import 'package:broom_main_vscode/ui-components/favorite_button.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
@@ -23,7 +24,6 @@ class _UserListState extends State<UserList> {
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
     List<User> users = userProvider.users;
     int usersLength = users.length;
-    List<bool> isFavoriteList = [];
 
     List<Address> address = [];
 
@@ -96,9 +96,6 @@ class _UserListState extends State<UserList> {
               itemCount: usuarios.length,
               itemBuilder: (context, index) {
                 ListUsers usuario = usuarios[index];
-                if (isFavoriteList.length != usuarios.length) {
-                  isFavoriteList = List.filled(usuarios.length, false);
-                }
                 addAddressForUser(usuario);
                 return ListTile(
                   titleTextStyle: const TextStyle(
@@ -114,19 +111,7 @@ class _UserListState extends State<UserList> {
                   leading: UserImage(user: usuario),
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
-                  trailing: IconButton(
-                    icon: Icon(
-                      Icons.favorite,
-                      color: isFavoriteList[index] ? Colors.red : Colors.grey,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isFavoriteList[index] = !isFavoriteList[index];
-                        print(
-                            "Favorito do usuário ${getListUserFullName(usuario)} mudou para: ${isFavoriteList[index]}");
-                      });
-                    },
-                  ),
+                  trailing: FavoriteButton(),
                   onTap: () {
                     Navigator.push(
                       context,

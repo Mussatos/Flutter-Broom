@@ -48,7 +48,7 @@ dependencies:
   splash_view: ^2.0.1
   flutter_stripe_web: ^6.2.0
   js: ^0.7.1
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,6 +70,7 @@ flutter:
   assets:
    - assets/Logo_com_letra.png
    - assets/Logo_so_o_balde.png
+   - assets/adsense.html
    
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

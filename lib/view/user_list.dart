@@ -62,6 +62,7 @@ class _UserListState extends State<UserList> {
       appBar: AppBar(
         title: Text('Listagem de usuários',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
+            automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: Icon(Icons.person),

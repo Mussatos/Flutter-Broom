@@ -133,66 +133,79 @@ class _ContractState extends State<Contract> {
     if (data.isNotEmpty) await launchUrlString(data);
   }
 
-  Future<void> sendContract() async {
-
-     setState(() {
-      _isBasketCleanQuantityValid = basketCleanQuantityController.text.isNotEmpty && 
-                                    int.tryParse(basketCleanQuantityController.text) != null;
-      _isBasketIroningQuantityValid = basketIroningQuantityController.text.isNotEmpty && 
-                                      int.tryParse(basketIroningQuantityController.text) != null;
-    });
-
-    if (!_isBasketCleanQuantityValid || !_isBasketIroningQuantityValid) {
-      return; 
-    }
-
-    List<String> selectedServices = [];
-    for (int i = 0; i < serviceType.length; i++) {
-      if (serviceTypeSelected[i]) {
-        selectedServices.add(serviceType[i]);
-      }
-    }
-
-    if (kitchenController.text.isEmpty &&
-        bedroomController.text.isEmpty &&
-        roomController.text.isEmpty &&
-        toiletController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Por Favor, inserir ao menos um comodo com quantidade válida para prosseguir com o contrato.'),
-        ),
-      );
-      return;
-    }
-
-    String? whatsappUrl = await apiService.sendContract(
-      tiposDeServico: selectedServices,
-      tipoLimpeza: cleanTypeSelected,
-      possuiPets: petsController ?? false,
-      possuiMaterialLimpeza: materialController ?? false,
-      tipoCestoLavar: cleanBasketTypeSelected,
-      tipoCestoPassar: ironingBasketTypeSelected,
-      qntCestoLavar: int.tryParse(basketCleanQuantityController.text) ?? 0,
-      qntCestoPassar: int.tryParse(basketIroningQuantityController.text) ?? 0,
-      quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
-      quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
-      quantidadeSala: int.tryParse(roomController.text) ?? 0,
-      mensagem: obsController.text,
-      id: widget.idDoUser,
-    );
-
-    if (whatsappUrl!.isNotEmpty) {
-      launchWhatsApp(whatsappUrl!);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
-        ),
-      );
+Future<void> sendContract() async {
+  List<String> selectedServices = [];
+  for (int i = 0; i < serviceType.length; i++) {
+    if (serviceTypeSelected[i]) {
+      selectedServices.add(serviceType[i]);
     }
   }
+
+  if (kitchenController.text.isEmpty &&
+      bedroomController.text.isEmpty &&
+      roomController.text.isEmpty &&
+      toiletController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Por Favor, inserir ao menos um cômodo com quantidade válida para prosseguir com o contrato.'),
+      ),
+    );
+    return;
+  }
+
+  bool isLavarRoupaSelected = serviceTypeSelected[1]; // 'Lavar roupa'
+  bool isPassarRoupaSelected = serviceTypeSelected[2]; // 'Passar roupa'
+
+  if (isLavarRoupaSelected && (basketCleanQuantityController.text.isEmpty || 
+      int.tryParse(basketCleanQuantityController.text) == null)) {
+    setState(() {
+      _isBasketCleanQuantityValid = false; 
+    });
+    return; 
+  } else {
+    setState(() {
+      _isBasketCleanQuantityValid = true; 
+    });
+  }
+
+  if (isPassarRoupaSelected && (basketIroningQuantityController.text.isEmpty || 
+      int.tryParse(basketIroningQuantityController.text) == null)) {
+    setState(() {
+      _isBasketIroningQuantityValid = false; 
+    });
+    return; 
+  } else {
+    setState(() {
+      _isBasketIroningQuantityValid = true; 
+    });
+  }
+
+  String? whatsappUrl = await apiService.sendContract(
+    tiposDeServico: selectedServices,
+    tipoLimpeza: cleanTypeSelected,
+    possuiPets: petsController ?? false,
+    possuiMaterialLimpeza: materialController ?? false,
+    tipoCestoLavar: cleanBasketTypeSelected,
+    tipoCestoPassar: ironingBasketTypeSelected,
+    qntCestoLavar: isLavarRoupaSelected ? int.tryParse(basketCleanQuantityController.text) ?? 0 : 0,
+    qntCestoPassar: isPassarRoupaSelected ? int.tryParse(basketIroningQuantityController.text) ?? 0 : 0,
+    quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
+    quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
+    quantidadeSala: int.tryParse(roomController.text) ?? 0,
+    mensagem: obsController.text,
+    id: widget.idDoUser,
+  );
+
+  if (whatsappUrl!.isNotEmpty) {
+    launchWhatsApp(whatsappUrl!);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
+      ),
+    );
+  }
+}
 
   void launchWhatsApp(String url) async {
     if (await canLaunch(url)) {

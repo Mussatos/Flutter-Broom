@@ -28,22 +28,30 @@ class _EditUserFormState extends State<EditUserForm> {
   late bool? wantService;
   File? userImage;
   PlatformFile? _selectedFile;
-  String _urlImagem = '';
 
   Future<void> _pickImage() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.image);
 
     if (result != null) {
-      setState(() {
-        _selectedFile = result.files.first;
-      });
+      PlatformFile file = result.files.first;
+      print(
+          "Arquivo selecionado: ${file.name}, Tamanho: ${file.size}, Tipo: ${file.extension}");
+
+      if (file.path != null) {
+        setState(() {
+          userImage =
+              File(file.path!); // Cria um objeto File a partir do caminho
+          _selectedFile = file; // Armazena o arquivo selecionado
+        });
+        print("Arquivo foi carregado com sucesso.");
+      } else {
+        print("Erro: o caminho do arquivo é null.");
+      }
     } else {
-      print('Nenhum arquivo selecionado.');
+      print("Nenhum arquivo foi selecionado.");
     }
   }
-
 
   @override
   void initState() {
@@ -69,24 +77,50 @@ class _EditUserFormState extends State<EditUserForm> {
     super.dispose();
   }
 
-  void saveUser() {
-    if (_formKey.currentState!.validate()) {
-      EditUser updatedUser = EditUser(
-        name: nameController.text,
-        lastName: lastNameController.text,
-        email: emailController.text,
-        cellphoneNumber:
-            cellphoneNumberController.text.replaceAll(RegExp(r'[\(\)\s-]'), ''),
-        description: descriptionController.text,
-        wantService: wantService ?? false,
-      );
+ void saveUser() async {
+  if (_formKey.currentState!.validate()) {
+    EditUser updatedUser = EditUser(
+      name: nameController.text,
+      lastName: lastNameController.text,
+      email: emailController.text,
+      cellphoneNumber: cellphoneNumberController.text.replaceAll(RegExp(r'[\(\)\s-]'), ''),
+      description: descriptionController.text,
+      wantService: wantService ?? false,
+    );
 
-      updateUser(updatedUser.toJson());
+    await updateUser(updatedUser.toJson());
 
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => UserYourself()));
+    if (_selectedFile != null && _selectedFile!.path != null) {
+      // Cria uma instância de File com o caminho do arquivo
+      File selectedFile = File(_selectedFile!.path!);
+
+      // Verifica se o arquivo existe
+      if (await selectedFile.exists()) {
+        var imageResult = await sendImage(selectedFile);
+        if (imageResult != "Sucesso") {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Imagem salva com sucesso!')),
+          );
+        }
+      } else {
+        print('Falha ao enviar: O arquivo não existe');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('O arquivo não existe.')),
+        );
+      }
+    } else {
+      print('Falha ao enviar: Nenhuma imagem foi selecionada');
     }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => UserYourself()),
+    );
   }
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -123,26 +157,35 @@ class _EditUserFormState extends State<EditUserForm> {
                       child: _selectedFile != null
                           ? CircleAvatar(
                               radius: 50,
-                              child: Container(
+                               child: Container(
                                 width: 80,
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     image: DecorationImage(
-                                        image: MemoryImage(
-                                            _selectedFile!.bytes!))),
+                                      image: userImage != null
+                                            ? FileImage(userImage!)
+                                            : _selectedFile != null
+                                                ? MemoryImage(_selectedFile!.bytes!) 
+                                                : AssetImage('assets/default_avatar.png'), 
+                                        fit: BoxFit.cover,
+                                       )),
                               ),
+                              //  backgroundImage: FileImage(
+                              // userImage!), // Exibe a imagem selecionada
                             )
                           : CircleAvatar(
                               radius: 50,
                               child: UserImage(
-                                  user: ListUsers(
-                                      id: -1,
-                                      address: [],
-                                      firstName: '',
-                                      lastName: '',
-                                      profileId: -1,
-                                      userImage: userActualImage ?? '',
-                                      wantService: false)),
+                                user: ListUsers(
+                                  id: -1,
+                                  address: [],
+                                  firstName: '',
+                                  lastName: '',
+                                  profileId: -1,
+                                  userImage: userActualImage ?? '',
+                                  wantService: false,
+                                ),
+                              ),
                             ),
                     ),
                     Positioned(
@@ -257,7 +300,6 @@ class _EditUserFormState extends State<EditUserForm> {
                     child: ElevatedButton(
                       onPressed: () async {
                         saveUser();
-                        sendImage(_selectedFile!);
                       },
                       child: Text('Salvar'),
                       style: ButtonStyle(

@@ -3,6 +3,7 @@ import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/confirmEmail.dart';
 import 'package:broom_main_vscode/edit_address.dart';
+import 'package:broom_main_vscode/edit_user.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:broom_main_vscode/view/account_settings.dart';
@@ -75,6 +76,13 @@ GoRouter createRouter(String initialLocation) {
         path: '/address/list',
         builder: (context, state) => AddressList(),
       ),
+     GoRoute(
+        path: '/accont/edit',
+        builder: (context, state) {
+          final usersEdit = state.extra as EditUser; 
+          return EditUserForm(usersEdit: usersEdit);
+        },
+    ),
     ],
   );
 }

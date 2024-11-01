@@ -154,24 +154,19 @@ class _UserYourselfState extends State<UserYourself> {
                           ),
                           ElevatedButton.icon(
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EditUserForm(
-                                            usersEdit: EditUser(
-                                                name: snapshot.data?.name,
-                                                lastName:
-                                                    snapshot.data?.lastName,
-                                                email: snapshot.data?.email,
-                                                cellphoneNumber: snapshot
-                                                    .data?.cellphoneNumber,
-                                                description:
-                                                    snapshot.data?.description,
-                                                wantService:
-                                                    snapshot.data?.wantService,
-                                                userActualImage:
-                                                    snapshot.data?.userImage),
-                                          )));
+                              GoRouter.of(context).push(
+                                '/accont/edit',
+                                extra: EditUser(
+                                  name: snapshot.data?.name,
+                                  lastName: snapshot.data?.lastName,
+                                  email: snapshot.data?.email,
+                                  cellphoneNumber:
+                                      snapshot.data?.cellphoneNumber,
+                                  description: snapshot.data?.description,
+                                  wantService: snapshot.data?.wantService,
+                                  userActualImage: snapshot.data?.userImage,
+                                ),
+                              );
                             },
                             icon: Icon(Icons.edit, color: Colors.white),
                             label: Text(

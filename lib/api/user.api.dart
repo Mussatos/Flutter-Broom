@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
+import 'package:http_parser/http_parser.dart';
 
 UserAutentication autentication = UserAutentication();
 //URL de Prod do backend: broom-api.onrender.com
@@ -442,21 +443,55 @@ class ApiService {
   }
 }
 
-Future sendImage(PlatformFile file) async {
-  final token = await autentication.getToken();
-  final userId = await autentication.getUserId();
-  var request =
-      http.MultipartRequest('POST', Uri.https(host, '/user/upload/$userId'));
-  request.headers['Authorization'] = 'Bearer $token';
-  request.files.add(await http.MultipartFile.fromBytes(
-    'file',
-    file.bytes!,
-    filename: file.name,
-  ));
+Future<String> sendImage(File file) async {
+  try {
+    final token = await autentication.getToken();
+    final userId = await autentication.getUserId();
+    var request = http.MultipartRequest('POST', Uri.https(host, '/user/upload/$userId'));
+    request.headers['Authorization'] = 'Bearer $token';
 
-  final res = await request.send();
-  return res.stream.bytesToString();
+    if (file.existsSync()) {
+      String extension = file.path.split('.').last.toLowerCase();
+
+      MediaType contentType;
+      switch (extension) {
+        case 'png':
+          contentType = MediaType('image', 'png');
+          break;
+        case 'jpg':
+        case 'jpeg':
+          contentType = MediaType('image', 'jpeg');
+          break;
+        default:
+          print("Tipo de arquivo não suportado: $extension");
+          return "Falha ao enviar: Tipo de arquivo não suportado.";
+      }
+
+      request.files.add(await http.MultipartFile.fromPath(
+        'file',
+        file.path,
+        contentType: contentType,
+      ));
+    } else {
+      print("Nenhuma imagem foi selecionada ou houve um erro ao carregar o arquivo.");
+      return "Falha ao enviar: Nenhuma imagem foi selecionada";
+    }
+
+    final response = await request.send();
+
+    // Aceita tanto 200 quanto 201 como códigos de sucesso
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return await response.stream.bytesToString();
+    } else {
+      print("Erro no upload da imagem: ${response.statusCode}");
+      return "Erro ao enviar imagem: ${response.statusCode}";
+    }
+  } catch (e) {
+    print("Exceção no upload da imagem: $e");
+    return "Exceção ao enviar imagem: $e";
+  }
 }
+
 
 Future<Map<String, dynamic>> fetchCEP(String cep) async {
   try {

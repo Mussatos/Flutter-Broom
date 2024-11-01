@@ -58,4 +58,6 @@
             <data android:scheme="http" android:host="example.com" />
             <data android:scheme="https" />
         </intent-filter> -->
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+        <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 </manifest>

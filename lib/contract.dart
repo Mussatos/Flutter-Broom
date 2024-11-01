@@ -53,6 +53,9 @@ class _ContractState extends State<Contract> {
     'Cesto grande'
   ]; //Passar roupa
 
+    bool _isBasketCleanQuantityValid = true;
+    bool _isBasketIroningQuantityValid = true;
+
   ApiService apiService = ApiService();
 
   Future<void> initPaymentSheet() async {
@@ -131,6 +134,18 @@ class _ContractState extends State<Contract> {
   }
 
   Future<void> sendContract() async {
+
+     setState(() {
+      _isBasketCleanQuantityValid = basketCleanQuantityController.text.isNotEmpty && 
+                                    int.tryParse(basketCleanQuantityController.text) != null;
+      _isBasketIroningQuantityValid = basketIroningQuantityController.text.isNotEmpty && 
+                                      int.tryParse(basketIroningQuantityController.text) != null;
+    });
+
+    if (!_isBasketCleanQuantityValid || !_isBasketIroningQuantityValid) {
+      return; 
+    }
+
     List<String> selectedServices = [];
     for (int i = 0; i < serviceType.length; i++) {
       if (serviceTypeSelected[i]) {
@@ -405,6 +420,7 @@ class _ContractState extends State<Contract> {
                               decoration: InputDecoration(
                                 labelText: 'Quantidade de cestos para lavar',
                                 border: OutlineInputBorder(),
+                                errorText: !_isBasketCleanQuantityValid ? 'Valor inválido' : null,
                               ),
                             ),
                           ],
@@ -450,6 +466,7 @@ class _ContractState extends State<Contract> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Quantidade de cestos para passar',
+                                 errorText: !_isBasketIroningQuantityValid ? 'Valor inválido' : null,
                                 border: OutlineInputBorder(),
                               ),
                             ),

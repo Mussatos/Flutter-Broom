@@ -305,6 +305,7 @@ Future<void> sendContract() async {
                     children: [
                       Checkbox(
                         value: petsController,
+                        activeColor: Colors.greenAccent,
                         onChanged: (bool? value) {
                           setState(() {
                             petsController = value!;
@@ -318,6 +319,7 @@ Future<void> sendContract() async {
                     children: [
                       Checkbox(
                         value: materialController,
+                        activeColor: Colors.greenAccent,
                         onChanged: (bool? value) {
                           setState(() {
                             materialController = value!;

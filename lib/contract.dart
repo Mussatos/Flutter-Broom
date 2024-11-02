@@ -20,7 +20,7 @@ class _ContractState extends State<Contract> {
   final TextEditingController toiletController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
   final TextEditingController obsController = TextEditingController();
-  final TextEditingController basketCleanQuantityController = TextEditingController(); 
+  final TextEditingController basketCleanQuantityController = TextEditingController();
   final TextEditingController basketIroningQuantityController = TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
@@ -53,10 +53,35 @@ class _ContractState extends State<Contract> {
     'Cesto grande'
   ]; //Passar roupa
 
-    bool _isBasketCleanQuantityValid = true;
-    bool _isBasketIroningQuantityValid = true;
+  bool _isBasketCleanQuantityValid = true;
+  bool _isBasketIroningQuantityValid = true;
 
   ApiService apiService = ApiService();
+
+@override
+  void initState() {
+    super.initState();
+    basketCleanQuantityController.addListener(_validateBasketQuantities);
+    basketIroningQuantityController.addListener(_validateBasketQuantities);
+  }
+
+  void _validateBasketQuantities() {
+    bool isLavarRoupaSelected = serviceTypeSelected[1];
+    bool isPassarRoupaSelected = serviceTypeSelected[2];
+
+    setState(() {
+      _isBasketCleanQuantityValid = isLavarRoupaSelected 
+          ? (basketCleanQuantityController.text.isNotEmpty && 
+             int.tryParse(basketCleanQuantityController.text) != null)
+          : true;
+
+      _isBasketIroningQuantityValid = isPassarRoupaSelected 
+          ? (basketIroningQuantityController.text.isNotEmpty && 
+             int.tryParse(basketIroningQuantityController.text) != null)
+          : true;
+    });
+  }
+
 
   Future<void> initPaymentSheet() async {
     try {
@@ -141,6 +166,23 @@ Future<void> sendContract() async {
     }
   }
 
+  String? basketCleanQuantity = basketCleanQuantityController.text;
+  String? basketIroningQuantity = basketIroningQuantityController.text;
+
+     if (serviceTypeSelected[1]) { // 'Lavar roupa'
+    if (basketCleanQuantity.isEmpty || 
+        int.tryParse(basketCleanQuantity) == null) {
+      return;
+    }
+  }
+
+  if (serviceTypeSelected[2]) { // 'Passar roupa'
+    if (basketIroningQuantity.isEmpty || 
+        int.tryParse(basketIroningQuantity) == null) {
+       return;
+    }
+  }
+
   if (kitchenController.text.isEmpty &&
       bedroomController.text.isEmpty &&
       roomController.text.isEmpty &&
@@ -153,32 +195,6 @@ Future<void> sendContract() async {
     return;
   }
 
-  bool isLavarRoupaSelected = serviceTypeSelected[1]; // 'Lavar roupa'
-  bool isPassarRoupaSelected = serviceTypeSelected[2]; // 'Passar roupa'
-
-  if (isLavarRoupaSelected && (basketCleanQuantityController.text.isEmpty || 
-      int.tryParse(basketCleanQuantityController.text) == null)) {
-    setState(() {
-      _isBasketCleanQuantityValid = false; 
-    });
-    return; 
-  } else {
-    setState(() {
-      _isBasketCleanQuantityValid = true; 
-    });
-  }
-
-  if (isPassarRoupaSelected && (basketIroningQuantityController.text.isEmpty || 
-      int.tryParse(basketIroningQuantityController.text) == null)) {
-    setState(() {
-      _isBasketIroningQuantityValid = false; 
-    });
-    return; 
-  } else {
-    setState(() {
-      _isBasketIroningQuantityValid = true; 
-    });
-  }
 
   String? whatsappUrl = await apiService.sendContract(
     tiposDeServico: selectedServices,
@@ -187,8 +203,8 @@ Future<void> sendContract() async {
     possuiMaterialLimpeza: materialController ?? false,
     tipoCestoLavar: cleanBasketTypeSelected,
     tipoCestoPassar: ironingBasketTypeSelected,
-    qntCestoLavar: isLavarRoupaSelected ? int.tryParse(basketCleanQuantityController.text) ?? 0 : 0,
-    qntCestoPassar: isPassarRoupaSelected ? int.tryParse(basketIroningQuantityController.text) ?? 0 : 0,
+    qntCestoLavar: (serviceTypeSelected[1] ? int.tryParse(basketCleanQuantityController.text) ?? 0 : 0),
+    qntCestoPassar: (serviceTypeSelected[2] ? int.tryParse(basketIroningQuantityController.text) ?? 0 : 0),
     quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
     quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
     quantidadeSala: int.tryParse(roomController.text) ?? 0,
@@ -433,7 +449,9 @@ Future<void> sendContract() async {
                               decoration: InputDecoration(
                                 labelText: 'Quantidade de cestos para lavar',
                                 border: OutlineInputBorder(),
-                                errorText: !_isBasketCleanQuantityValid ? 'Valor inválido' : null,
+                                errorText: !_isBasketCleanQuantityValid
+                                    ? 'Valor inválido'
+                                    : null,
                               ),
                             ),
                           ],
@@ -479,7 +497,9 @@ Future<void> sendContract() async {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Quantidade de cestos para passar',
-                                 errorText: !_isBasketIroningQuantityValid ? 'Valor inválido' : null,
+                                errorText: !_isBasketIroningQuantityValid
+                                    ? 'Valor inválido'
+                                    : null,
                                 border: OutlineInputBorder(),
                               ),
                             ),

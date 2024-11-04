@@ -73,7 +73,8 @@ class _UserYourselfState extends State<UserYourself> {
                                 lastName: '',
                                 profileId: -1,
                                 userImage: snapshot.data!.userImage,
-                                wantService: false)),
+                                wantService: false,
+                                isFavorite: false)),
                       ),
                       SizedBox(height: 20),
                       Text(

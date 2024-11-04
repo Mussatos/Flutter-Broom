@@ -58,11 +58,20 @@ class _UserListState extends State<UserList> {
       return '${user.firstName} ${user.lastName}';
     }
 
+    Future<void> changeFavorite(bool changeF, int favoritedId) async {
+      changeF = !changeF;
+      if (changeF) {
+        await setUserFavorite(favoritedId);
+        return;
+      }
+      await deleteUserFavorite(favoritedId);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Listagem de usuários',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
-            automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: Icon(Icons.person),
@@ -112,7 +121,11 @@ class _UserListState extends State<UserList> {
                   leading: UserImage(user: usuario),
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
-                  trailing: FavoriteButton(),
+                  trailing: FavoriteButton(
+                    isFavorite: usuario.isFavorite,
+                    callback: () =>
+                        changeFavorite(usuario.isFavorite, usuario.id),
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,

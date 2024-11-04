@@ -142,7 +142,8 @@ class _EditUserFormState extends State<EditUserForm> {
                                       lastName: '',
                                       profileId: -1,
                                       userImage: userActualImage ?? '',
-                                      wantService: false)),
+                                      wantService: false,
+                                      isFavorite: false)),
                             ),
                     ),
                     Positioned(

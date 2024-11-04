@@ -1,19 +1,39 @@
+import 'package:broom_main_vscode/user.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class FavoriteButton extends StatefulWidget {
-  const FavoriteButton({super.key});
+  bool isFavorite;
+  Function callback;
+
+  FavoriteButton({super.key, required this.isFavorite, required this.callback});
 
   @override
   State<FavoriteButton> createState() => _FavoriteButtonState();
 }
 
-class _FavoriteButtonState extends State<FavoriteButton> {
-      bool isFavoriteList = false;
+class _FavoriteButtonState extends State<FavoriteButton>
+    with TickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   Future<void> isLiked() async {
-      setState(() {
-        isFavoriteList = !isFavoriteList;
-      });
+    setState(() {
+      widget.isFavorite = !widget.isFavorite;
+    });
+    widget.callback();
   }
 
   @override
@@ -21,9 +41,9 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     return IconButton(
       icon: Icon(
         Icons.favorite,
-        color: isFavoriteList ? Colors.red : Colors.grey,
+        color: widget.isFavorite ? Colors.red : Colors.grey,
       ),
-      onPressed: (){
+      onPressed: () {
         isLiked();
       },
     );

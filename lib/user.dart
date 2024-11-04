@@ -104,6 +104,7 @@ class ListUsers {
   String userImage;
   bool? wantService;
   List<dynamic> address;
+  bool isFavorite;
 
   ListUsers({
     required this.id,
@@ -113,6 +114,7 @@ class ListUsers {
     required this.profileId,
     required this.userImage,
     required this.wantService,
+    required this.isFavorite,
   });
 
   factory ListUsers.fromJson(Map<String, dynamic> json) {
@@ -124,6 +126,7 @@ class ListUsers {
       userImage: json['user_image'],
       address: json['address'],
       wantService: json['want_service'],
+      isFavorite: json['is_favorite']
     );
   }
 }

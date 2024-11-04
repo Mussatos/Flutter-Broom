@@ -278,7 +278,7 @@ Future<Yourself?> getUserById() async {
 Future<List<Address>> fetchAddress() async {
   final id = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http('host', '/address/$id'); 
+  final url = Uri.http(host, '/address/$id'); 
 
   try {
     final response = await http.get(

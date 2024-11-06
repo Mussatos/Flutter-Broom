@@ -131,6 +131,41 @@ class ListUsers {
   }
 }
 
+// class ListUsersDiarist {
+//   int id;
+//   int profileId;
+//   String firstName;
+//   String lastName;
+//   String userImage;
+//   bool? wantService;
+//   List<dynamic> address;
+//   bool isFavorite;
+
+//   ListUsers({
+//     required this.id,
+//     required this.address,
+//     required this.firstName,
+//     required this.lastName,
+//     required this.profileId,
+//     required this.userImage,
+//     required this.wantService,
+//     required this.isFavorite,
+//   });
+
+//   factory ListUsers.fromJson(Map<String, dynamic> json) {
+//     return ListUsers(
+//       id: json['id'],
+//       profileId: json['profile_id'],
+//       firstName: json['first_name'],
+//       lastName: json['last_name'],
+//       userImage: json['user_image'],
+//       address: json['address'],
+//       wantService: json['want_service'],
+//       isFavorite: json['is_favorite']
+//     );
+//   }
+// }
+
 class Address {
   String? state = '';
   String? city = '';

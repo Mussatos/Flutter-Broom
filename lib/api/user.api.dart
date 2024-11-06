@@ -530,6 +530,31 @@ Future<String> paymentCheckout(
   }
 }
 
+Future<List<ListUsers>> getUserFavorite() async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  try {
+    final response = await http.get(
+      urlFavorite,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => ListUsers.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return [];
+  }
+}
+
 Future<bool> setUserFavorite(int? favoritedId) async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();

@@ -1,106 +1,81 @@
-import 'dart:typed_data';
-
 import 'package:broom_main_vscode/api/user.api.dart';
-import 'package:broom_main_vscode/main.dart';
 import 'package:broom_main_vscode/ui-components/favorite_button.dart';
-import 'package:broom_main_vscode/user.dart';
-import 'package:broom_main_vscode/user_provider.dart';
-import 'package:broom_main_vscode/user_yourself.dart';
-import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
+import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_view.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
 
-class UserList extends StatefulWidget {
-  const UserList({super.key});
+class UserfavoriteList extends StatefulWidget {
+  UserfavoriteList({super.key});
 
   @override
-  State<UserList> createState() => _UserListState();
+  State<UserfavoriteList> createState() => _UserfavoriteListState();
 }
 
-class _UserListState extends State<UserList> {
+class _UserfavoriteListState extends State<UserfavoriteList> {
+  List<Address> address = [];
+
+  void addAddressForUser(ListUsers user) {
+    if (user.address.isNotEmpty) {
+      address.add(Address.fromJson(user.address[0]));
+    } else {
+      address.add(Address(
+        state: '',
+        city: '',
+        neighborhood: '',
+        addressType: '',
+        street: '',
+        addressCode: '',
+        complement: '',
+        number: -1,
+        userId: null,
+        id: null,
+      ));
+    }
+  }
+
+  String getListUserFormatedAddress(Address userAddress) {
+    if (userAddress.state == '' ||
+        userAddress.neighborhood == '' ||
+        userAddress.city == '') return '';
+
+    return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
+  }
+
+  String getListUserFullName(ListUsers user) {
+    return '${user.firstName} ${user.lastName}';
+  }
+
+  Future<void> changeFavorite(bool changeF, int favoritedId) async {
+    changeF = !changeF;
+    if (changeF) {
+      await setUserFavorite(favoritedId);
+      return;
+    }
+    await deleteUserFavorite(favoritedId);
+  }
+
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = UserProvider.of(context) as UserProvider;
-    List<User> users = userProvider.users;
-    int usersLength = users.length;
-
-    List<Address> address = [];
-  
-
-    void addAddressForUser(ListUsers user) {
-      if (user.address.isNotEmpty) {
-        address.add(Address.fromJson(user.address[0]));
-      } else {
-        address.add(Address(
-          state: '',
-          city: '',
-          neighborhood: '',
-          addressType: '',
-          street: '',
-          addressCode: '',
-          complement: '',
-          number: -1,
-          userId: null,
-          id: null,
-        ));
-      }
-    }
-
-    String getListUserFormatedAddress(Address userAddress) {
-      if (userAddress.state == '' ||
-          userAddress.neighborhood == '' ||
-          userAddress.city == '') return '';
-
-      return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
-    }
-
-    String getListUserFullName(ListUsers user) {
-      return '${user.firstName} ${user.lastName}';
-    }
-
-    Future<void> changeFavorite(bool changeF, int favoritedId) async {
-      changeF = !changeF;
-      if (changeF) {
-        await setUserFavorite(favoritedId);
-        return;
-      }
-      await deleteUserFavorite(favoritedId);
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Listagem de usuários',
+        title: Text('Listagem de favoritos',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.favorite),
-            color: Colors.red.shade400,
-            onPressed: () {
-              GoRouter.of(context).push('/favorite-page');
-            },
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back_ios,
+            size: 24,
+            color: Colors.black,
           ),
-          IconButton(
-            icon: Icon(Icons.person),
-            color: Colors.white,
-            onPressed: () {
-              GoRouter.of(context).push('/account/view');
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.settings),
-            color: Colors.grey.shade800,
-            onPressed: () {
-              GoRouter.of(context).push('/account/settings');
-            },
-          ),
-        ],
+        ),
         elevation: 0,
         backgroundColor: Color(0xFF2ECC8F),
       ),
       body: FutureBuilder<List<ListUsers>>(
-        future: fetchUsuarios(),
+        future: getUserFavorite(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

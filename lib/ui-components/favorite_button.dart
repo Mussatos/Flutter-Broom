@@ -39,7 +39,7 @@ class _FavoriteButtonState extends State<FavoriteButton>
 
     widget.callback();
 
-    await Future.delayed(Duration(milliseconds: 550));
+    await Future.delayed(Duration(milliseconds: 100));
     setState(() {
       isButtonEnabled = true;
     });

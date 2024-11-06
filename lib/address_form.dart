@@ -72,7 +72,6 @@ class _AddressFormState extends State<AddressForm> {
           'Registrar Endereço',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -83,12 +82,14 @@ class _AddressFormState extends State<AddressForm> {
             color: Colors.black,
           ),
         ),
+        backgroundColor: Color(0xFF2ECC8F),
       ),
       body: SingleChildScrollView(
         child: Container(
           color: Color(0xFF2ECC8F),
           alignment: Alignment.center,
           padding: const EdgeInsets.all(35.0),
+          height: MediaQuery.of(context).size.height,
           child: Form(
             key: _formKey,
             child: Column(
@@ -133,9 +134,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 25),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -152,6 +151,9 @@ class _AddressFormState extends State<AddressForm> {
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
                     ),
                     style: TextStyle(
                       color: Colors.white,
@@ -164,9 +166,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 25),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -183,6 +183,9 @@ class _AddressFormState extends State<AddressForm> {
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
                     ),
                     style: TextStyle(
                       color: Colors.white,
@@ -195,9 +198,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 25),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -226,9 +227,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 25),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -257,9 +256,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 25),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -287,7 +284,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 25),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -309,7 +306,7 @@ class _AddressFormState extends State<AddressForm> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 25),
                 SizedBox(
                   width: 350,
                   child: Text(
@@ -348,7 +345,7 @@ class _AddressFormState extends State<AddressForm> {
                         });
                       }),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 70),
                 SizedBox(
                   width: 350,
                   height: 50,

@@ -20,8 +20,10 @@ class _ContractState extends State<Contract> {
   final TextEditingController toiletController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
   final TextEditingController obsController = TextEditingController();
-  final TextEditingController basketCleanQuantityController = TextEditingController();
-  final TextEditingController basketIroningQuantityController = TextEditingController();
+  final TextEditingController basketCleanQuantityController =
+      TextEditingController();
+  final TextEditingController basketIroningQuantityController =
+      TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
   bool _ready = false;
@@ -58,7 +60,7 @@ class _ContractState extends State<Contract> {
 
   ApiService apiService = ApiService();
 
-@override
+  @override
   void initState() {
     super.initState();
     basketCleanQuantityController.addListener(_validateBasketQuantities);
@@ -70,18 +72,17 @@ class _ContractState extends State<Contract> {
     bool isPassarRoupaSelected = serviceTypeSelected[2];
 
     setState(() {
-      _isBasketCleanQuantityValid = isLavarRoupaSelected 
-          ? (basketCleanQuantityController.text.isNotEmpty && 
-             int.tryParse(basketCleanQuantityController.text) != null)
+      _isBasketCleanQuantityValid = isLavarRoupaSelected
+          ? (basketCleanQuantityController.text.isNotEmpty &&
+              int.tryParse(basketCleanQuantityController.text) != null)
           : true;
 
-      _isBasketIroningQuantityValid = isPassarRoupaSelected 
-          ? (basketIroningQuantityController.text.isNotEmpty && 
-             int.tryParse(basketIroningQuantityController.text) != null)
+      _isBasketIroningQuantityValid = isPassarRoupaSelected
+          ? (basketIroningQuantityController.text.isNotEmpty &&
+              int.tryParse(basketIroningQuantityController.text) != null)
           : true;
     });
   }
-
 
   Future<void> initPaymentSheet() async {
     try {
@@ -169,17 +170,21 @@ Future<void> sendContract() async {
   String? basketCleanQuantity = basketCleanQuantityController.text;
   String? basketIroningQuantity = basketIroningQuantityController.text;
 
-     if (serviceTypeSelected[1]) { // 'Lavar roupa'
-    if (basketCleanQuantity.isEmpty || 
-        int.tryParse(basketCleanQuantity) == null) {
-      return;
+  if (serviceTypeSelected[1]) { 
+    if (basketCleanQuantity.isEmpty || int.tryParse(basketCleanQuantity) == null) {
+      setState(() {
+        _isBasketCleanQuantityValid = false; 
+      });
+      return; 
     }
   }
 
-  if (serviceTypeSelected[2]) { // 'Passar roupa'
-    if (basketIroningQuantity.isEmpty || 
-        int.tryParse(basketIroningQuantity) == null) {
-       return;
+  if (serviceTypeSelected[2]) { 
+    if (basketIroningQuantity.isEmpty || int.tryParse(basketIroningQuantity) == null) {
+      setState(() {
+        _isBasketIroningQuantityValid = false; 
+      });
+      return; 
     }
   }
 
@@ -195,7 +200,6 @@ Future<void> sendContract() async {
     return;
   }
 
-
   String? whatsappUrl = await apiService.sendContract(
     tiposDeServico: selectedServices,
     tipoLimpeza: cleanTypeSelected,
@@ -203,8 +207,12 @@ Future<void> sendContract() async {
     possuiMaterialLimpeza: materialController ?? false,
     tipoCestoLavar: cleanBasketTypeSelected,
     tipoCestoPassar: ironingBasketTypeSelected,
-    qntCestoLavar: (serviceTypeSelected[1] ? int.tryParse(basketCleanQuantityController.text) ?? 0 : 0),
-    qntCestoPassar: (serviceTypeSelected[2] ? int.tryParse(basketIroningQuantityController.text) ?? 0 : 0),
+    qntCestoLavar: (serviceTypeSelected[1]
+        ? int.tryParse(basketCleanQuantityController.text) ?? 0
+        : 0),
+    qntCestoPassar: (serviceTypeSelected[2]
+        ? int.tryParse(basketIroningQuantityController.text) ?? 0
+        : 0),
     quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
     quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
     quantidadeSala: int.tryParse(roomController.text) ?? 0,

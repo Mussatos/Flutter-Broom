@@ -134,7 +134,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -166,7 +166,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -198,7 +198,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -227,7 +227,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -256,7 +256,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -284,7 +284,7 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -306,7 +306,7 @@ class _AddressFormState extends State<AddressForm> {
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: Text(
@@ -345,7 +345,7 @@ class _AddressFormState extends State<AddressForm> {
                         });
                       }),
                 ),
-                SizedBox(height: 70),
+                SizedBox(height: 30),
                 SizedBox(
                   width: 350,
                   height: 50,

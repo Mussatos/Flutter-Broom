@@ -109,7 +109,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
         child: Container(
           color: Color(0xFF2ECC8F),
           alignment: Alignment.center,
-          padding: const EdgeInsets.all(40.0),
+          padding: const EdgeInsets.all(35.0),
           height: MediaQuery.of(context).size.height,
           child: Form(
             key: _formKey,
@@ -143,7 +143,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -171,7 +171,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -199,7 +199,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -227,7 +227,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -255,7 +255,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -283,7 +283,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: TextFormField(
@@ -305,7 +305,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     ),
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 22),
                 SizedBox(
                   width: 350,
                   child: Text(
@@ -343,7 +343,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                             addressTypeSelected = value!;
                           });
                         })),
-                SizedBox(height: 70),
+                SizedBox(height: 30),
                 SizedBox(
                   width: 350,
                   height: 50,

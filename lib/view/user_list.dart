@@ -75,13 +75,6 @@ class _UserListState extends State<UserList> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.favorite),
-            color: Colors.red.shade400,
-            onPressed: () {
-              GoRouter.of(context).push('/favorite-page');
-            },
-          ),
-          IconButton(
             icon: Icon(Icons.person),
             color: Colors.white,
             onPressed: () {

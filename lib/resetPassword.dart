@@ -23,6 +23,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   String? passwordError;
   String? confirmPasswordError;
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _resetPassword() async {
     if (_formKey.currentState!.validate()) {
       String token = widget.token ?? '';

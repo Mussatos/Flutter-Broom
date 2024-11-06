@@ -58,6 +58,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
     streetController.dispose();
     numberController.dispose();
     stateController.dispose();
+    cityController.dispose();
     neighController.dispose();
     addressCodeController.dispose();
     complementController.dispose();

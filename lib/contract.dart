@@ -53,6 +53,19 @@ class _ContractState extends State<Contract> {
     'Cesto grande'
   ]; //Passar roupa
 
+  
+  @override
+  void dispose() {
+    bedroomController.dispose();
+    kitchenController.dispose();
+    toiletController.dispose();
+    roomController.dispose();
+    clothCleanController.dispose();
+    clothCleanController.dispose();
+    obsController.dispose();
+    super.dispose();
+  }
+  
   ApiService apiService = ApiService();
 
   Future<void> initPaymentSheet() async {

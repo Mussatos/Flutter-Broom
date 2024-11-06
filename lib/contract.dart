@@ -41,6 +41,19 @@ class _ContractState extends State<Contract> {
   String ironingBasketTypeSelected = 'Cesto pequeno'; //Passar roupa 
   List<String> ironingBasketType = ['Cesto pequeno', 'Cesto médio', 'Cesto grande']; //Passar roupa
 
+  
+  @override
+  void dispose() {
+    bedroomController.dispose();
+    kitchenController.dispose();
+    toiletController.dispose();
+    roomController.dispose();
+    clothCleanController.dispose();
+    clothCleanController.dispose();
+    obsController.dispose();
+    super.dispose();
+  }
+  
   ApiService apiService = ApiService();
 
   Future<void> sendContract() async {

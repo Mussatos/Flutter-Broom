@@ -42,6 +42,17 @@ class _UserFormState extends State<UserForm> {
   String? genderError;
 
   @override
+  void dispose() {
+    controllerName.dispose();
+    controllerSobrenome.dispose();
+    controllerCpf.dispose();
+    controllerDate.dispose();
+    controllerEmail.dispose();
+    controllerPassword.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
 

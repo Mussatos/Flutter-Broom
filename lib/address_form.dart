@@ -40,6 +40,7 @@ class _AddressFormState extends State<AddressForm> {
     neighController.dispose();
     addressCodeController.dispose();
     complementController.dispose();
+    cityController.dispose();
     super.dispose();
   }
 

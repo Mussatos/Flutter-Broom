@@ -263,6 +263,7 @@ Future<void> sendContract() async {
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(35.0),
+          color: Colors.white,
           child: Column(
             children: [
               Text(
@@ -388,7 +389,9 @@ Future<void> sendContract() async {
                           child: Container(
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4)),
+                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white,
+                                ),
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
@@ -402,6 +405,7 @@ Future<void> sendContract() async {
                                   Icons.arrow_drop_down,
                                   color: Colors.black,
                                 ),
+                                dropdownColor: Colors.white,
                                 onChanged: (String? newValue) {
                                   setState(() {
                                     cleanTypeSelected = newValue!;
@@ -424,7 +428,9 @@ Future<void> sendContract() async {
                             Container(
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(4)),
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: Colors.white,
+                                  ),
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
@@ -438,6 +444,7 @@ Future<void> sendContract() async {
                                     Icons.arrow_drop_down,
                                     color: Colors.black,
                                   ),
+                                  dropdownColor: Colors.white,
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       cleanBasketTypeSelected = newValue!;
@@ -473,7 +480,9 @@ Future<void> sendContract() async {
                             Container(
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(4)),
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: Colors.white,
+                                  ),
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
@@ -487,6 +496,7 @@ Future<void> sendContract() async {
                                     Icons.arrow_drop_down,
                                     color: Colors.black,
                                   ),
+                                  dropdownColor: Colors.white,
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       ironingBasketTypeSelected = newValue!;

@@ -46,13 +46,14 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
     return '${user.firstName} ${user.lastName}';
   }
 
-  Future<void> changeFavorite(bool changeF, int favoritedId) async {
-    changeF = !changeF;
-    if (changeF) {
-      await setUserFavorite(favoritedId);
+  Future<void> changeFavorite(ListUsers usuario) async {
+    usuario.isFavorite = !usuario.isFavorite;
+    print(usuario.isFavorite);
+    if (usuario.isFavorite) {
+      await setUserFavorite(usuario.id);
       return;
     }
-    await deleteUserFavorite(favoritedId);
+    await deleteUserFavorite(usuario.id);
   }
 
   @override
@@ -106,8 +107,7 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
                   subtitle: Text(getListUserFormatedAddress(address[index])),
                   trailing: FavoriteButton(
                     isFavorite: usuario.isFavorite,
-                    callback: () =>
-                        changeFavorite(usuario.isFavorite, usuario.id),
+                    callback: () => changeFavorite(usuario),
                   ),
                   onTap: () {
                     Navigator.push(

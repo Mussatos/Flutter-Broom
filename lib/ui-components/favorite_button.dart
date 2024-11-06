@@ -14,28 +14,37 @@ class FavoriteButton extends StatefulWidget {
 
 class _FavoriteButtonState extends State<FavoriteButton>
     with TickerProviderStateMixin {
-  late final AnimationController _controller;
+  // late final AnimationController _controller;
+  bool isButtonEnabled = true;
 
-  @override
-  void initState() {
-    super.initState();
+  // @override
+  // void initState() {
+  //   super.initState();
 
-    _controller = AnimationController(vsync: this);
-  }
+  //   _controller = AnimationController(vsync: this);
+  // }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
   Future<void> isLiked() async {
+    if (!isButtonEnabled) return;
+
     setState(() {
       widget.isFavorite = !widget.isFavorite;
+      isButtonEnabled = false;
     });
-    widget.callback();
-  }
 
+    widget.callback();
+
+    await Future.delayed(Duration(milliseconds: 550));
+    setState(() {
+      isButtonEnabled = true;
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
     return IconButton(
@@ -43,9 +52,7 @@ class _FavoriteButtonState extends State<FavoriteButton>
         Icons.favorite,
         color: widget.isFavorite ? Colors.red : Colors.grey,
       ),
-      onPressed: () {
-        isLiked();
-      },
+      onPressed: isButtonEnabled ? isLiked : null,
     );
   }
 }

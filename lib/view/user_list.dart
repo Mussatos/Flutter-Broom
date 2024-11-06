@@ -26,7 +26,6 @@ class _UserListState extends State<UserList> {
     int usersLength = users.length;
 
     List<Address> address = [];
-  
 
     void addAddressForUser(ListUsers user) {
       if (user.address.isNotEmpty) {
@@ -59,13 +58,14 @@ class _UserListState extends State<UserList> {
       return '${user.firstName} ${user.lastName}';
     }
 
-    Future<void> changeFavorite(bool changeF, int favoritedId) async {
-      changeF = !changeF;
-      if (changeF) {
-        await setUserFavorite(favoritedId);
+    Future<void> changeFavorite(ListUsers usuario) async {
+      usuario.isFavorite = !usuario.isFavorite;
+      print(usuario.isFavorite);
+      if (usuario.isFavorite) {
+        await setUserFavorite(usuario.id);
         return;
       }
-      await deleteUserFavorite(favoritedId);
+      await deleteUserFavorite(usuario.id);
     }
 
     return Scaffold(
@@ -131,8 +131,7 @@ class _UserListState extends State<UserList> {
                   subtitle: Text(getListUserFormatedAddress(address[index])),
                   trailing: FavoriteButton(
                     isFavorite: usuario.isFavorite,
-                    callback: () =>
-                        changeFavorite(usuario.isFavorite, usuario.id),
+                    callback: () => changeFavorite(usuario),
                   ),
                   onTap: () {
                     Navigator.push(

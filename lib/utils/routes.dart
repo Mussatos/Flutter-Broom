@@ -1,10 +1,12 @@
 import 'package:broom_main_vscode/address_form.dart';
 import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/confirmEmail.dart';
 import 'package:broom_main_vscode/edit_address.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:broom_main_vscode/view/account_settings.dart';
+import 'package:broom_main_vscode/view/userFavorite_list.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:broom_main_vscode/Login.dart';
@@ -52,6 +54,10 @@ GoRouter createRouter(String initialLocation) {
         builder: (context, state) => SignUpPage(),
       ),
       GoRoute(
+        path: '/forget-password',
+        builder: (context, state) => ConfirmEmail(),
+      ),
+      GoRoute(
         path: '/reset-password',
         builder: (context, state) {
           final token = state.uri.queryParameters['token'];
@@ -69,6 +75,10 @@ GoRouter createRouter(String initialLocation) {
       GoRoute(
         path: '/address/list',
         builder: (context, state) => AddressList(),
+      ),
+      GoRoute(
+        path: '/favorite-page',
+        builder: (context, state) => UserfavoriteList(),
       ),
     ],
   );

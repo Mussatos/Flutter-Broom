@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -14,8 +16,9 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
   bool _isLoading = false;
   String? passwordError;
   String? confirmPasswordError;
@@ -29,6 +32,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   Future<void> _resetPassword() async {
     if (_formKey.currentState!.validate()) {
+      
+      if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() {
+        confirmPasswordError = 'As senhas não correspondem';
+      });
+      return;
+    }
+
       String token = widget.token ?? '';
 
       if (token.isEmpty) {
@@ -43,35 +54,26 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       });
 
       try {
-        final response = await http.post(
-          Uri.parse('http://localhost:3000/reset'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'token': token,
-            'password': _passwordController.text,
-          }),
-        );
-
-        if (response.statusCode == 200) {
+        final isReset = await resetPassword(token, _passwordController.text);
+        if (isReset) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Senha alterada com sucesso!'),
           ));
         } else {
-          print("Erro: ${response.body}"); 
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Falha ao alterar a senha. Tente novamente.'),
-          ));
+          throw Exception();
         }
       } catch (e) {
-        print("Erro na requisição: $e"); 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Erro na conexão. Tente novamente.'),
+          content: Text('Falha ao alterar a senha. Tente novamente..'),
         ));
       } finally {
         setState(() {
           _isLoading = false;
+          //TODO -> Depois vocês veêm se ficou muito escroto com isso ou se e melhor levar o usuário direto pra tela 
+          Future.delayed(Duration(seconds: 1), () {
+            GoRouter.of(context).push('/login');
+          });
+          ;
         });
       }
     }
@@ -107,7 +109,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       errorText: passwordError,
                       onChanged: (value) {
                         setState(() {
-                          passwordError = value.isEmpty ? 'Insira uma senha' : null;
+                          passwordError =
+                              value.isEmpty ? 'Insira uma senha' : null;
                         });
                       },
                     ),
@@ -118,16 +121,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       errorText: confirmPasswordError,
                       onChanged: (value) {
                         setState(() {
-                          confirmPasswordError = value != _passwordController.text
-                              ? 'As senhas não correspondem'
-                              : null;
+                          confirmPasswordError =
+                              value != _passwordController.text
+                                  ? 'As senhas não correspondem'
+                                  : null;
                         });
                       },
                     ),
-                                       SizedBox(height: 20),
+                    SizedBox(height: 20),
                     _isLoading
                         ? CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // Cor do carregador
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white), // Cor do carregador
                           )
                         : SizedBox(
                             width: 350,
@@ -136,12 +141,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               onPressed: _resetPassword,
                               child: Text('Redefinir Senha'),
                               style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(Colors.black),
-                                foregroundColor: MaterialStateProperty.all(Colors.white),
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.black),
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.white),
                               ),
                             ),
                           ),
-
                   ],
                 ),
               ),

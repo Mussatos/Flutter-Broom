@@ -4,8 +4,16 @@ class Modal extends StatelessWidget {
   String? title = '';
   String? message = '';
   Function? click = () => 'default';
+  bool showOneButton = false;
+  String? mainButtonTitle = '';
 
-  Modal({super.key, this.title, this.message, this.click});
+  Modal(
+      {super.key,
+      this.title,
+      this.message,
+      this.click,
+      this.mainButtonTitle,
+      required this.showOneButton});
 
   @override
   Widget build(BuildContext context) {
@@ -30,23 +38,24 @@ class Modal extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'Não',
-                style: TextStyle(color: Colors.white),
+            if (!showOneButton!)
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Não',
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(Color(0xFF2ECC8F))),
               ),
-              style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(Color(0xFF2ECC8F))),
-            ),
             ElevatedButton(
                 onPressed: () {
                   click!();
                 },
-                child: const Text(
-                  'Sim',
+                child: Text(
+                  mainButtonTitle ?? 'Sim',
                   style: TextStyle(color: Colors.white),
                 ),
                 style: ButtonStyle(

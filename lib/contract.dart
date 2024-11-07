@@ -170,22 +170,18 @@ Future<void> sendContract() async {
   String? basketCleanQuantity = basketCleanQuantityController.text;
   String? basketIroningQuantity = basketIroningQuantityController.text;
 
-  if (serviceTypeSelected[1]) { 
-    if (basketCleanQuantity.isEmpty || int.tryParse(basketCleanQuantity) == null) {
-      setState(() {
-        _isBasketCleanQuantityValid = false; 
-      });
-      return; 
-    }
-  }
+  setState(() {
+    _isBasketCleanQuantityValid = serviceTypeSelected[1]
+        ? (basketCleanQuantity.isNotEmpty && int.tryParse(basketCleanQuantity) != null)
+        : true;
 
-  if (serviceTypeSelected[2]) { 
-    if (basketIroningQuantity.isEmpty || int.tryParse(basketIroningQuantity) == null) {
-      setState(() {
-        _isBasketIroningQuantityValid = false; 
-      });
-      return; 
-    }
+    _isBasketIroningQuantityValid = serviceTypeSelected[2]
+        ? (basketIroningQuantity.isNotEmpty && int.tryParse(basketIroningQuantity) != null)
+        : true;
+  });
+
+  if (!_isBasketCleanQuantityValid || !_isBasketIroningQuantityValid) {
+    return; 
   }
 
   if (kitchenController.text.isEmpty &&

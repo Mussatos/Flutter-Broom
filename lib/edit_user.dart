@@ -69,7 +69,7 @@ class _EditUserFormState extends State<EditUserForm> {
     super.dispose();
   }
 
-  void saveUser() {
+  Future<void> saveUser() async{
     if (_formKey.currentState!.validate()) {
       EditUser updatedUser = EditUser(
         name: nameController.text,
@@ -256,9 +256,15 @@ class _EditUserFormState extends State<EditUserForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        saveUser();
-                        sendImage(_selectedFile!);
+                     onPressed: () async {
+                        try {
+                          await saveUser();
+                          if (_selectedFile != null) {
+                            await sendImage(_selectedFile!);
+                          }
+                        } catch (e) {
+                          print("Erro ao salvar ou enviar a imagem: $e");
+                        }
                       },
                       child: Text('Salvar'),
                       style: ButtonStyle(

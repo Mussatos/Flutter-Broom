@@ -24,11 +24,32 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController emailController;
   late TextEditingController cellphoneNumberController;
   late TextEditingController descriptionController;
+  late TextEditingController favoriteDaytimeController;
+  late TextEditingController valueWillingToPayController;
+  late TextEditingController serviceTypeController;
+
   late String userActualImage;
   late bool? wantService;
   File? userImage;
   PlatformFile? _selectedFile;
   String _urlImagem = '';
+  String? serviceType;
+
+  final List<String> serviceOptions = [
+    'Limpeza leve',
+    'Limpeza média',
+    'Limpeza pesada',
+    'Lavar roupas',
+    'Lavar louça',
+    'Passar roupas',
+    'Organização'
+  ]; 
+
+  final List<String> daytimeOptions = [
+    'Manhã',
+    'Tarde',
+    'Integral'
+  ]; 
 
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -43,7 +64,14 @@ class _EditUserFormState extends State<EditUserForm> {
       print('Nenhum arquivo selecionado.');
     }
   }
+  
+int? profileId;
 
+Future<Yourself?> fetchUserById() async {
+      profileId = await autentication.getProfileId();
+      print('id: $profileId');
+      return await getUserById();
+}
 
   @override
   void initState() {
@@ -55,8 +83,20 @@ class _EditUserFormState extends State<EditUserForm> {
         mask: '(00)0 0000-0000', text: widget.usersEdit.cellphoneNumber);
     descriptionController =
         TextEditingController(text: widget.usersEdit.description);
+    favoriteDaytimeController =
+        TextEditingController(text: widget.usersEdit.favoriteDaytime);
+    valueWillingToPayController =
+        TextEditingController(text: widget.usersEdit.valueWillingToPay?.toString() ?? '');
+    serviceTypeController =
+        TextEditingController(text: widget.usersEdit.serviceType);
     wantService = widget.usersEdit.wantService ?? false;
     userActualImage = widget.usersEdit.userActualImage ?? '';
+    print(valueWillingToPayController.text);
+    print(serviceTypeController.text);
+    print(favoriteDaytimeController.text);
+    fetchUserById().then((_) {
+    setState(() {}); 
+  });
   }
 
   @override
@@ -215,6 +255,56 @@ class _EditUserFormState extends State<EditUserForm> {
                       return null;
                     },
                   ),
+                  if(profileId == 1) ...[
+                     SizedBox(height: 10),
+             SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        value: serviceTypeController.text.isNotEmpty ? serviceTypeController.text : null,
+                        decoration: InputDecoration(
+                          labelText: 'Informe o serviço que está procurando',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: serviceOptions.map((String option) {
+                          return DropdownMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            serviceTypeController.text = newValue ?? '';
+                          });
+                        },
+                      ),
+                     SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        value: favoriteDaytimeController.text.isNotEmpty ? favoriteDaytimeController.text : null,
+                        decoration: InputDecoration(
+                          labelText: 'Informe o período de preferência',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: daytimeOptions.map((String option) {
+                          return DropdownMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            favoriteDaytimeController.text = newValue ?? '';
+                          });
+                        },
+                      ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: valueWillingToPayController,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o valor que deseja pagar',
+                        border: OutlineInputBorder(),
+                        prefixText: 'R\$',
+                      ),
+                    ),
+                  ],
                   SizedBox(height: 10),
                   TextFormField(
                     controller: descriptionController,

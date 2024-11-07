@@ -17,6 +17,8 @@ class UserYourself extends StatefulWidget {
 }
 
 class _UserYourselfState extends State<UserYourself> {
+  int? profileId;
+
   @override
   Widget build(BuildContext context) {
     String getListUserFormatedAddress(Map<String, dynamic> address) {
@@ -26,6 +28,12 @@ class _UserYourselfState extends State<UserYourself> {
           userAddress.city == '') return '';
 
       return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
+    }
+
+    Future<Yourself?> fetchUserById() async {
+      profileId = await autentication.getProfileId();
+
+      return await getUserById();
     }
 
     return Scaffold(
@@ -47,7 +55,7 @@ class _UserYourselfState extends State<UserYourself> {
         ),
       ),
       body: FutureBuilder(
-        future: getUserById(),
+        future: fetchUserById(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -73,7 +81,8 @@ class _UserYourselfState extends State<UserYourself> {
                                 lastName: '',
                                 profileId: -1,
                                 userImage: snapshot.data!.userImage,
-                                wantService: false)),
+                                wantService: false,
+                                isFavorite: false)),
                       ),
                       SizedBox(height: 20),
                       Text(
@@ -130,7 +139,73 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         textAlign: TextAlign.justify,
                       ),
-                      SizedBox(height: 40),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      if (profileId == 1) ...[
+                        Text('Contratante'),
+                      ] else ...[
+                        Text(
+                          'Atendo nas seguintes regiões:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10),
+                            RegionTag(text: 'Campo Grande'),
+                            SizedBox(width: 8),
+                            RegionTag(text: 'Toda região da cidade'),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Especialidades:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10),
+                            RegionTag(text: 'Faxinar'),
+                            SizedBox(width: 8),
+                            RegionTag(text: 'Lavar'),
+                            SizedBox(width: 10),
+                            RegionTag(text: 'Limpeza pós-obra'),
+                            SizedBox(width: 8),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RegionTag(text: 'Limpeza residencial'),
+                            SizedBox(width: 10),
+                            RegionTag(text: 'organizar'),
+                            SizedBox(width: 8),
+                            RegionTag(text: 'passar'),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10),
+                            RegionTag(text: 'vidros e fachadas'),
+                          ],
+                        )
+                      ],
+                      SizedBox(height: 150),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -194,6 +269,31 @@ class _UserYourselfState extends State<UserYourself> {
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class RegionTag extends StatelessWidget {
+  final String text;
+
+  const RegionTag({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      decoration: BoxDecoration(
+        color: Color(0xFF2ECC8F),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

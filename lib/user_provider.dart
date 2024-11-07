@@ -22,4 +22,5 @@ class UserProvider extends InheritedWidget {
   bool updateShouldNotify(UserProvider widget) {
     return true;
   }
+
 }

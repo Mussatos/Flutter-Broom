@@ -17,6 +17,8 @@ class UserYourself extends StatefulWidget {
 }
 
 class _UserYourselfState extends State<UserYourself> {
+  int? profileId;
+
   @override
   Widget build(BuildContext context) {
     String getListUserFormatedAddress(Map<String, dynamic> address) {
@@ -26,6 +28,12 @@ class _UserYourselfState extends State<UserYourself> {
           userAddress.city == '') return '';
 
       return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
+    }
+
+    Future<Yourself?> fetchUserById() async {
+      profileId = await autentication.getProfileId();
+      print(profileId);
+      return await getUserById();
     }
 
     return Scaffold(
@@ -47,7 +55,7 @@ class _UserYourselfState extends State<UserYourself> {
         ),
       ),
       body: FutureBuilder(
-        future: getUserById(),
+        future: fetchUserById(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -131,6 +139,14 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         textAlign: TextAlign.justify,
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      if (profileId == 1) ...[
+                        Text('Contratante'),
+                      ] else ...[
+                        Text('Diariosto'),
+                      ],
                       SizedBox(height: 40),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

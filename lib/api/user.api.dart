@@ -34,6 +34,7 @@ Future<bool> register(Map<String, dynamic> user) async {
       await autentication.setToken(response['access_token']);
       await autentication.setProfileId(response['user']['profile_id']);
       await autentication.setUserId(response['user']['id']);
+      await autentication.setUserEmail(response['user']['email']);
       return true;
     } else {
       throw Exception('Falha ao cadastrar usuário');
@@ -58,6 +59,7 @@ Future<bool> login(String email, String password) async {
       await autentication.setToken(response['access_token']);
       await autentication.setProfileId(response['data']['profile_id']);
       await autentication.setUserId(response['data']['id']);
+      await autentication.setUserEmail(response['data']['email']);
 
       return isLogged;
     } else {
@@ -485,6 +487,7 @@ Future<Map<String, dynamic>> fetchCEP(String cep) async {
 }
 
 Future<Map<String, dynamic>> payment() async {
+  String? contratctorEmail = await autentication.getUserEmail();
   try {
     final token = await autentication.getToken();
     var response = await http.post(
@@ -493,6 +496,7 @@ Future<Map<String, dynamic>> payment() async {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       },
+      body: jsonEncode({'contractor_email': contratctorEmail})
     );
 
     if (response.statusCode == 201) {
@@ -510,13 +514,20 @@ Future<Map<String, dynamic>> payment() async {
 Future<String> paymentCheckout(
     Map<String, dynamic> priceData, int quantity) async {
   try {
+    String? contratctorEmail = await autentication.getUserEmail();
+    int? contractorId = await autentication.getUserId();
     final token = await autentication.getToken();
     var response = await http.post(urlPaymentCheckout,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({'price_data': priceData, 'quantity': quantity}));
+        body: jsonEncode({
+          'price_data': priceData,
+          'quantity': quantity,
+          'contractor_id': contractorId,
+          'contractor_email': contratctorEmail
+        }));
 
     if (response.statusCode == 201) {
       var resp = jsonDecode(response.body);

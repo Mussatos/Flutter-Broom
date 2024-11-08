@@ -43,13 +43,9 @@ class _EditUserFormState extends State<EditUserForm> {
     'Lavar louça',
     'Passar roupas',
     'Organização'
-  ]; 
+  ];
 
-  final List<String> daytimeOptions = [
-    'Manhã',
-    'Tarde',
-    'Integral'
-  ]; 
+  final List<String> daytimeOptions = ['Manhã', 'Tarde', 'Integral'];
 
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -64,14 +60,14 @@ class _EditUserFormState extends State<EditUserForm> {
       print('Nenhum arquivo selecionado.');
     }
   }
-  
-int? profileId;
 
-Future<Yourself?> fetchUserById() async {
-      profileId = await autentication.getProfileId();
-      print('id: $profileId');
-      return await getUserById();
-}
+  int? profileId;
+
+  Future<Yourself?> fetchUserById() async {
+    profileId = await autentication.getProfileId();
+    print('id: $profileId');
+    return await getUserById();
+  }
 
   @override
   void initState() {
@@ -85,8 +81,8 @@ Future<Yourself?> fetchUserById() async {
         TextEditingController(text: widget.usersEdit.description);
     favoriteDaytimeController =
         TextEditingController(text: widget.usersEdit.favoriteDaytime);
-    valueWillingToPayController =
-        TextEditingController(text: widget.usersEdit.valueWillingToPay?.toString() ?? '');
+    valueWillingToPayController = TextEditingController(
+        text: widget.usersEdit.valueWillingToPay?.toString() ?? '');
     serviceTypeController =
         TextEditingController(text: widget.usersEdit.serviceType);
     wantService = widget.usersEdit.wantService ?? false;
@@ -95,8 +91,8 @@ Future<Yourself?> fetchUserById() async {
     print(serviceTypeController.text);
     print(favoriteDaytimeController.text);
     fetchUserById().then((_) {
-    setState(() {}); 
-  });
+      setState(() {});
+    });
   }
 
   @override
@@ -109,7 +105,7 @@ Future<Yourself?> fetchUserById() async {
     super.dispose();
   }
 
-  Future<void> saveUser() async{
+  Future<void> saveUser() async {
     if (_formKey.currentState!.validate()) {
       EditUser updatedUser = EditUser(
         name: nameController.text,
@@ -255,46 +251,50 @@ Future<Yourself?> fetchUserById() async {
                       return null;
                     },
                   ),
-                  if(profileId == 1) ...[
-                     SizedBox(height: 10),
-             SizedBox(height: 10),
-                      DropdownButtonFormField<String>(
-                        value: serviceTypeController.text.isNotEmpty ? serviceTypeController.text : null,
-                        decoration: InputDecoration(
-                          labelText: 'Informe o serviço que está procurando',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: serviceOptions.map((String option) {
-                          return DropdownMenuItem<String>(
-                            value: option,
-                            child: Text(option),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            serviceTypeController.text = newValue ?? '';
-                          });
-                        },
+                  if (profileId == 1) ...[
+                    SizedBox(height: 10),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      value: serviceTypeController.text.isNotEmpty
+                          ? serviceTypeController.text
+                          : null,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o serviço que está procurando',
+                        border: OutlineInputBorder(),
                       ),
-                     SizedBox(height: 10),
-                      DropdownButtonFormField<String>(
-                        value: favoriteDaytimeController.text.isNotEmpty ? favoriteDaytimeController.text : null,
-                        decoration: InputDecoration(
-                          labelText: 'Informe o período de preferência',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: daytimeOptions.map((String option) {
-                          return DropdownMenuItem<String>(
-                            value: option,
-                            child: Text(option),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            favoriteDaytimeController.text = newValue ?? '';
-                          });
-                        },
+                      items: serviceOptions.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          serviceTypeController.text = newValue ?? '';
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      value: favoriteDaytimeController.text.isNotEmpty
+                          ? favoriteDaytimeController.text
+                          : null,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o período de preferência',
+                        border: OutlineInputBorder(),
                       ),
+                      items: daytimeOptions.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          favoriteDaytimeController.text = newValue ?? '';
+                        });
+                      },
+                    ),
                     SizedBox(height: 10),
                     TextFormField(
                       controller: valueWillingToPayController,
@@ -346,7 +346,7 @@ Future<Yourself?> fetchUserById() async {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                     onPressed: () async {
+                      onPressed: () async {
                         try {
                           await saveUser();
                           if (_selectedFile != null) {

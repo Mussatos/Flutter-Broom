@@ -19,12 +19,20 @@ class _ContractState extends State<Contract> {
   final TextEditingController kitchenController = TextEditingController();
   final TextEditingController toiletController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
-  final TextEditingController clothController = TextEditingController();
-  final TextEditingController clothCleanController = TextEditingController();
   final TextEditingController obsController = TextEditingController();
+  final TextEditingController basketCleanQuantityController =
+      TextEditingController();
+  final TextEditingController basketIroningQuantityController =
+      TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
   bool _ready = false;
+  Map<String, bool> invalidRooms = {
+    'bedroom': false,
+    'kitchen': false,
+    'toilet': false,
+    'room': false
+  };
 
   List<String> serviceType = [
     'Limpeza',
@@ -53,20 +61,50 @@ class _ContractState extends State<Contract> {
     'Cesto grande'
   ]; //Passar roupa
 
-  
+  bool _isBasketCleanQuantityValid = true;
+  bool _isBasketIroningQuantityValid = true;
+
   @override
   void dispose() {
     bedroomController.dispose();
     kitchenController.dispose();
     toiletController.dispose();
     roomController.dispose();
-    clothCleanController.dispose();
-    clothCleanController.dispose();
+    basketCleanQuantityController.dispose();
+    basketIroningQuantityController.dispose();
     obsController.dispose();
     super.dispose();
   }
-  
+
   ApiService apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    basketCleanQuantityController.addListener(_validateBasketQuantities);
+    basketIroningQuantityController.addListener(_validateBasketQuantities);
+    bedroomController.addListener(roomsValidation);
+    roomController.addListener(roomsValidation);
+    kitchenController.addListener(roomsValidation);
+    toiletController.addListener(roomsValidation);
+  }
+
+  void _validateBasketQuantities() {
+    bool isLavarRoupaSelected = serviceTypeSelected[1];
+    bool isPassarRoupaSelected = serviceTypeSelected[2];
+
+    setState(() {
+      _isBasketCleanQuantityValid = isLavarRoupaSelected
+          ? (basketCleanQuantityController.text.isNotEmpty &&
+              int.tryParse(basketCleanQuantityController.text) != null)
+          : true;
+
+      _isBasketIroningQuantityValid = isPassarRoupaSelected
+          ? (basketIroningQuantityController.text.isNotEmpty &&
+              int.tryParse(basketIroningQuantityController.text) != null)
+          : true;
+    });
+  }
 
   Future<void> initPaymentSheet() async {
     try {
@@ -140,8 +178,7 @@ class _ContractState extends State<Contract> {
 
     final data = await paymentCheckout(priceData, quantity);
 
-  if(data.isNotEmpty)
-    await launchUrlString(data);
+    if (data.isNotEmpty) await launchUrlString(data);
   }
 
   Future<void> sendContract() async {
@@ -152,26 +189,50 @@ class _ContractState extends State<Contract> {
       }
     }
 
-    if (kitchenController.text.isEmpty &&
-        bedroomController.text.isEmpty &&
-        roomController.text.isEmpty &&
-        toiletController.text.isEmpty) {
+    String? basketCleanQuantity = basketCleanQuantityController.text;
+    String? basketIroningQuantity = basketIroningQuantityController.text;
+
+    setState(() {
+      _isBasketCleanQuantityValid = serviceTypeSelected[1]
+          ? (basketCleanQuantity.isNotEmpty &&
+              int.tryParse(basketCleanQuantity) != null)
+          : true;
+
+      _isBasketIroningQuantityValid = serviceTypeSelected[2]
+          ? (basketIroningQuantity.isNotEmpty &&
+              int.tryParse(basketIroningQuantity) != null)
+          : true;
+    });
+
+    if (!_isBasketCleanQuantityValid || !_isBasketIroningQuantityValid) {
+      return;
+    }
+
+    if (hasInsertedAtLeastOneRoomNumber()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-              'Por Favor, inserir ao menos um comodo com quantidade válida para prosseguir com o contrato.'),
+              'Por Favor, inserir ao menos um cômodo com quantidade válida para prosseguir com o contrato.'),
         ),
       );
       return;
     }
 
+    if (invalidRooms.containsValue(true)) return;
+    
     String? whatsappUrl = await apiService.sendContract(
       tiposDeServico: selectedServices,
       tipoLimpeza: cleanTypeSelected,
       possuiPets: petsController ?? false,
       possuiMaterialLimpeza: materialController ?? false,
-      quantidadeRoupaLavar: int.tryParse(clothController.text) ?? 0,
-      quantidadeRoupaPassar: int.tryParse(clothCleanController.text) ?? 0,
+      tipoCestoLavar: cleanBasketTypeSelected,
+      tipoCestoPassar: ironingBasketTypeSelected,
+      qntCestoLavar: (serviceTypeSelected[1]
+          ? int.tryParse(basketCleanQuantityController.text) ?? 0
+          : 0),
+      qntCestoPassar: (serviceTypeSelected[2]
+          ? int.tryParse(basketIroningQuantityController.text) ?? 0
+          : 0),
       quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
       quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
       quantidadeSala: int.tryParse(roomController.text) ?? 0,
@@ -189,6 +250,24 @@ class _ContractState extends State<Contract> {
         ),
       );
     }
+  }
+
+  void roomsValidation() {
+    final notNumber = RegExp(r'[^0-9]');
+
+    setState(() {
+      invalidRooms['kitchen'] = notNumber.hasMatch(kitchenController.text);
+      invalidRooms['bedroom'] = notNumber.hasMatch(bedroomController.text);
+      invalidRooms['room'] = notNumber.hasMatch(roomController.text);
+      invalidRooms['toilet'] = notNumber.hasMatch(toiletController.text);
+    });
+  }
+
+  bool hasInsertedAtLeastOneRoomNumber() {
+    return kitchenController.text.isEmpty &&
+        bedroomController.text.isEmpty &&
+        roomController.text.isEmpty &&
+        toiletController.text.isEmpty;
   }
 
   void launchWhatsApp(String url) async {
@@ -223,6 +302,7 @@ class _ContractState extends State<Contract> {
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(35.0),
+          color: Colors.white,
           child: Column(
             children: [
               Text(
@@ -237,9 +317,11 @@ class _ContractState extends State<Contract> {
                       controller: bedroomController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Quarto',
-                        border: OutlineInputBorder(),
-                      ),
+                          labelText: 'Quarto',
+                          border: OutlineInputBorder(),
+                          errorText: invalidRooms['bedroom']!
+                              ? 'Valor inválido'
+                              : null),
                     ),
                   ),
                   SizedBox(width: 10),
@@ -248,9 +330,11 @@ class _ContractState extends State<Contract> {
                       controller: kitchenController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Cozinha',
-                        border: OutlineInputBorder(),
-                      ),
+                          labelText: 'Cozinha',
+                          border: OutlineInputBorder(),
+                          errorText: invalidRooms['kitchen']!
+                              ? 'Valor inválido'
+                              : null),
                     ),
                   ),
                 ],
@@ -263,9 +347,11 @@ class _ContractState extends State<Contract> {
                       controller: toiletController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Banheiro',
-                        border: OutlineInputBorder(),
-                      ),
+                          labelText: 'Banheiro',
+                          border: OutlineInputBorder(),
+                          errorText: invalidRooms['toilet']!
+                              ? 'Valor inválido'
+                              : null),
                     ),
                   ),
                   SizedBox(width: 10),
@@ -274,9 +360,10 @@ class _ContractState extends State<Contract> {
                       controller: roomController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Sala',
-                        border: OutlineInputBorder(),
-                      ),
+                          labelText: 'Sala',
+                          border: OutlineInputBorder(),
+                          errorText:
+                              invalidRooms['room']! ? 'Valor inválido' : null),
                     ),
                   ),
                 ],
@@ -289,6 +376,7 @@ class _ContractState extends State<Contract> {
                     children: [
                       Checkbox(
                         value: petsController,
+                        activeColor: Colors.greenAccent,
                         onChanged: (bool? value) {
                           setState(() {
                             petsController = value!;
@@ -302,6 +390,7 @@ class _ContractState extends State<Contract> {
                     children: [
                       Checkbox(
                         value: materialController,
+                        activeColor: Colors.greenAccent,
                         onChanged: (bool? value) {
                           setState(() {
                             materialController = value!;
@@ -345,8 +434,10 @@ class _ContractState extends State<Contract> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4)),
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                              color: Colors.white,
+                            ),
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
@@ -360,6 +451,7 @@ class _ContractState extends State<Contract> {
                                   Icons.arrow_drop_down,
                                   color: Colors.black,
                                 ),
+                                dropdownColor: Colors.white,
                                 onChanged: (String? newValue) {
                                   setState(() {
                                     cleanTypeSelected = newValue!;
@@ -377,75 +469,109 @@ class _ContractState extends State<Contract> {
                         ),
                       if (serviceType[index] == 'Lavar roupa' &&
                           serviceTypeSelected[index])
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
+                        Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4)),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: cleanBasketTypeSelected,
-                                isExpanded: true,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
+                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white,
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: cleanBasketTypeSelected,
+                                  isExpanded: true,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black,
+                                  ),
+                                  dropdownColor: Colors.white,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      cleanBasketTypeSelected = newValue!;
+                                    });
+                                  },
+                                  items: cleanBasketType.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                 ),
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black,
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    cleanBasketTypeSelected = newValue!;
-                                  });
-                                },
-                                items: cleanBasketType.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              controller: basketCleanQuantityController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Quantidade de cestos para lavar',
+                                border: OutlineInputBorder(),
+                                errorText: !_isBasketCleanQuantityValid
+                                    ? 'Valor inválido'
+                                    : null,
+                              ),
+                            ),
+                          ],
                         ),
                       if (serviceType[index] == 'Passar roupa' &&
                           serviceTypeSelected[index])
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
+                        Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4)),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: ironingBasketTypeSelected,
-                                isExpanded: true,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
+                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white,
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: ironingBasketTypeSelected,
+                                  isExpanded: true,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                  icon: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: Colors.black,
+                                  ),
+                                  dropdownColor: Colors.white,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      ironingBasketTypeSelected = newValue!;
+                                    });
+                                  },
+                                  items: ironingBasketType.map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                 ),
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black,
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    ironingBasketTypeSelected = newValue!;
-                                  });
-                                },
-                                items: ironingBasketType.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              controller: basketIroningQuantityController,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                labelText: 'Quantidade de cestos para passar',
+                                errorText: !_isBasketIroningQuantityValid
+                                    ? 'Valor inválido'
+                                    : null,
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                          ],
                         ),
                     ],
                   );

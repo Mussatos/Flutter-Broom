@@ -24,11 +24,32 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController emailController;
   late TextEditingController cellphoneNumberController;
   late TextEditingController descriptionController;
+  late TextEditingController favoriteDaytimeController;
+  late TextEditingController valueWillingToPayController;
+  late TextEditingController serviceTypeController;
+
   late String userActualImage;
   late bool? wantService;
   File? userImage;
   PlatformFile? _selectedFile;
   String _urlImagem = '';
+  String? serviceType;
+
+  final List<String> serviceOptions = [
+    'Limpeza leve',
+    'Limpeza média',
+    'Limpeza pesada',
+    'Lavar roupas',
+    'Lavar louça',
+    'Passar roupas',
+    'Organização'
+  ]; 
+
+  final List<String> daytimeOptions = [
+    'Manhã',
+    'Tarde',
+    'Integral'
+  ]; 
 
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -43,7 +64,14 @@ class _EditUserFormState extends State<EditUserForm> {
       print('Nenhum arquivo selecionado.');
     }
   }
+  
+int? profileId;
 
+Future<Yourself?> fetchUserById() async {
+      profileId = await autentication.getProfileId();
+      print('id: $profileId');
+      return await getUserById();
+}
 
   @override
   void initState() {
@@ -55,8 +83,20 @@ class _EditUserFormState extends State<EditUserForm> {
         mask: '(00)0 0000-0000', text: widget.usersEdit.cellphoneNumber);
     descriptionController =
         TextEditingController(text: widget.usersEdit.description);
+    favoriteDaytimeController =
+        TextEditingController(text: widget.usersEdit.favoriteDaytime);
+    valueWillingToPayController =
+        TextEditingController(text: widget.usersEdit.valueWillingToPay?.toString() ?? '');
+    serviceTypeController =
+        TextEditingController(text: widget.usersEdit.serviceType);
     wantService = widget.usersEdit.wantService ?? false;
-    userActualImage = widget.usersEdit.userActualImage!;
+    userActualImage = widget.usersEdit.userActualImage ?? '';
+    print(valueWillingToPayController.text);
+    print(serviceTypeController.text);
+    print(favoriteDaytimeController.text);
+    fetchUserById().then((_) {
+    setState(() {}); 
+  });
   }
 
   @override
@@ -69,7 +109,7 @@ class _EditUserFormState extends State<EditUserForm> {
     super.dispose();
   }
 
-  void saveUser() {
+  Future<void> saveUser() async{
     if (_formKey.currentState!.validate()) {
       EditUser updatedUser = EditUser(
         name: nameController.text,
@@ -108,166 +148,227 @@ class _EditUserFormState extends State<EditUserForm> {
           ),
         ),
       ),
-      body: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Stack(children: [
-                  GestureDetector(
-                    onTap: () {
-                      _pickImage();
-                    },
-                    child: _selectedFile != null
-                        ? CircleAvatar(
-                            radius: 50,
-                            child: Container(
-                              width: 80,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      image:
-                                          MemoryImage(_selectedFile!.bytes!))),
-                            ),
-                          )
-                        : CircleAvatar(
-                            radius: 50,
-                            child: UserImage(
-                                user: ListUsers(
-                                    id: -1,
-                                    address: [],
-                                    firstName: '',
-                                    lastName: '',
-                                    profileId: -1,
-                                    userImage: userActualImage,
-                                    wantService: false)),
-                          ),
-                  ),
-                  Positioned(
-                    bottom: 5,
-                    right: 5,
-                    child: IconButton(
-                        onPressed: () {
-                          _pickImage();
-                        },
-                        icon: const Icon(
-                          Icons.add_a_photo,
-                          color: Color(0xFF2ECC8F),
-                        )),
-                  )
-                ]),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Nome',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe o nome';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: lastNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Sobrenome',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe o sobrenome';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: emailController,
-                  decoration: InputDecoration(
-                    labelText: 'E-mail',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe o e-mail';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: cellphoneNumberController,
-                  decoration: InputDecoration(
-                    labelText: 'Número de celular',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe o número de celular';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Descrição',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Informe a descrição';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                Row(
-                  children: [
-                    Text(
-                      'Quer serviço?',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Switch(
-                      activeColor: Color(0xFF2ECC8F),
-                      value: wantService!,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          wantService = value ?? false;
-                        });
+      body: SingleChildScrollView(
+        child: Container(
+            padding: const EdgeInsets.all(20.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Stack(children: [
+                    GestureDetector(
+                      onTap: () {
+                        _pickImage();
                       },
+                      child: _selectedFile != null
+                          ? CircleAvatar(
+                              radius: 50,
+                              child: Container(
+                                width: 80,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        image: MemoryImage(
+                                            _selectedFile!.bytes!))),
+                              ),
+                            )
+                          : CircleAvatar(
+                              radius: 50,
+                              child: UserImage(
+                                  user: ListUsers(
+                                      id: -1,
+                                      address: [],
+                                      firstName: '',
+                                      lastName: '',
+                                      profileId: -1,
+                                      userImage: userActualImage ?? '',
+                                      wantService: false,
+                                      isFavorite: false)),
+                            ),
+                    ),
+                    Positioned(
+                      bottom: 5,
+                      right: 5,
+                      child: IconButton(
+                          onPressed: () {
+                            _pickImage();
+                          },
+                          icon: const Icon(
+                            Icons.add_a_photo,
+                            color: Color(0xFF2ECC8F),
+                          )),
+                    )
+                  ]),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Nome',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Informe o nome';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: lastNameController,
+                    decoration: InputDecoration(
+                      labelText: 'Sobrenome',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Informe o sobrenome';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: 'E-mail',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Informe o e-mail';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: cellphoneNumberController,
+                    decoration: InputDecoration(
+                      labelText: 'Número de celular',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Informe o número de celular';
+                      }
+                      return null;
+                    },
+                  ),
+                  if(profileId == 1) ...[
+                     SizedBox(height: 10),
+             SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        value: serviceTypeController.text.isNotEmpty ? serviceTypeController.text : null,
+                        decoration: InputDecoration(
+                          labelText: 'Informe o serviço que está procurando',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: serviceOptions.map((String option) {
+                          return DropdownMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            serviceTypeController.text = newValue ?? '';
+                          });
+                        },
+                      ),
+                     SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        value: favoriteDaytimeController.text.isNotEmpty ? favoriteDaytimeController.text : null,
+                        decoration: InputDecoration(
+                          labelText: 'Informe o período de preferência',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: daytimeOptions.map((String option) {
+                          return DropdownMenuItem<String>(
+                            value: option,
+                            child: Text(option),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            favoriteDaytimeController.text = newValue ?? '';
+                          });
+                        },
+                      ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: valueWillingToPayController,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o valor que deseja pagar',
+                        border: OutlineInputBorder(),
+                        prefixText: 'R\$',
+                      ),
                     ),
                   ],
-                ),
-                SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      saveUser();
-                      sendImage(_selectedFile!);
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: descriptionController,
+                    decoration: InputDecoration(
+                      labelText: 'Descrição',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Informe a descrição';
+                      }
+                      return null;
                     },
-                    child: Text('Salvar'),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.black),
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text(
+                        'Quer serviço?',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Switch(
+                        activeColor: Color(0xFF2ECC8F),
+                        value: wantService!,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            wantService = value ?? false;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                     onPressed: () async {
+                        try {
+                          await saveUser();
+                          if (_selectedFile != null) {
+                            await sendImage(_selectedFile!);
+                          }
+                        } catch (e) {
+                          print("Erro ao salvar ou enviar a imagem: $e");
+                        }
+                      },
+                      child: Text('Salvar'),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.black),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          )),
+                ],
+              ),
+            )),
+      ),
     );
   }
 }

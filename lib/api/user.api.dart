@@ -16,8 +16,6 @@ UserAutentication autentication = UserAutentication();
 const String host = 'localhost:3000';
 Uri urlRegister = Uri.http(host, '/register');
 Uri urlLogin = Uri.http(host, '/login');
-Uri urlListContractors = Uri.http(host, '/list/contractors');
-Uri urlListDiarists = Uri.http(host, '/list/diarists');
 Uri urlViewDiarist = Uri.http(host, '');
 Uri urlForgetPassword = Uri.http(host, '/forget');
 Uri urlResetPassword = Uri.http(host, '/reset');
@@ -112,9 +110,10 @@ Future<bool> resetPassword(String token, String password) async {
 Future<List<ListUsers>> fetchUsuarios() async {
   final token = await autentication.getToken();
   final userProfileId = await autentication.getProfileId();
+  final userId = await autentication.getUserId();
   try {
     final response = await http.get(
-      getListUrl(userProfileId),
+      getListUrl(userProfileId, userId),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -133,8 +132,10 @@ Future<List<ListUsers>> fetchUsuarios() async {
   }
 }
 
-Uri getListUrl(int? userProfileId) {
-  return userProfileId == 1 ? urlListDiarists : urlListContractors;
+Uri getListUrl(int? userProfileId, int? userId) {
+  return userProfileId == 1
+      ? Uri.http(host, '/list/diarists', {'id': userId.toString()})
+      : Uri.http(host, '/list/contractors', {'id': userId.toString()});
 }
 
 Future<Uint8List?> fetchUserImage(String imageName) async {
@@ -250,7 +251,7 @@ Future<Address?> getAddressByUserId() async {
 Future<Yourself?> getUserById() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http(host,'/user/$userId');
+  final url = Uri.http(host, '/user/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -278,7 +279,7 @@ Future<Yourself?> getUserById() async {
 Future<List<Address>> fetchAddress() async {
   final id = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http('host', '/address/$id'); 
+  final url = Uri.http(host, '/address/$id');
 
   try {
     final response = await http.get(
@@ -303,7 +304,7 @@ Future<List<Address>> fetchAddress() async {
 
 Future<void> deleteAddress(int? idDoEndereco) async {
   final token = await autentication.getToken();
-  final url = Uri.http(host,'/address/$idDoEndereco'); 
+  final url = Uri.http(host, '/address/$idDoEndereco');
 
   try {
     final response = await http.delete(
@@ -383,8 +384,10 @@ class ApiService {
     required String? tipoLimpeza,
     required bool? possuiPets,
     required bool? possuiMaterialLimpeza,
-    required int? quantidadeRoupaLavar,
-    required int? quantidadeRoupaPassar,
+    required String? tipoCestoLavar,
+    required String? tipoCestoPassar,
+    required int? qntCestoLavar,
+    required int? qntCestoPassar,
     required int? quantidadeQuarto,
     required int? quantidadeBanheiro,
     required int? quantidadeSala,
@@ -399,8 +402,10 @@ class ApiService {
       "tipoLimpeza": tipoLimpeza,
       "possuiPets": possuiPets,
       "possuiMaterialLimpeza": possuiMaterialLimpeza,
-      "qntRoupaLavar": quantidadeRoupaLavar,
-      "qntRoupaPassar": quantidadeRoupaPassar,
+      "tipoCestoLavar": tipoCestoLavar,
+      "tipoCestoPassar": tipoCestoPassar,
+      "qntCestoLavar": qntCestoLavar,
+      "qntCestoPassar": qntCestoPassar,
       "comodos": [
         {
           "tipo": "quarto",
@@ -522,5 +527,82 @@ Future<String> paymentCheckout(
   } catch (e) {
     print(e);
     return "";
+  }
+}
+
+Future<List<ListUsers>> getUserFavorite() async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  try {
+    final response = await http.get(
+      urlFavorite,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => ListUsers.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return [];
+  }
+}
+
+Future<bool> setUserFavorite(int? favoritedId) async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  try {
+    final response = await http.post(
+      urlFavorite,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'favorited_id': favoritedId,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
+Future<bool> deleteUserFavorite(int? favoritedId) async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  try {
+    final response = await http.delete(
+      urlFavorite,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'favorited_id': favoritedId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return false;
   }
 }

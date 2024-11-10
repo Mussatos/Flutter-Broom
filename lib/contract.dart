@@ -20,8 +20,10 @@ class _ContractState extends State<Contract> {
   final TextEditingController toiletController = TextEditingController();
   final TextEditingController roomController = TextEditingController();
   final TextEditingController obsController = TextEditingController();
-  final TextEditingController basketCleanQuantityController = TextEditingController(); 
-  final TextEditingController basketIroningQuantityController = TextEditingController();
+  final TextEditingController basketCleanQuantityController =
+      TextEditingController();
+  final TextEditingController basketIroningQuantityController =
+      TextEditingController();
   bool? petsController = false;
   bool? materialController = false;
   bool _ready = false;
@@ -53,7 +55,34 @@ class _ContractState extends State<Contract> {
     'Cesto grande'
   ]; //Passar roupa
 
+  bool _isBasketCleanQuantityValid = true;
+  bool _isBasketIroningQuantityValid = true;
+
   ApiService apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    basketCleanQuantityController.addListener(_validateBasketQuantities);
+    basketIroningQuantityController.addListener(_validateBasketQuantities);
+  }
+
+  void _validateBasketQuantities() {
+    bool isLavarRoupaSelected = serviceTypeSelected[1];
+    bool isPassarRoupaSelected = serviceTypeSelected[2];
+
+    setState(() {
+      _isBasketCleanQuantityValid = isLavarRoupaSelected
+          ? (basketCleanQuantityController.text.isNotEmpty &&
+              int.tryParse(basketCleanQuantityController.text) != null)
+          : true;
+
+      _isBasketIroningQuantityValid = isPassarRoupaSelected
+          ? (basketIroningQuantityController.text.isNotEmpty &&
+              int.tryParse(basketIroningQuantityController.text) != null)
+          : true;
+    });
+  }
 
   Future<void> initPaymentSheet() async {
     try {
@@ -130,54 +159,73 @@ class _ContractState extends State<Contract> {
     if (data.isNotEmpty) await launchUrlString(data);
   }
 
-  Future<void> sendContract() async {
-    List<String> selectedServices = [];
-    for (int i = 0; i < serviceType.length; i++) {
-      if (serviceTypeSelected[i]) {
-        selectedServices.add(serviceType[i]);
-      }
-    }
-
-    if (kitchenController.text.isEmpty &&
-        bedroomController.text.isEmpty &&
-        roomController.text.isEmpty &&
-        toiletController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Por Favor, inserir ao menos um comodo com quantidade válida para prosseguir com o contrato.'),
-        ),
-      );
-      return;
-    }
-
-    String? whatsappUrl = await apiService.sendContract(
-      tiposDeServico: selectedServices,
-      tipoLimpeza: cleanTypeSelected,
-      possuiPets: petsController ?? false,
-      possuiMaterialLimpeza: materialController ?? false,
-      tipoCestoLavar: cleanBasketTypeSelected,
-      tipoCestoPassar: ironingBasketTypeSelected,
-      qntCestoLavar: int.tryParse(basketCleanQuantityController.text) ?? 0,
-      qntCestoPassar: int.tryParse(basketIroningQuantityController.text) ?? 0,
-      quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
-      quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
-      quantidadeSala: int.tryParse(roomController.text) ?? 0,
-      mensagem: obsController.text,
-      id: widget.idDoUser,
-    );
-
-    if (whatsappUrl!.isNotEmpty) {
-      launchWhatsApp(whatsappUrl!);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
-        ),
-      );
+Future<void> sendContract() async {
+  List<String> selectedServices = [];
+  for (int i = 0; i < serviceType.length; i++) {
+    if (serviceTypeSelected[i]) {
+      selectedServices.add(serviceType[i]);
     }
   }
+
+  String? basketCleanQuantity = basketCleanQuantityController.text;
+  String? basketIroningQuantity = basketIroningQuantityController.text;
+
+  setState(() {
+    _isBasketCleanQuantityValid = serviceTypeSelected[1]
+        ? (basketCleanQuantity.isNotEmpty && int.tryParse(basketCleanQuantity) != null)
+        : true;
+
+    _isBasketIroningQuantityValid = serviceTypeSelected[2]
+        ? (basketIroningQuantity.isNotEmpty && int.tryParse(basketIroningQuantity) != null)
+        : true;
+  });
+
+  if (!_isBasketCleanQuantityValid || !_isBasketIroningQuantityValid) {
+    return; 
+  }
+
+  if (kitchenController.text.isEmpty &&
+      bedroomController.text.isEmpty &&
+      roomController.text.isEmpty &&
+      toiletController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Por Favor, inserir ao menos um cômodo com quantidade válida para prosseguir com o contrato.'),
+      ),
+    );
+    return;
+  }
+
+  String? whatsappUrl = await apiService.sendContract(
+    tiposDeServico: selectedServices,
+    tipoLimpeza: cleanTypeSelected,
+    possuiPets: petsController ?? false,
+    possuiMaterialLimpeza: materialController ?? false,
+    tipoCestoLavar: cleanBasketTypeSelected,
+    tipoCestoPassar: ironingBasketTypeSelected,
+    qntCestoLavar: (serviceTypeSelected[1]
+        ? int.tryParse(basketCleanQuantityController.text) ?? 0
+        : 0),
+    qntCestoPassar: (serviceTypeSelected[2]
+        ? int.tryParse(basketIroningQuantityController.text) ?? 0
+        : 0),
+    quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
+    quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
+    quantidadeSala: int.tryParse(roomController.text) ?? 0,
+    mensagem: obsController.text,
+    id: widget.idDoUser,
+  );
+
+  if (whatsappUrl!.isNotEmpty) {
+    launchWhatsApp(whatsappUrl!);
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
+      ),
+    );
+  }
+}
 
   void launchWhatsApp(String url) async {
     if (await canLaunch(url)) {
@@ -211,6 +259,7 @@ class _ContractState extends State<Contract> {
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(35.0),
+          color: Colors.white,
           child: Column(
             children: [
               Text(
@@ -277,6 +326,7 @@ class _ContractState extends State<Contract> {
                     children: [
                       Checkbox(
                         value: petsController,
+                        activeColor: Colors.greenAccent,
                         onChanged: (bool? value) {
                           setState(() {
                             petsController = value!;
@@ -290,6 +340,7 @@ class _ContractState extends State<Contract> {
                     children: [
                       Checkbox(
                         value: materialController,
+                        activeColor: Colors.greenAccent,
                         onChanged: (bool? value) {
                           setState(() {
                             materialController = value!;
@@ -334,7 +385,9 @@ class _ContractState extends State<Contract> {
                           child: Container(
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4)),
+                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white,
+                                ),
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
@@ -348,6 +401,7 @@ class _ContractState extends State<Contract> {
                                   Icons.arrow_drop_down,
                                   color: Colors.black,
                                 ),
+                                dropdownColor: Colors.white,
                                 onChanged: (String? newValue) {
                                   setState(() {
                                     cleanTypeSelected = newValue!;
@@ -370,7 +424,9 @@ class _ContractState extends State<Contract> {
                             Container(
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(4)),
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: Colors.white,
+                                  ),
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
@@ -384,6 +440,7 @@ class _ContractState extends State<Contract> {
                                     Icons.arrow_drop_down,
                                     color: Colors.black,
                                   ),
+                                  dropdownColor: Colors.white,
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       cleanBasketTypeSelected = newValue!;
@@ -405,6 +462,9 @@ class _ContractState extends State<Contract> {
                               decoration: InputDecoration(
                                 labelText: 'Quantidade de cestos para lavar',
                                 border: OutlineInputBorder(),
+                                errorText: !_isBasketCleanQuantityValid
+                                    ? 'Valor inválido'
+                                    : null,
                               ),
                             ),
                           ],
@@ -416,7 +476,9 @@ class _ContractState extends State<Contract> {
                             Container(
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(4)),
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: Colors.white,
+                                  ),
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
@@ -430,6 +492,7 @@ class _ContractState extends State<Contract> {
                                     Icons.arrow_drop_down,
                                     color: Colors.black,
                                   ),
+                                  dropdownColor: Colors.white,
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       ironingBasketTypeSelected = newValue!;
@@ -450,6 +513,9 @@ class _ContractState extends State<Contract> {
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Quantidade de cestos para passar',
+                                errorText: !_isBasketIroningQuantityValid
+                                    ? 'Valor inválido'
+                                    : null,
                                 border: OutlineInputBorder(),
                               ),
                             ),

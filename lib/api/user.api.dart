@@ -606,3 +606,60 @@ Future<bool> deleteUserFavorite(int? favoritedId) async {
     return false;
   }
 }
+
+Future<void> sendCustomContractorProfile({
+  required String? serviceType,
+  required String? favoriteDaytime,
+  required int valueWillingToPay,
+}) async {
+
+  final url = Uri.http(host, '/contractor/profile/custom');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+
+  final body = jsonEncode({
+    'service_type': serviceType,
+    'favorite_daytime': favoriteDaytime,
+    'value_willing_to_pay': valueWillingToPay,
+    'contractor_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<Map<String, dynamic>?> fetchCustomContractorProfile(int userId) async {
+  final url = Uri.http(host, '/contractor/profile/custom/$userId');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body);
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return null;
+  }
+}

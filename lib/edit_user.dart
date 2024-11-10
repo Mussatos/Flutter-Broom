@@ -24,11 +24,27 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController emailController;
   late TextEditingController cellphoneNumberController;
   late TextEditingController descriptionController;
+  late TextEditingController valueWillingToPayController;
+  String? serviceTypeSelected;
+  String? favoriteDaytimeSelected;
+
   late String userActualImage;
   late bool? wantService;
   File? userImage;
   PlatformFile? _selectedFile;
   String _urlImagem = '';
+
+  List<String> serviceType = [
+    'Limpeza leve',
+    'Limpeza média',
+    'Limpeza pesada',
+    'Lavar roupas',
+    'Lavar louça',
+    'Passar roupas',
+    'Organização'
+  ];
+
+  List<String> daytimeType = ['Manhã', 'Tarde', 'Integral'];
 
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -44,6 +60,14 @@ class _EditUserFormState extends State<EditUserForm> {
     }
   }
 
+  int? profileId;
+
+  Future<Yourself?> fetchUserById() async {
+    profileId = await autentication.getProfileId();
+    print('id: $profileId');
+    print(getUserById());
+    return await getUserById();
+  }
 
   @override
   void initState() {
@@ -55,8 +79,20 @@ class _EditUserFormState extends State<EditUserForm> {
         mask: '(00)0 0000-0000', text: widget.usersEdit.cellphoneNumber);
     descriptionController =
         TextEditingController(text: widget.usersEdit.description);
+    valueWillingToPayController = TextEditingController(
+        text: widget.usersEdit.valueWillingToPay?.toString() ?? '');
+
+    serviceTypeSelected = widget.usersEdit.serviceType;
+    favoriteDaytimeSelected = widget.usersEdit.favoriteDaytime;
+
     wantService = widget.usersEdit.wantService ?? false;
     userActualImage = widget.usersEdit.userActualImage ?? '';
+    print(valueWillingToPayController.text);
+    print(serviceTypeSelected);
+    print(favoriteDaytimeSelected);
+    fetchUserById().then((_) {
+      setState(() {});
+    });
   }
 
   @override
@@ -69,7 +105,7 @@ class _EditUserFormState extends State<EditUserForm> {
     super.dispose();
   }
 
-  void saveUser() {
+  Future<void> saveUser() async {
     if (_formKey.currentState!.validate()) {
       EditUser updatedUser = EditUser(
         name: nameController.text,
@@ -82,6 +118,15 @@ class _EditUserFormState extends State<EditUserForm> {
       );
 
       updateUser(updatedUser.toJson());
+
+      if (profileId == 1) {
+        await sendCustomContractorProfile(
+          serviceType: serviceTypeSelected,
+          favoriteDaytime: favoriteDaytimeSelected,
+          valueWillingToPay:
+              int.tryParse(valueWillingToPayController.text) ?? 0,
+        );
+      }
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => UserYourself()));
@@ -215,6 +260,55 @@ class _EditUserFormState extends State<EditUserForm> {
                       return null;
                     },
                   ),
+                  if (profileId == 1) ...[
+                    SizedBox(height: 10),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      value: serviceTypeSelected,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o serviço que está procurando',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: serviceType
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                            value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          serviceTypeSelected = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      value: favoriteDaytimeSelected,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o período de preferência',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: daytimeType.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          favoriteDaytimeSelected = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: valueWillingToPayController,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o valor que deseja pagar',
+                        border: OutlineInputBorder(),
+                        prefixText: 'R\$',
+                      ),
+                    ),
+                  ],
                   SizedBox(height: 10),
                   TextFormField(
                     controller: descriptionController,
@@ -256,9 +350,15 @@ class _EditUserFormState extends State<EditUserForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        saveUser();
-                        sendImage(_selectedFile!);
+                     onPressed: () async {
+                        try {
+                          await saveUser();
+                          if (_selectedFile != null) {
+                            await sendImage(_selectedFile!);
+                          }
+                        } catch (e) {
+                          print("Erro ao salvar ou enviar a imagem: $e");
+                        }
                       },
                       child: Text('Salvar'),
                       style: ButtonStyle(

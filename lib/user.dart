@@ -312,6 +312,9 @@ class EditUser {
   String? email = '';
   bool? wantService;
   String? userActualImage;
+  String? serviceType;
+  String? favoriteDaytime;
+  num? valueWillingToPay;
 
   EditUser(
       {required this.name,

@@ -18,6 +18,7 @@ class UserYourself extends StatefulWidget {
 
 class _UserYourselfState extends State<UserYourself> {
   int? profileId;
+  Map<String, dynamic>? customData;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,11 @@ class _UserYourselfState extends State<UserYourself> {
 
     Future<Yourself?> fetchUserById() async {
       profileId = await autentication.getProfileId();
+      final userData = await getUserById();
 
+      if (userData != null && profileId == 1) {
+        customData = await fetchCustomContractorProfile(userData.id);
+      }
       return await getUserById();
     }
 
@@ -143,7 +148,85 @@ class _UserYourselfState extends State<UserYourself> {
                         height: 10,
                       ),
                       if (profileId == 1) ...[
-                        Text('Contratante'),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.build,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Tipo de serviço que estou procurando:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          '${customData?['service_type'] ?? 'Não especificado'}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.access_time,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Horário de preferência:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          '${customData?['favorite_daytime'] ?? 'Não especificado'}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.attach_money,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Valor que estou disposto a pagar:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'R\$${customData?['value_willing_to_pay'] ?? 'Não especificado'}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 15),
                       ] else ...[
                         Text(
                           'Atendo nas seguintes regiões:',

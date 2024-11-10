@@ -488,16 +488,16 @@ Future<Map<String, dynamic>> fetchCEP(String cep) async {
 
 Future<Map<String, dynamic>> payment() async {
   String? contratctorEmail = await autentication.getUserEmail();
+  int? contractorId = await autentication.getUserId();
+
   try {
     final token = await autentication.getToken();
-    var response = await http.post(
-      urlPaymentIntent,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode({'contractor_email': contratctorEmail})
-    );
+    var response = await http.post(urlPaymentIntent,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'contractor_email': contratctorEmail, 'contractor_id': contractorId}));
 
     if (response.statusCode == 201) {
       Map<String, dynamic> data = json.decode(response.body);

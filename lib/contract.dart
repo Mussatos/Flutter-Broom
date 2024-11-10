@@ -172,7 +172,7 @@ class _ContractState extends State<Contract> {
       'product_data': {
         'name': 'Contratação de serviço de limpeza doméstica',
       },
-      'unit_amount': 20000,
+      'unit_amount': 51,
     };
     int quantity = 1;
 

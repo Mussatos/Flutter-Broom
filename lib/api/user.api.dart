@@ -656,10 +656,18 @@ Future<Map<String, dynamic>?> fetchCustomContractorProfile(int userId) async {
     'Authorization': 'Bearer $token',
   });
 
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body);
-  } else {
-    print('Failed to fetch custom contractor profile');
-    return null;
-  }
+   print('Response status: ${response.statusCode}');
+   print('Response body: ${response.body}');
+
+  if (response.statusCode == 200 && response.body.isNotEmpty) {
+    try {
+      return jsonDecode(response.body);
+    } catch (e) {
+      print('Erro ao decodificar JSON: $e');
+      return null;
+    }} else {
+      print('Failed to fetch custom contractor profile');
+      return null;
+   }
 }
+

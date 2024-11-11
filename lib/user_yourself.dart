@@ -30,7 +30,6 @@ class _UserYourselfState extends State<UserYourself> {
 
       return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
     }
-
     Future<Yourself?> fetchUserById() async {
       profileId = await autentication.getProfileId();
       final userData = await getUserById();
@@ -38,7 +37,8 @@ class _UserYourselfState extends State<UserYourself> {
       if (userData != null && profileId == 1) {
         customData = await fetchCustomContractorProfile(userData.id);
       }
-      return await getUserById();
+
+      return userData;
     }
 
     return Scaffold(
@@ -152,8 +152,7 @@ class _UserYourselfState extends State<UserYourself> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.build,
-                                color: Color(0xFF2ECC8F), size: 20),
+                            Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Tipo de serviço que estou procurando:',
@@ -167,7 +166,9 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          '${customData?['service_type'] ?? 'Não especificado'}',
+                          customData?['service_type'] != null && customData?['service_type'] != ""
+                              ? '${customData?['service_type']}'
+                              : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -178,8 +179,7 @@ class _UserYourselfState extends State<UserYourself> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.access_time,
-                                color: Color(0xFF2ECC8F), size: 20),
+                            Icon(Icons.access_time, color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Horário de preferência:',
@@ -193,7 +193,9 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          '${customData?['favorite_daytime'] ?? 'Não especificado'}',
+                          customData?['favorite_daytime'] != null && customData?['favorite_daytime'] != ""
+                              ? '${customData?['favorite_daytime']}'
+                              : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -204,8 +206,7 @@ class _UserYourselfState extends State<UserYourself> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.attach_money,
-                                color: Color(0xFF2ECC8F), size: 20),
+                            Icon(Icons.attach_money, color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Valor que estou disposto a pagar:',
@@ -219,7 +220,9 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'R\$${customData?['value_willing_to_pay'] ?? 'Não especificado'}',
+                          customData?['value_willing_to_pay'] != null && customData?['value_willing_to_pay'] != 0
+                              ? 'R\$${customData?['value_willing_to_pay']}'
+                              : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,

@@ -52,7 +52,7 @@ class UserView extends StatelessWidget {
           } else {
 
         var userData = snapshot.data?[0] as UserModel?;
-        var customData = snapshot.data?[1] as Map<String, dynamic>?;
+        var customData = snapshot.data?[1] as ContractorCustomInformation?;
 
         if (userData == null) {
           return const Center(child: Text('Erro ao carregar dados'));
@@ -140,8 +140,8 @@ class UserView extends StatelessWidget {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            customData?['service_type'] != null && customData?['service_type'] != ""
-                                ? '${customData?['service_type']}'
+                            customData?.serviceType != null && customData?.serviceType != ""
+                                ? '${customData?.serviceType}'
                                 : 'Não especificado',
                             style: TextStyle(
                               fontSize: 16,
@@ -167,8 +167,8 @@ class UserView extends StatelessWidget {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            customData?['favorite_daytime'] != null && customData?['favorite_daytime'] != ""
-                                ? '${customData?['favorite_daytime']}'
+                            customData?.favoriteDaytime != null && customData?.favoriteDaytime != ""
+                                ? '${customData?.favoriteDaytime}'
                                 : 'Não especificado',
                             style: TextStyle(
                               fontSize: 16,
@@ -194,8 +194,8 @@ class UserView extends StatelessWidget {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            customData?['value_willing_to_pay'] != null && customData?['value_willing_to_pay'] != 0
-                                ? 'R\$${customData?['value_willing_to_pay']}'
+                            customData?.valueWillingToPay != null && customData?.valueWillingToPay != 0
+                                ? 'R\$${customData?.valueWillingToPay}'
                                 : 'Não especificado',
                             style: TextStyle(
                               fontSize: 16,

@@ -227,66 +227,51 @@ class _UserYourselfState extends State<UserYourself> {
                           ),
                         ),
                         SizedBox(height: 15),
-                      ] else ...[
+                      ] else if(profileId == 2)...[
+
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.build,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Atendo nas seguintes regiões:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
                         Text(
-                          'Atendo nas seguintes regiões:',
+                          '${customData?['service_type'] ?? 'Não especificado'}',
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 15),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Icon(Icons.access_time,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
-                            RegionTag(text: 'Campo Grande'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'Toda região da cidade'),
+                            Text(
+                              'Horário de preferência:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
                           ],
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          'Especialidades:',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 10),
-                            RegionTag(text: 'Faxinar'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'Lavar'),
-                            SizedBox(width: 10),
-                            RegionTag(text: 'Limpeza pós-obra'),
-                            SizedBox(width: 8),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            RegionTag(text: 'Limpeza residencial'),
-                            SizedBox(width: 10),
-                            RegionTag(text: 'organizar'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'passar'),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 10),
-                            RegionTag(text: 'vidros e fachadas'),
-                          ],
-                        )
                       ],
                       SizedBox(height: 150),
                       Row(

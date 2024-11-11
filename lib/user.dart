@@ -119,15 +119,14 @@ class ListUsers {
 
   factory ListUsers.fromJson(Map<String, dynamic> json) {
     return ListUsers(
-      id: json['id'],
-      profileId: json['profile_id'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      userImage: json['user_image'],
-      address: json['address'],
-      wantService: json['want_service'],
-      isFavorite: json['is_favorite']
-    );
+        id: json['id'],
+        profileId: json['profile_id'],
+        firstName: json['first_name'],
+        lastName: json['last_name'],
+        userImage: json['user_image'],
+        address: json['address'],
+        wantService: json['want_service'],
+        isFavorite: json['is_favorite']);
   }
 }
 
@@ -315,6 +314,8 @@ class EditUser {
   String? serviceType;
   String? favoriteDaytime;
   num? valueWillingToPay;
+  String? regionAtendiment;
+  String? specialties;
 
   EditUser(
       {required this.name,

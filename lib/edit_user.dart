@@ -27,6 +27,8 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController valueWillingToPayController;
   String? serviceTypeSelected;
   String? favoriteDaytimeSelected;
+  String? regionAtendimentSelected;
+  List<String?> specialtiesSelected = [];
 
   late String userActualImage;
   late bool? wantService;
@@ -46,6 +48,24 @@ class _EditUserFormState extends State<EditUserForm> {
 
   List<String> daytimeType = ['Manhã', 'Tarde', 'Integral'];
 
+  List<String> regionAtendiment = [
+    'Lado norte',
+    'Lado sul',
+    'Lado leste',
+    'Lado oeste',
+    'Toda a região'
+  ];
+
+  List<String> specialties = [
+    'Faxinar',
+    'Lavar',
+    'Limpeza pós-obra',
+    'Limpeza residencial',
+    'Organizar',
+    'Passar',
+    'Vidros e fachadas'
+  ];
+
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -64,7 +84,6 @@ class _EditUserFormState extends State<EditUserForm> {
 
   Future<Yourself?> fetchUserById() async {
     profileId = await autentication.getProfileId();
-    print('id: $profileId');
     print(getUserById());
     return await getUserById();
   }
@@ -84,6 +103,27 @@ class _EditUserFormState extends State<EditUserForm> {
 
     serviceTypeSelected = widget.usersEdit.serviceType;
     favoriteDaytimeSelected = widget.usersEdit.favoriteDaytime;
+    regionAtendimentSelected = widget.usersEdit.regionAtendiment;
+
+    if (widget.usersEdit.specialties != null) {
+      if (widget.usersEdit.specialties is String) {
+        // Se specialties for uma string, dividir por vírgula para criar uma lista
+        specialtiesSelected = widget.usersEdit.specialties!
+            .split(',')
+            .map((s) => s.trim())
+            .toList();
+      } else if (widget.usersEdit.specialties is List) {
+        // Se specialties já for uma lista, converta cada item para String
+        specialtiesSelected = (widget.usersEdit.specialties as List)
+            .map((e) => e.toString())
+            .toList();
+      } else {
+        // Caso não tenha specialties definidas, inicializar com uma lista vazia
+        specialtiesSelected = [];
+      }
+    } else {
+      specialtiesSelected = [];
+    }
 
     wantService = widget.usersEdit.wantService ?? false;
     userActualImage = widget.usersEdit.userActualImage ?? '';
@@ -127,10 +167,51 @@ class _EditUserFormState extends State<EditUserForm> {
               int.tryParse(valueWillingToPayController.text) ?? 0,
         );
       }
+      // else if(profileId == 2){
+
+      // }
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => UserYourself()));
     }
+  }
+
+  Future<void> _showSpecialtiesDialog() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Selecione as Especialidades"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: specialties.map((specialty) {
+                return CheckboxListTile(
+                  title: Text(specialty),
+                  value: specialtiesSelected.contains(specialty),
+                  onChanged: (bool? selected) {
+                    setState(() {
+                      if (selected == true) {
+                        specialtiesSelected.add(specialty);
+                      } else {
+                        specialtiesSelected.remove(specialty);
+                      }
+                    });
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Fechar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -308,6 +389,67 @@ class _EditUserFormState extends State<EditUserForm> {
                         prefixText: 'R\$',
                       ),
                     ),
+                  ] else if (profileId == 2) ...[
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      value: regionAtendimentSelected,
+                      decoration: InputDecoration(
+                        labelText:
+                            'Informe a região de Campo grande que você atua',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: regionAtendiment
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                            value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          regionAtendimentSelected = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Especialidades:',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        ElevatedButton(
+                          onPressed: _showSpecialtiesDialog,
+                          child: Text("Selecionar"),
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.black),
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8.0,
+                      children: specialtiesSelected
+                          .map((specialty) => Chip(
+                                label: Text(specialty!),
+                                labelStyle: TextStyle(
+                                  color: Colors.white,
+                                ),
+                                backgroundColor: Color(0xFF2ECC8F),
+                                deleteIconColor: Colors.white,
+                                onDeleted: () {
+                                  setState(() {
+                                    specialtiesSelected.remove(specialty);
+                                  });
+                                },
+                              ))
+                          .toList(),
+                    ),
+                    SizedBox(height: 10),
                   ],
                   SizedBox(height: 10),
                   TextFormField(
@@ -350,7 +492,7 @@ class _EditUserFormState extends State<EditUserForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                     onPressed: () async {
+                      onPressed: () async {
                         try {
                           await saveUser();
                           if (_selectedFile != null) {

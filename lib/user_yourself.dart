@@ -18,7 +18,7 @@ class UserYourself extends StatefulWidget {
 
 class _UserYourselfState extends State<UserYourself> {
   int? profileId;
-  Map<String, dynamic>? customData;
+  ContractorCustomInformation? customData;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +30,7 @@ class _UserYourselfState extends State<UserYourself> {
 
       return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
     }
+
     Future<Yourself?> fetchUserById() async {
       profileId = await autentication.getProfileId();
       final userData = await getUserById();
@@ -152,7 +153,8 @@ class _UserYourselfState extends State<UserYourself> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
+                            Icon(Icons.build,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Tipo de serviço que estou procurando:',
@@ -166,8 +168,9 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          customData?['service_type'] != null && customData?['service_type'] != ""
-                              ? '${customData?['service_type']}'
+                          customData?.serviceType != null &&
+                                  customData?.serviceType != ""
+                              ? '${customData?.serviceType}'
                               : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
@@ -179,7 +182,8 @@ class _UserYourselfState extends State<UserYourself> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.access_time, color: Color(0xFF2ECC8F), size: 20),
+                            Icon(Icons.access_time,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Horário de preferência:',
@@ -193,8 +197,9 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          customData?['favorite_daytime'] != null && customData?['favorite_daytime'] != ""
-                              ? '${customData?['favorite_daytime']}'
+                          customData?.favoriteDaytime != null &&
+                                  customData?.favoriteDaytime != ""
+                              ? '${customData?.favoriteDaytime}'
                               : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
@@ -206,7 +211,8 @@ class _UserYourselfState extends State<UserYourself> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.attach_money, color: Color(0xFF2ECC8F), size: 20),
+                            Icon(Icons.attach_money,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Valor que estou disposto a pagar:',
@@ -220,8 +226,9 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          customData?['value_willing_to_pay'] != null && customData?['value_willing_to_pay'] != 0
-                              ? 'R\$${customData?['value_willing_to_pay']}'
+                          customData?.valueWillingToPay != null &&
+                                  customData?.valueWillingToPay != 0
+                              ? 'R\$${customData?.valueWillingToPay}'
                               : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
@@ -331,7 +338,13 @@ class _UserYourselfState extends State<UserYourself> {
                                                 wantService:
                                                     snapshot.data?.wantService,
                                                 userActualImage:
-                                                    snapshot.data?.userImage),
+                                                    snapshot.data?.userImage,
+                                                favoriteDaytime:
+                                                    customData?.favoriteDaytime,
+                                                serviceType:
+                                                    customData?.serviceType,
+                                                valueWillingToPay: customData
+                                                    ?.valueWillingToPay),
                                           )));
                             },
                             icon: Icon(Icons.edit, color: Colors.white),

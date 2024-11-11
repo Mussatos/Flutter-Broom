@@ -87,9 +87,7 @@ class _EditUserFormState extends State<EditUserForm> {
 
     wantService = widget.usersEdit.wantService ?? false;
     userActualImage = widget.usersEdit.userActualImage ?? '';
-    print(valueWillingToPayController.text);
-    print(serviceTypeSelected);
-    print(favoriteDaytimeSelected);
+
     fetchUserById().then((_) {
       setState(() {});
     });
@@ -124,7 +122,7 @@ class _EditUserFormState extends State<EditUserForm> {
           serviceType: serviceTypeSelected,
           favoriteDaytime: favoriteDaytimeSelected,
           valueWillingToPay:
-              int.tryParse(valueWillingToPayController.text) ?? 0,
+              double.tryParse(valueWillingToPayController.text) ?? 0.0,
         );
       }
 

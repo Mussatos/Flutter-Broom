@@ -11,9 +11,13 @@ class LoginPage extends StatelessWidget {
   TextEditingController? emailController = TextEditingController(text: '');
   TextEditingController? passwordController = TextEditingController(text: '');
   bool isLogged = false;
+  
 
   void userLogged(context) async {
     if (await login(emailController!.text, passwordController!.text)) {
+      emailController!.dispose();
+      passwordController!.dispose();
+      
       GoRouter.of(context).push('/List');
       return;
     }

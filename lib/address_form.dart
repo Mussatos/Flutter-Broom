@@ -60,10 +60,11 @@ class _AddressFormState extends State<AddressForm> {
         id: null,
       );
 
-      createAddress(newAddress.toJson());
-      Navigator.pop(context);
-    }
+    await createAddress(newAddress.toJson());
+
+    Navigator.pop(context, newAddress);
   }
+}
 
   @override
   Widget build(BuildContext context) {

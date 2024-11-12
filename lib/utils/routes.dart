@@ -7,6 +7,7 @@ import 'package:broom_main_vscode/edit_user.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:broom_main_vscode/view/account_settings.dart';
+import 'package:broom_main_vscode/view/userFavorite_list.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:broom_main_vscode/Login.dart';
@@ -83,6 +84,10 @@ GoRouter createRouter(String initialLocation) {
           return EditUserForm(usersEdit: usersEdit);
         },
     ),
+      GoRoute(
+        path: '/favorite-page',
+        builder: (context, state) => UserfavoriteList(),
+      ),
     ],
   );
 }

@@ -13,19 +13,16 @@ import 'package:broom_main_vscode/utils/user_autentication.dart';
 import 'package:http_parser/http_parser.dart';
 
 UserAutentication autentication = UserAutentication();
-//URL de Prod do backend: broom-api.onrender.com
-//localhost:3000
-const String host = 'broom-api.onrender.com';
-Uri urlRegister = Uri.https(host, '/register');
-Uri urlLogin = Uri.https(host, '/login');
-Uri urlListContractors = Uri.https(host, '/list/contractors');
-Uri urlListDiarists = Uri.https(host, '/list/diarists');
-Uri urlViewDiarist = Uri.https(host, '');
-Uri urlForgetPassword = Uri.https(host, '/forget');
-Uri urlResetPassword = Uri.https(host, '/reset');
-Uri urlPaymentIntent = Uri.https(host, '/payment');
-Uri urlPaymentCheckout = Uri.https(host, '/payment/checkout');
-Uri urlAddress = Uri.https(host, '/address');
+//URL de Prod do backend: https://broom-api.onrender.com/
+const String host = 'localhost:3000';
+Uri urlRegister = Uri.http(host, '/register');
+Uri urlLogin = Uri.http(host, '/login');
+Uri urlViewDiarist = Uri.http(host, '');
+Uri urlForgetPassword = Uri.http(host, '/forget');
+Uri urlResetPassword = Uri.http(host, '/reset');
+Uri urlPaymentIntent = Uri.http(host, '/payment');
+Uri urlPaymentCheckout = Uri.http(host, '/payment/checkout');
+Uri urlAddress = Uri.http(host, '/address');
 
 Future<bool> register(Map<String, dynamic> user) async {
   try {
@@ -114,9 +111,10 @@ Future<bool> resetPassword(String token, String password) async {
 Future<List<ListUsers>> fetchUsuarios() async {
   final token = await autentication.getToken();
   final userProfileId = await autentication.getProfileId();
+  final userId = await autentication.getUserId();
   try {
     final response = await http.get(
-      getListUrl(userProfileId),
+      getListUrl(userProfileId, userId),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -135,15 +133,17 @@ Future<List<ListUsers>> fetchUsuarios() async {
   }
 }
 
-Uri getListUrl(int? userProfileId) {
-  return userProfileId == 1 ? urlListDiarists : urlListContractors;
+Uri getListUrl(int? userProfileId, int? userId) {
+  return userProfileId == 1
+      ? Uri.http(host, '/list/diarists', {'id': userId.toString()})
+      : Uri.http(host, '/list/contractors', {'id': userId.toString()});
 }
 
 Future<Uint8List?> fetchUserImage(String imageName) async {
   final token = await autentication.getToken();
 
   try {
-    final response = await http.get(Uri.https(host, '/file/$imageName'),
+    final response = await http.get(Uri.http(host, '/file/$imageName'),
         headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
@@ -192,8 +192,8 @@ Future<UserModel> fetchUsuario(int? id) async {
 
 Uri getViewUrl(int? userProfileId, int? id) {
   return userProfileId == 1
-      ? Uri.https(host, '/diarist/${id}')
-      : Uri.https(host, '/contractor/${id}');
+      ? Uri.http(host, '/diarist/${id}')
+      : Uri.http(host, '/contractor/${id}');
 }
 
 Future<void> createAddress(Map<String, dynamic> payload) async {
@@ -224,7 +224,7 @@ Future<void> createAddress(Map<String, dynamic> payload) async {
 Future<Address?> getAddressByUserId() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/address/$userId');
+  final url = Uri.http(host, '/address/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -252,7 +252,7 @@ Future<Address?> getAddressByUserId() async {
 Future<Yourself?> getUserById() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/user/$userId');
+  final url = Uri.http(host, '/user/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -280,7 +280,7 @@ Future<Yourself?> getUserById() async {
 Future<List<Address>> fetchAddress() async {
   final id = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/address/$id');
+  final url = Uri.http(host, '/address/$id');
 
   try {
     final response = await http.get(
@@ -305,7 +305,7 @@ Future<List<Address>> fetchAddress() async {
 
 Future<void> deleteAddress(int? idDoEndereco) async {
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/address/$idDoEndereco');
+  final url = Uri.http(host, '/address/$idDoEndereco');
 
   try {
     final response = await http.delete(
@@ -330,7 +330,7 @@ Future<void> deleteAddress(int? idDoEndereco) async {
 Future<void> updateAddress(
     int? addressId, Map<String, dynamic> addressData) async {
   final token = await autentication.getToken();
-  final url = Uri.https(host, '/address/$addressId');
+  final url = Uri.http(host, '/address/$addressId');
 
   try {
     final response = await http.put(
@@ -356,7 +356,7 @@ Future<void> updateAddress(
 Future<void> updateUser(Map<String, dynamic> usersData) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
-  final url = Uri.https(host, '/user/$userId');
+  final url = Uri.http(host, '/user/$userId');
 
   try {
     final response = await http.put(
@@ -387,6 +387,8 @@ class ApiService {
     required bool? possuiMaterialLimpeza,
     required String? tipoCestoLavar,
     required String? tipoCestoPassar,
+    required int? qntCestoLavar,
+    required int? qntCestoPassar,
     required int? quantidadeQuarto,
     required int? quantidadeBanheiro,
     required int? quantidadeSala,
@@ -394,7 +396,7 @@ class ApiService {
     required int id,
   }) async {
     final token = await autentication.getToken();
-    final url = Uri.https(host, '/contract/sendContract/$id');
+    final url = Uri.http(host, '/contract/sendContract/$id');
 
     Map<String, dynamic> body = {
       "tiposDeServico": tiposDeServico,
@@ -403,6 +405,8 @@ class ApiService {
       "possuiMaterialLimpeza": possuiMaterialLimpeza,
       "tipoCestoLavar": tipoCestoLavar,
       "tipoCestoPassar": tipoCestoPassar,
+      "qntCestoLavar": qntCestoLavar,
+      "qntCestoPassar": qntCestoPassar,
       "comodos": [
         {
           "tipo": "quarto",
@@ -558,5 +562,145 @@ Future<String> paymentCheckout(
   } catch (e) {
     print(e);
     return "";
+  }
+}
+
+Future<List<ListUsers>> getUserFavorite() async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  try {
+    final response = await http.get(
+      urlFavorite,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => ListUsers.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return [];
+  }
+}
+
+Future<bool> setUserFavorite(int? favoritedId) async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  try {
+    final response = await http.post(
+      urlFavorite,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'favorited_id': favoritedId,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
+Future<bool> deleteUserFavorite(int? favoritedId) async {
+  final userId = await autentication.getUserId();
+  final token = await autentication.getToken();
+  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  try {
+    final response = await http.delete(
+      urlFavorite,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'favorited_id': favoritedId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
+Future<void> sendCustomContractorProfile({
+  required String? serviceType,
+  required String? favoriteDaytime,
+  required double valueWillingToPay,
+}) async {
+  final url = Uri.http(host, '/contractor/profile/custom');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'service_type': serviceType,
+    'favorite_daytime': favoriteDaytime,
+    'value_willing_to_pay': valueWillingToPay,
+    'contractor_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<ContractorCustomInformation> fetchCustomContractorProfile(
+    int userId) async {
+  final url = Uri.http(host, '/contractor/profile/custom/$userId');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200 && response.body.isNotEmpty) {
+    try {
+      return ContractorCustomInformation.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      print('Erro ao decodificar JSON: $e');
+      return ContractorCustomInformation(
+          serviceType: null, favoriteDaytime: null, valueWillingToPay: null);
+    }
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return ContractorCustomInformation(
+        serviceType: null, favoriteDaytime: null, valueWillingToPay: null);
   }
 }

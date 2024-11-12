@@ -24,10 +24,27 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController emailController;
   late TextEditingController cellphoneNumberController;
   late TextEditingController descriptionController;
+  late TextEditingController valueWillingToPayController;
+  String? serviceTypeSelected;
+  String? favoriteDaytimeSelected;
+
   late String userActualImage;
   late bool? wantService;
   File? userImage;
   PlatformFile? _selectedFile;
+  String _urlImagem = '';
+
+  List<String> serviceType = [
+    'Limpeza leve',
+    'Limpeza média',
+    'Limpeza pesada',
+    'Lavar roupas',
+    'Lavar louça',
+    'Passar roupas',
+    'Organização'
+  ];
+
+  List<String> daytimeType = ['Manhã', 'Tarde', 'Integral'];
 
   Future<void> _pickImage() async {
     FilePickerResult? result =
@@ -53,6 +70,15 @@ class _EditUserFormState extends State<EditUserForm> {
     }
   }
 
+  int? profileId;
+
+  Future<Yourself?> fetchUserById() async {
+    profileId = await autentication.getProfileId();
+    print('id: $profileId');
+    print(getUserById());
+    return await getUserById();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -63,8 +89,18 @@ class _EditUserFormState extends State<EditUserForm> {
         mask: '(00)0 0000-0000', text: widget.usersEdit.cellphoneNumber);
     descriptionController =
         TextEditingController(text: widget.usersEdit.description);
+    valueWillingToPayController = TextEditingController(
+        text: widget.usersEdit.valueWillingToPay?.toString() ?? '');
+
+    serviceTypeSelected = widget.usersEdit.serviceType;
+    favoriteDaytimeSelected = widget.usersEdit.favoriteDaytime;
+
     wantService = widget.usersEdit.wantService ?? false;
     userActualImage = widget.usersEdit.userActualImage ?? '';
+
+    fetchUserById().then((_) {
+      setState(() {});
+    });
   }
 
   @override
@@ -77,7 +113,7 @@ class _EditUserFormState extends State<EditUserForm> {
     super.dispose();
   }
 
- void saveUser() async {
+ Future<void> saveUser() async {
   if (_formKey.currentState!.validate()) {
     EditUser updatedUser = EditUser(
       name: nameController.text,
@@ -90,11 +126,18 @@ class _EditUserFormState extends State<EditUserForm> {
 
     await updateUser(updatedUser.toJson());
 
+      if (profileId == 1) {
+        await sendCustomContractorProfile(
+          serviceType: serviceTypeSelected,
+          favoriteDaytime: favoriteDaytimeSelected,
+          valueWillingToPay:
+              double.tryParse(valueWillingToPayController.text) ?? 0.0,
+        );
+      }
+
     if (_selectedFile != null && _selectedFile!.path != null) {
-      // Cria uma instância de File com o caminho do arquivo
       File selectedFile = File(_selectedFile!.path!);
 
-      // Verifica se o arquivo existe
       if (await selectedFile.exists()) {
         var imageResult = await sendImage(selectedFile);
         if (imageResult != "Sucesso") {
@@ -176,16 +219,15 @@ class _EditUserFormState extends State<EditUserForm> {
                           : CircleAvatar(
                               radius: 50,
                               child: UserImage(
-                                user: ListUsers(
-                                  id: -1,
-                                  address: [],
-                                  firstName: '',
-                                  lastName: '',
-                                  profileId: -1,
-                                  userImage: userActualImage ?? '',
-                                  wantService: false,
-                                ),
-                              ),
+                                  user: ListUsers(
+                                      id: -1,
+                                      address: [],
+                                      firstName: '',
+                                      lastName: '',
+                                      profileId: -1,
+                                      userImage: userActualImage ?? '',
+                                      wantService: false,
+                                      isFavorite: false)),
                             ),
                     ),
                     Positioned(
@@ -257,6 +299,55 @@ class _EditUserFormState extends State<EditUserForm> {
                       return null;
                     },
                   ),
+                  if (profileId == 1) ...[
+                    SizedBox(height: 10),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      value: serviceTypeSelected,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o serviço que está procurando',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: serviceType
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                            value: value, child: Text(value));
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          serviceTypeSelected = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                      value: favoriteDaytimeSelected,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o período de preferência',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: daytimeType.map((String option) {
+                        return DropdownMenuItem<String>(
+                          value: option,
+                          child: Text(option),
+                        );
+                      }).toList(),
+                      onChanged: (String? value) {
+                        setState(() {
+                          favoriteDaytimeSelected = value!;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    TextFormField(
+                      controller: valueWillingToPayController,
+                      decoration: InputDecoration(
+                        labelText: 'Informe o valor que deseja pagar',
+                        border: OutlineInputBorder(),
+                        prefixText: 'R\$',
+                      ),
+                    ),
+                  ],
                   SizedBox(height: 10),
                   TextFormField(
                     controller: descriptionController,
@@ -298,8 +389,15 @@ class _EditUserFormState extends State<EditUserForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        saveUser();
+                     onPressed: () async {
+                        try {
+                          await saveUser();
+                          if (_selectedFile != null) {
+                            await sendImage(File(_selectedFile!.path!));
+                          }
+                        } catch (e) {
+                          print("Erro ao salvar ou enviar a imagem: $e");
+                        }
                       },
                       child: Text('Salvar'),
                       style: ButtonStyle(

@@ -40,6 +40,7 @@ class _AddressFormState extends State<AddressForm> {
     neighController.dispose();
     addressCodeController.dispose();
     complementController.dispose();
+    cityController.dispose();
     super.dispose();
   }
 
@@ -66,13 +67,15 @@ class _AddressFormState extends State<AddressForm> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Registrar Endereço',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -83,18 +86,22 @@ class _AddressFormState extends State<AddressForm> {
             color: Colors.black,
           ),
         ),
+        backgroundColor: Color(0xFF2ECC8F),
       ),
       body: SingleChildScrollView(
         child: Container(
           color: Color(0xFF2ECC8F),
           alignment: Alignment.center,
           padding: const EdgeInsets.all(35.0),
+          height: MediaQuery.of(context).size.height,
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: addressCodeController,
                     decoration: InputDecoration(
@@ -133,11 +140,10 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     enabled: false,
                     controller: stateController,
@@ -152,6 +158,9 @@ class _AddressFormState extends State<AddressForm> {
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
                     ),
                     style: TextStyle(
                       color: Colors.white,
@@ -164,11 +173,10 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: cityController,
                     decoration: InputDecoration(
@@ -183,6 +191,9 @@ class _AddressFormState extends State<AddressForm> {
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
                     ),
                     style: TextStyle(
                       color: Colors.white,
@@ -195,11 +206,10 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     enabled: isUnique,
                     controller: streetController,
@@ -226,11 +236,10 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     enabled: isUnique,
                     controller: neighController,
@@ -257,11 +266,10 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: numberController,
                     decoration: InputDecoration(
@@ -287,9 +295,10 @@ class _AddressFormState extends State<AddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: complementController,
                     decoration: InputDecoration(
@@ -309,9 +318,10 @@ class _AddressFormState extends State<AddressForm> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: Text(
                     'Escolha o tipo do endereço',
                     style: TextStyle(
@@ -321,7 +331,8 @@ class _AddressFormState extends State<AddressForm> {
                   ),
                 ),
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: DropdownButton<String>(
                       value: addressTypeSelected,
                       underline: Container(
@@ -348,9 +359,10 @@ class _AddressFormState extends State<AddressForm> {
                         });
                       }),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.050),
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   height: 50,
                   child: TextButton(
                     onPressed: saveAddress,

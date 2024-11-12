@@ -17,6 +17,9 @@ class UserYourself extends StatefulWidget {
 }
 
 class _UserYourselfState extends State<UserYourself> {
+  int? profileId;
+  ContractorCustomInformation? customData;
+
   @override
   Widget build(BuildContext context) {
     String getListUserFormatedAddress(Map<String, dynamic> address) {
@@ -26,6 +29,17 @@ class _UserYourselfState extends State<UserYourself> {
           userAddress.city == '') return '';
 
       return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
+    }
+
+    Future<Yourself?> fetchUserById() async {
+      profileId = await autentication.getProfileId();
+      final userData = await getUserById();
+
+      if (userData != null && profileId == 1) {
+        customData = await fetchCustomContractorProfile(userData.id);
+      }
+
+      return userData;
     }
 
     return Scaffold(
@@ -47,7 +61,7 @@ class _UserYourselfState extends State<UserYourself> {
         ),
       ),
       body: FutureBuilder(
-        future: getUserById(),
+        future: fetchUserById(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -73,7 +87,8 @@ class _UserYourselfState extends State<UserYourself> {
                                 lastName: '',
                                 profileId: -1,
                                 userImage: snapshot.data!.userImage,
-                                wantService: false)),
+                                wantService: false,
+                                isFavorite: false)),
                       ),
                       SizedBox(height: 20),
                       Text(
@@ -130,7 +145,160 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         textAlign: TextAlign.justify,
                       ),
-                      SizedBox(height: 40),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      if (profileId == 1) ...[
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.build,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Tipo de serviço que estou procurando:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          customData?.serviceType != null &&
+                                  customData?.serviceType != ""
+                              ? '${customData?.serviceType}'
+                              : 'Não especificado',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.access_time,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Horário de preferência:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          customData?.favoriteDaytime != null &&
+                                  customData?.favoriteDaytime != ""
+                              ? '${customData?.favoriteDaytime}'
+                              : 'Não especificado',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.attach_money,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Valor que estou disposto a pagar:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          customData?.valueWillingToPay != null &&
+                                  customData?.valueWillingToPay != 0
+                              ? 'R\$${customData?.valueWillingToPay}'
+                              : 'Não especificado',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                      ] else ...[
+                        Text(
+                          'Atendo nas seguintes regiões:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10),
+                            RegionTag(text: 'Campo Grande'),
+                            SizedBox(width: 8),
+                            RegionTag(text: 'Toda região da cidade'),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Especialidades:',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10),
+                            RegionTag(text: 'Faxinar'),
+                            SizedBox(width: 8),
+                            RegionTag(text: 'Lavar'),
+                            SizedBox(width: 10),
+                            RegionTag(text: 'Limpeza pós-obra'),
+                            SizedBox(width: 8),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RegionTag(text: 'Limpeza residencial'),
+                            SizedBox(width: 10),
+                            RegionTag(text: 'organizar'),
+                            SizedBox(width: 8),
+                            RegionTag(text: 'passar'),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10),
+                            RegionTag(text: 'vidros e fachadas'),
+                          ],
+                        )
+                      ],
+                      SizedBox(height: 150),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -157,16 +325,25 @@ class _UserYourselfState extends State<UserYourself> {
                               GoRouter.of(context).push(
                                 '/accont/edit',
                                 extra: EditUser(
-                                  name: snapshot.data?.name,
-                                  lastName: snapshot.data?.lastName,
-                                  email: snapshot.data?.email,
-                                  cellphoneNumber:
-                                      snapshot.data?.cellphoneNumber,
-                                  description: snapshot.data?.description,
-                                  wantService: snapshot.data?.wantService,
-                                  userActualImage: snapshot.data?.userImage,
-                                ),
-                              );
+                                                name: snapshot.data?.name,
+                                                lastName:
+                                                    snapshot.data?.lastName,
+                                                email: snapshot.data?.email,
+                                                cellphoneNumber: snapshot
+                                                    .data?.cellphoneNumber,
+                                                description:
+                                                    snapshot.data?.description,
+                                                wantService:
+                                                    snapshot.data?.wantService,
+                                                userActualImage:
+                                                    snapshot.data?.userImage,
+                                                favoriteDaytime:
+                                                    customData?.favoriteDaytime,
+                                                serviceType:
+                                                    customData?.serviceType,
+                                                valueWillingToPay: customData
+                                                    ?.valueWillingToPay),
+                                          );
                             },
                             icon: Icon(Icons.edit, color: Colors.white),
                             label: Text(
@@ -189,6 +366,31 @@ class _UserYourselfState extends State<UserYourself> {
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class RegionTag extends StatelessWidget {
+  final String text;
+
+  const RegionTag({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+      decoration: BoxDecoration(
+        color: Color(0xFF2ECC8F),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

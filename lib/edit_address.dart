@@ -58,6 +58,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
     streetController.dispose();
     numberController.dispose();
     stateController.dispose();
+    cityController.dispose();
     neighController.dispose();
     addressCodeController.dispose();
     complementController.dispose();
@@ -87,6 +88,9 @@ class _EditAddressFormState extends State<EditAddressForm> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -110,15 +114,18 @@ class _EditAddressFormState extends State<EditAddressForm> {
           color: Color(0xFF2ECC8F),
           alignment: Alignment.center,
           padding: const EdgeInsets.all(35.0),
+          height: MediaQuery.of(context).size.height,
           child: Form(
             key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(
-                  width: 350,
+                  //width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: addressCodeController,
-                    enabled: false,
+                    // enabled: false,
                     decoration: InputDecoration(
                       labelText: 'CEP',
                       labelStyle: TextStyle(color: Colors.white),
@@ -142,9 +149,10 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  width: 350,
+                  //width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: stateController,
                     decoration: InputDecoration(
@@ -170,9 +178,10 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: cityController,
                     decoration: InputDecoration(
@@ -198,11 +207,10 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: streetController,
                     decoration: InputDecoration(
@@ -228,11 +236,10 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: neighController,
                     decoration: InputDecoration(
@@ -258,11 +265,10 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: numberController,
                     decoration: InputDecoration(
@@ -288,9 +294,10 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     },
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: complementController,
                     decoration: InputDecoration(
@@ -310,9 +317,10 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   child: Text(
                     'Escolha o tipo do endereço',
                     style: TextStyle(
@@ -322,7 +330,8 @@ class _EditAddressFormState extends State<EditAddressForm> {
                   ),
                 ),
                 SizedBox(
-                    width: 350,
+                    // width: 350,
+                    width: screenWidth * 0.9,
                     child: DropdownButton<String>(
                         value: addressTypeSelected,
                         underline: Container(
@@ -348,10 +357,12 @@ class _EditAddressFormState extends State<EditAddressForm> {
                             addressTypeSelected = value!;
                           });
                         })),
-                SizedBox(height: 10),
+                SizedBox(height: screenHeight * 0.050),
                 SizedBox(
-                  width: 350,
+                  // width: 350,
+                  width: screenWidth * 0.9,
                   height: 50,
+
                   child: TextButton(
                     onPressed: saveAddress,
                     child: Text('Salvar Alterações'),

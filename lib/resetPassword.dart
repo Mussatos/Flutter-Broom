@@ -23,8 +23,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   String? passwordError;
   String? confirmPasswordError;
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _resetPassword() async {
     if (_formKey.currentState!.validate()) {
+      
+      if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() {
+        confirmPasswordError = 'As senhas não correspondem';
+      });
+      return;
+    }
+
       String token = widget.token ?? '';
 
       if (token.isEmpty) {
@@ -54,7 +69,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       } finally {
         setState(() {
           _isLoading = false;
-          //TODO -> Depois vocês veêm se ficou muito escroto com isso ou se e melhor levar o usuário direto pra tela
+          //TODO -> Depois vocês veêm se ficou muito escroto com isso ou se e melhor levar o usuário direto pra tela 
           Future.delayed(Duration(seconds: 1), () {
             GoRouter.of(context).push('/login');
           });

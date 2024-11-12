@@ -104,6 +104,7 @@ class ListUsers {
   String userImage;
   bool? wantService;
   List<dynamic> address;
+  bool isFavorite;
 
   ListUsers({
     required this.id,
@@ -113,20 +114,56 @@ class ListUsers {
     required this.profileId,
     required this.userImage,
     required this.wantService,
+    required this.isFavorite,
   });
 
   factory ListUsers.fromJson(Map<String, dynamic> json) {
     return ListUsers(
-      id: json['id'],
-      profileId: json['profile_id'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      userImage: json['user_image'],
-      address: json['address'],
-      wantService: json['want_service'],
-    );
+        id: json['id'],
+        profileId: json['profile_id'],
+        firstName: json['first_name'],
+        lastName: json['last_name'],
+        userImage: json['user_image'],
+        address: json['address'],
+        wantService: json['want_service'],
+        isFavorite: json['is_favorite']);
   }
 }
+
+// class ListUsersDiarist {
+//   int id;
+//   int profileId;
+//   String firstName;
+//   String lastName;
+//   String userImage;
+//   bool? wantService;
+//   List<dynamic> address;
+//   bool isFavorite;
+
+//   ListUsers({
+//     required this.id,
+//     required this.address,
+//     required this.firstName,
+//     required this.lastName,
+//     required this.profileId,
+//     required this.userImage,
+//     required this.wantService,
+//     required this.isFavorite,
+//   });
+
+//   factory ListUsers.fromJson(Map<String, dynamic> json) {
+//     return ListUsers(
+//       id: json['id'],
+//       profileId: json['profile_id'],
+//       firstName: json['first_name'],
+//       lastName: json['last_name'],
+//       userImage: json['user_image'],
+//       address: json['address'],
+//       wantService: json['want_service'],
+//       isFavorite: json['is_favorite']
+//     );
+//   }
+// }
 
 class Address {
   String? state = '';
@@ -274,6 +311,9 @@ class EditUser {
   String? email = '';
   bool? wantService;
   String? userActualImage;
+  String? serviceType;
+  String? favoriteDaytime;
+  num? valueWillingToPay;
 
   EditUser(
       {required this.name,
@@ -282,16 +322,25 @@ class EditUser {
       required this.description,
       required this.wantService,
       required this.email,
-      this.userActualImage});
+      this.userActualImage,
+      this.serviceType,
+      this.favoriteDaytime,
+      this.valueWillingToPay});
 
   factory EditUser.fromJson(Map<String, dynamic> json) {
     return EditUser(
-        description: json['description'],
-        name: json['first_name'],
-        lastName: json['last_name'],
-        cellphoneNumber: json['cellphone_number'],
-        wantService: json['want_service'] ?? false,
-        email: json['email'] ?? '');
+      description: json['description'],
+      name: json['first_name'],
+      lastName: json['last_name'],
+      cellphoneNumber: json['cellphone_number'],
+      wantService: json['want_service'] ?? false,
+      email: json['email'] ?? '',
+      serviceType: json['Contractor_Custom_Information']['service_type'] ?? '',
+      favoriteDaytime:
+          json['Contractor_Custom_Information']['favorite_daytime'] ?? '',
+      valueWillingToPay:
+          json['Contractor_Custom_Information']['value_willing_to_pay'] ?? '',
+    );
   }
   Map<String, dynamic> toJson() {
     return {
@@ -301,6 +350,32 @@ class EditUser {
       'cellphone_number': cellphoneNumber,
       'want_service': wantService,
       'email': email,
+    };
+  }
+}
+
+class ContractorCustomInformation {
+  String? serviceType;
+  String? favoriteDaytime;
+  double? valueWillingToPay;
+
+  ContractorCustomInformation(
+      {required this.serviceType,
+      required this.favoriteDaytime,
+      required this.valueWillingToPay});
+
+  factory ContractorCustomInformation.fromJson(Map<String, dynamic> json) {
+    return ContractorCustomInformation(
+      serviceType: json['service_type'] ?? '',
+      favoriteDaytime: json['favorite_daytime'] ?? '',
+      valueWillingToPay: json['value_willing_to_pay'] ?? 0.0,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'service_type': serviceType,
+      'favorite_daytime': favoriteDaytime,
+      'value_willing_to_pay': valueWillingToPay
     };
   }
 }

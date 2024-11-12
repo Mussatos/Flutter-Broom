@@ -18,7 +18,7 @@ class UserYourself extends StatefulWidget {
 
 class _UserYourselfState extends State<UserYourself> {
   int? profileId;
-  Map<String, dynamic>? customData;
+  ContractorCustomInformation? customData;
   List<dynamic>? customDataSpecialties = [];
   List<dynamic>? customDataActivity = [];
 
@@ -43,7 +43,8 @@ class _UserYourselfState extends State<UserYourself> {
         customDataSpecialties = await fetchDataDiaristSpecialties(userData.id);
         customDataActivity = await fetchDataDiaristZones(userData.id);
       }
-      return await getUserById();
+
+      return userData;
     }
 
     return Scaffold(
@@ -172,7 +173,10 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          '${customData?['service_type'] ?? 'Não especificado'}',
+                          customData?.serviceType != null &&
+                                  customData?.serviceType != ""
+                              ? '${customData?.serviceType}'
+                              : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -198,7 +202,10 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          '${customData?['favorite_daytime'] ?? 'Não especificado'}',
+                          customData?.favoriteDaytime != null &&
+                                  customData?.favoriteDaytime != ""
+                              ? '${customData?.favoriteDaytime}'
+                              : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -224,7 +231,10 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'R\$${customData?['value_willing_to_pay'] ?? 'Não especificado'}',
+                          customData?.valueWillingToPay != null &&
+                                  customData?.valueWillingToPay != 0
+                              ? 'R\$${customData?.valueWillingToPay}'
+                              : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -313,34 +323,35 @@ class _UserYourselfState extends State<UserYourself> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => EditUserForm(
-                                            usersEdit: EditUser(
-                                              name: snapshot.data?.name,
-                                              lastName: snapshot.data?.lastName,
-                                              email: snapshot.data?.email,
-                                              cellphoneNumber: snapshot
-                                                  .data?.cellphoneNumber,
-                                              description:
-                                                  snapshot.data?.description,
-                                              wantService:
-                                                  snapshot.data?.wantService,
-                                              userActualImage:
-                                                  snapshot.data?.userImage,
-                                              specialties: customDataSpecialties
-                                                  ?.map(
-                                                    (e) => e['speciality']
-                                                        .toString(),
-                                                  )
-                                                  .toList(),
-                                              regionAtendiment:
-                                                  customDataActivity
-                                                      ?.map(
-                                                        (e) => e['zone_id']
-                                                            .toString(),
-                                                      )
-                                                      .toList(),
-                                            ),
-                                          )));
+                                    builder: (context) => EditUserForm(
+                                      usersEdit: EditUser(
+                                        name: snapshot.data?.name,
+                                        lastName: snapshot.data?.lastName,
+                                        email: snapshot.data?.email,
+                                        cellphoneNumber:
+                                            snapshot.data?.cellphoneNumber,
+                                        description: snapshot.data?.description,
+                                        wantService: snapshot.data?.wantService,
+                                        userActualImage:
+                                            snapshot.data?.userImage,
+                                        favoriteDaytime:
+                                            customData?.favoriteDaytime,
+                                        serviceType: customData?.serviceType,
+                                        valueWillingToPay:
+                                            customData?.valueWillingToPay,
+                                        specialties: customDataSpecialties
+                                            ?.map(
+                                              (e) => e['speciality'].toString(),
+                                            )
+                                            .toList(),
+                                        regionAtendiment: customDataActivity
+                                            ?.map(
+                                              (e) => e['zone_id'].toString(),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ));
                             },
                             icon: Icon(Icons.edit, color: Colors.white),
                             label: Text(

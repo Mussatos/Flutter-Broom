@@ -144,7 +144,7 @@ class _EditUserFormState extends State<EditUserForm> {
           serviceType: serviceTypeSelected,
           favoriteDaytime: favoriteDaytimeSelected,
           valueWillingToPay:
-              int.tryParse(valueWillingToPayController.text) ?? 0,
+              double.tryParse(valueWillingToPayController.text) ?? 0.0,
         );
       } else if (profileId == 2) {
         specialtiesSelected!.forEach(

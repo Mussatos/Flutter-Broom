@@ -27,6 +27,12 @@ class _ContractState extends State<Contract> {
   bool? petsController = false;
   bool? materialController = false;
   bool _ready = false;
+  Map<String, bool> invalidRooms = {
+    'bedroom': false,
+    'kitchen': false,
+    'toilet': false,
+    'room': false
+  };
 
   List<String> serviceType = [
     'Limpeza',
@@ -58,6 +64,18 @@ class _ContractState extends State<Contract> {
   bool _isBasketCleanQuantityValid = true;
   bool _isBasketIroningQuantityValid = true;
 
+  @override
+  void dispose() {
+    bedroomController.dispose();
+    kitchenController.dispose();
+    toiletController.dispose();
+    roomController.dispose();
+    basketCleanQuantityController.dispose();
+    basketIroningQuantityController.dispose();
+    obsController.dispose();
+    super.dispose();
+  }
+
   ApiService apiService = ApiService();
 
   @override
@@ -65,6 +83,10 @@ class _ContractState extends State<Contract> {
     super.initState();
     basketCleanQuantityController.addListener(_validateBasketQuantities);
     basketIroningQuantityController.addListener(_validateBasketQuantities);
+    bedroomController.addListener(roomsValidation);
+    roomController.addListener(roomsValidation);
+    kitchenController.addListener(roomsValidation);
+    toiletController.addListener(roomsValidation);
   }
 
   void _validateBasketQuantities() {
@@ -159,73 +181,94 @@ class _ContractState extends State<Contract> {
     if (data.isNotEmpty) await launchUrlString(data);
   }
 
-Future<void> sendContract() async {
-  List<String> selectedServices = [];
-  for (int i = 0; i < serviceType.length; i++) {
-    if (serviceTypeSelected[i]) {
-      selectedServices.add(serviceType[i]);
+  Future<void> sendContract() async {
+    List<String> selectedServices = [];
+    for (int i = 0; i < serviceType.length; i++) {
+      if (serviceTypeSelected[i]) {
+        selectedServices.add(serviceType[i]);
+      }
+    }
+
+    String? basketCleanQuantity = basketCleanQuantityController.text;
+    String? basketIroningQuantity = basketIroningQuantityController.text;
+
+    setState(() {
+      _isBasketCleanQuantityValid = serviceTypeSelected[1]
+          ? (basketCleanQuantity.isNotEmpty &&
+              int.tryParse(basketCleanQuantity) != null)
+          : true;
+
+      _isBasketIroningQuantityValid = serviceTypeSelected[2]
+          ? (basketIroningQuantity.isNotEmpty &&
+              int.tryParse(basketIroningQuantity) != null)
+          : true;
+    });
+
+    if (!_isBasketCleanQuantityValid || !_isBasketIroningQuantityValid) {
+      return;
+    }
+
+    if (hasInsertedAtLeastOneRoomNumber()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Por Favor, inserir ao menos um cômodo com quantidade válida para prosseguir com o contrato.'),
+        ),
+      );
+      return;
+    }
+
+    if (invalidRooms.containsValue(true)) return;
+    
+    String? whatsappUrl = await apiService.sendContract(
+      tiposDeServico: selectedServices,
+      tipoLimpeza: cleanTypeSelected,
+      possuiPets: petsController ?? false,
+      possuiMaterialLimpeza: materialController ?? false,
+      tipoCestoLavar: cleanBasketTypeSelected,
+      tipoCestoPassar: ironingBasketTypeSelected,
+      qntCestoLavar: (serviceTypeSelected[1]
+          ? int.tryParse(basketCleanQuantityController.text) ?? 0
+          : 0),
+      qntCestoPassar: (serviceTypeSelected[2]
+          ? int.tryParse(basketIroningQuantityController.text) ?? 0
+          : 0),
+      quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
+      quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
+      quantidadeSala: int.tryParse(roomController.text) ?? 0,
+      mensagem: obsController.text,
+      id: widget.idDoUser,
+    );
+
+    if (whatsappUrl!.isNotEmpty) {
+      launchWhatsApp(whatsappUrl!);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
+        ),
+      );
     }
   }
 
-  String? basketCleanQuantity = basketCleanQuantityController.text;
-  String? basketIroningQuantity = basketIroningQuantityController.text;
+  void roomsValidation() {
+    final notNumber = RegExp(r'[^0-9]');
 
-  setState(() {
-    _isBasketCleanQuantityValid = serviceTypeSelected[1]
-        ? (basketCleanQuantity.isNotEmpty && int.tryParse(basketCleanQuantity) != null)
-        : true;
-
-    _isBasketIroningQuantityValid = serviceTypeSelected[2]
-        ? (basketIroningQuantity.isNotEmpty && int.tryParse(basketIroningQuantity) != null)
-        : true;
-  });
-
-  if (!_isBasketCleanQuantityValid || !_isBasketIroningQuantityValid) {
-    return; 
+    setState(() {
+      invalidRooms['kitchen'] = notNumber.hasMatch(kitchenController.text);
+      invalidRooms['bedroom'] = notNumber.hasMatch(bedroomController.text);
+      invalidRooms['room'] = notNumber.hasMatch(roomController.text);
+      invalidRooms['toilet'] = notNumber.hasMatch(toiletController.text);
+    });
   }
 
-  if (kitchenController.text.isEmpty &&
-      bedroomController.text.isEmpty &&
-      roomController.text.isEmpty &&
-      toiletController.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Por Favor, inserir ao menos um cômodo com quantidade válida para prosseguir com o contrato.'),
-      ),
-    );
-    return;
+  bool hasInsertedAtLeastOneRoomNumber() {
+    return kitchenController.text.isEmpty &&
+        bedroomController.text.isEmpty &&
+        roomController.text.isEmpty &&
+        toiletController.text.isEmpty;
   }
-
-  String? whatsappUrl = await apiService.sendContract(
-    tiposDeServico: selectedServices,
-    tipoLimpeza: cleanTypeSelected,
-    possuiPets: petsController ?? false,
-    possuiMaterialLimpeza: materialController ?? false,
-    tipoCestoLavar: cleanBasketTypeSelected,
-    tipoCestoPassar: ironingBasketTypeSelected,
-    qntCestoLavar: (serviceTypeSelected[1]
-        ? int.tryParse(basketCleanQuantityController.text) ?? 0
-        : 0),
-    qntCestoPassar: (serviceTypeSelected[2]
-        ? int.tryParse(basketIroningQuantityController.text) ?? 0
-        : 0),
-    quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
-    quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
-    quantidadeSala: int.tryParse(roomController.text) ?? 0,
-    mensagem: obsController.text,
-    id: widget.idDoUser,
-  );
-
-  if (whatsappUrl!.isNotEmpty) {
-    launchWhatsApp(whatsappUrl!);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
-      ),
-    );
-  }
-}
 
   void launchWhatsApp(String url) async {
     if (await canLaunch(url)) {
@@ -274,9 +317,11 @@ Future<void> sendContract() async {
                       controller: bedroomController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Quarto',
-                        border: OutlineInputBorder(),
-                      ),
+                          labelText: 'Quarto',
+                          border: OutlineInputBorder(),
+                          errorText: invalidRooms['bedroom']!
+                              ? 'Valor inválido'
+                              : null),
                     ),
                   ),
                   SizedBox(width: 10),
@@ -285,9 +330,11 @@ Future<void> sendContract() async {
                       controller: kitchenController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Cozinha',
-                        border: OutlineInputBorder(),
-                      ),
+                          labelText: 'Cozinha',
+                          border: OutlineInputBorder(),
+                          errorText: invalidRooms['kitchen']!
+                              ? 'Valor inválido'
+                              : null),
                     ),
                   ),
                 ],
@@ -300,9 +347,11 @@ Future<void> sendContract() async {
                       controller: toiletController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Banheiro',
-                        border: OutlineInputBorder(),
-                      ),
+                          labelText: 'Banheiro',
+                          border: OutlineInputBorder(),
+                          errorText: invalidRooms['toilet']!
+                              ? 'Valor inválido'
+                              : null),
                     ),
                   ),
                   SizedBox(width: 10),
@@ -311,9 +360,10 @@ Future<void> sendContract() async {
                       controller: roomController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: 'Sala',
-                        border: OutlineInputBorder(),
-                      ),
+                          labelText: 'Sala',
+                          border: OutlineInputBorder(),
+                          errorText:
+                              invalidRooms['room']! ? 'Valor inválido' : null),
                     ),
                   ),
                 ],
@@ -384,10 +434,10 @@ Future<void> sendContract() async {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4),
-                                color: Colors.white,
-                                ),
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(4),
+                              color: Colors.white,
+                            ),
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
@@ -417,17 +467,18 @@ Future<void> sendContract() async {
                             ),
                           ),
                         ),
-                        if (serviceType[index] == 'Lavar roupa' &&
+                      if (serviceType[index] == 'Lavar roupa' &&
                           serviceTypeSelected[index])
                         Column(
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: Colors.white,
-                                  ),
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white,
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   value: cleanBasketTypeSelected,
@@ -475,11 +526,12 @@ Future<void> sendContract() async {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: Colors.white,
-                                  ),
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(4),
+                                color: Colors.white,
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   value: ironingBasketTypeSelected,

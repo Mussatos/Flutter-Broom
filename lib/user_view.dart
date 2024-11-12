@@ -41,7 +41,12 @@ class UserView extends StatelessWidget {
         ),
       ),
       body: FutureBuilder(
-        future: fetchUsuario(usuario.id),
+        future: Future.wait([
+          fetchUsuario(usuario.id),
+          fetchCustomContractorProfile(usuario.id),
+          fetchDataDiaristSpecialties(usuario.id),
+          fetchDataDiaristZones(usuario.id)
+        ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -50,6 +55,16 @@ class UserView extends StatelessWidget {
           } else if (!snapshot.hasData) {
             return const Center(child: Text('Nenhum usuário encontrado'));
           } else {
+            var userData = snapshot.data?[0] as UserModel?;
+            var customData = snapshot.data?[1] as ContractorCustomInformation?;
+            List<dynamic>? customDataSpeciality =
+                snapshot.data?[2] as List<dynamic>;
+            List<dynamic>? customDataZones = snapshot.data?[3] as List<dynamic>;
+
+            if (userData == null) {
+              return const Center(child: Text('Erro ao carregar dados'));
+            }
+
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -63,7 +78,7 @@ class UserView extends StatelessWidget {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      '${snapshot.data?.name} ${snapshot.data?.lastName}',
+                      '${userData.name} ${userData.lastName}', // Usando dados diretamente do UserModel
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -73,7 +88,7 @@ class UserView extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Serviço: ${snapshot.data!.wantService ? "Está à procura." : "Não está necessitando."}',
+                      'Serviço: ${userData.wantService ? "Está à procura." : "Não está necessitando."}',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -104,7 +119,7 @@ class UserView extends StatelessWidget {
                     ),
                     SizedBox(height: 10),
                     Text(
-                      '${snapshot.data?.description}',
+                      '${userData.description}',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
@@ -113,6 +128,160 @@ class UserView extends StatelessWidget {
                       ),
                       textAlign: TextAlign.justify,
                     ),
+                    if (profileId == 1) ...[
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Tipo de serviço que estou procurando:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customData?.serviceType != null &&
+                                customData?.serviceType != ""
+                            ? '${customData?.serviceType}'
+                            : 'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.access_time,
+                              color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Horário de preferência:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customData?.favoriteDaytime != null &&
+                                customData?.favoriteDaytime != ""
+                            ? '${customData?.favoriteDaytime}'
+                            : 'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.attach_money,
+                              color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Valor que estou disposto a pagar:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customData?.valueWillingToPay != null &&
+                                customData?.valueWillingToPay != 0
+                            ? 'R\$${customData?.valueWillingToPay}'
+                            : 'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                    ] else if (profileId == 2) ...[
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Atendo nas seguintes regiões:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customDataZones!
+                                .map((actv) =>
+                                    actv['state'] ??
+                                    actv['zone_id']
+                                        .toString()
+                                        .replaceAll('_', ' '))
+                                .join(', ') ??
+                            'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.access_time,
+                              color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Especialidades:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customDataSpeciality!
+                                .map((spec) => spec['speciality']
+                                    .toString()
+                                    .replaceAll('_', ' '))
+                                .join(', ') ??
+                            'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                    ],
                     SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -123,11 +292,9 @@ class UserView extends StatelessWidget {
                         SE O USUARIO Q ESTA NA LISTA FOR DIARISTA APARECE O BOTAO DE CRIAR CONTRATO
                     */
                         if (profileId == 1) ...[
-                          
                           ElevatedButton.icon(
                             onPressed: () async {
-                              final phoneNumber =
-                                  snapshot.data?.cellphoneNumber;
+                              final phoneNumber = userData.cellphoneNumber;
                               if (phoneNumber != null) {
                                 final whatsappUrl =
                                     'https://wa.me/$phoneNumber';

@@ -327,16 +327,25 @@ class EditUser {
       required this.email,
       this.specialties,
       this.regionAtendiment,
-      this.userActualImage});
+      this.userActualImage,
+      this.serviceType,
+      this.favoriteDaytime,
+      this.valueWillingToPay});
 
   factory EditUser.fromJson(Map<String, dynamic> json) {
     return EditUser(
-        description: json['description'],
-        name: json['first_name'],
-        lastName: json['last_name'],
-        cellphoneNumber: json['cellphone_number'],
-        wantService: json['want_service'] ?? false,
-        email: json['email'] ?? '');
+      description: json['description'],
+      name: json['first_name'],
+      lastName: json['last_name'],
+      cellphoneNumber: json['cellphone_number'],
+      wantService: json['want_service'] ?? false,
+      email: json['email'] ?? '',
+      serviceType: json['Contractor_Custom_Information']['service_type'] ?? '',
+      favoriteDaytime:
+          json['Contractor_Custom_Information']['favorite_daytime'] ?? '',
+      valueWillingToPay:
+          json['Contractor_Custom_Information']['value_willing_to_pay'] ?? '',
+    );
   }
   Map<String, dynamic> toJson() {
     return {
@@ -347,5 +356,69 @@ class EditUser {
       'want_service': wantService,
       'email': email,
     };
+  }
+}
+
+class ContractorCustomInformation {
+  String? serviceType;
+  String? favoriteDaytime;
+  double? valueWillingToPay;
+
+  ContractorCustomInformation(
+      {required this.serviceType,
+      required this.favoriteDaytime,
+      required this.valueWillingToPay});
+
+  factory ContractorCustomInformation.fromJson(Map<String, dynamic> json) {
+    return ContractorCustomInformation(
+      serviceType: json['service_type'] ?? '',
+      favoriteDaytime: json['favorite_daytime'] ?? '',
+      valueWillingToPay: json['value_willing_to_pay'] ?? 0.0,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'service_type': serviceType,
+      'favorite_daytime': favoriteDaytime,
+      'value_willing_to_pay': valueWillingToPay
+    };
+  }
+}
+
+class DiaristCustomInformationSpeciality {
+  List<String>? specialties;
+
+  DiaristCustomInformationSpeciality({
+    required this.specialties,
+  });
+
+  factory DiaristCustomInformationSpeciality.fromJson(
+      Map<String, dynamic> json) {
+    return DiaristCustomInformationSpeciality(
+      specialties: json['speciality'] ?? '',
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'speciality': specialties,
+    };
+  }
+}
+
+class DiaristCustomInformationActivity {
+  List<String>? regionAtendiment;
+  List<String>? stateAtendiment;
+
+  DiaristCustomInformationActivity(
+      {required this.regionAtendiment, required this.stateAtendiment});
+
+  factory DiaristCustomInformationActivity.fromJson(Map<String, dynamic> json) {
+    return DiaristCustomInformationActivity(
+      regionAtendiment: json['zone_id'] ?? '',
+      stateAtendiment: json['state'] ?? '',
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {'zone_id': regionAtendiment, 'state': stateAtendiment};
   }
 }

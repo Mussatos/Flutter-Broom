@@ -610,7 +610,7 @@ Future<bool> deleteUserFavorite(int? favoritedId) async {
 Future<void> sendCustomContractorProfile({
   required String? serviceType,
   required String? favoriteDaytime,
-  required int valueWillingToPay,
+  required double valueWillingToPay,
 }) async {
   final url = Uri.http(host, '/contractor/profile/custom');
   final token = await autentication.getToken();
@@ -645,7 +645,8 @@ Future<void> sendCustomContractorProfile({
   }
 }
 
-Future<Map<String, dynamic>?> fetchCustomContractorProfile(int userId) async {
+Future<ContractorCustomInformation> fetchCustomContractorProfile(
+    int userId) async {
   final url = Uri.http(host, '/contractor/profile/custom/$userId');
   final token = await autentication.getToken();
 
@@ -654,11 +655,18 @@ Future<Map<String, dynamic>?> fetchCustomContractorProfile(int userId) async {
     'Authorization': 'Bearer $token',
   });
 
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body);
+  if (response.statusCode == 200 && response.body.isNotEmpty) {
+    try {
+      return ContractorCustomInformation.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      print('Erro ao decodificar JSON: $e');
+      return ContractorCustomInformation(
+          serviceType: null, favoriteDaytime: null, valueWillingToPay: null);
+    }
   } else {
     print('Failed to fetch custom contractor profile');
-    return null;
+    return ContractorCustomInformation(
+        serviceType: null, favoriteDaytime: null, valueWillingToPay: null);
   }
 }
 

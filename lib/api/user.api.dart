@@ -14,7 +14,7 @@ import 'package:http_parser/http_parser.dart';
 
 UserAutentication autentication = UserAutentication();
 //URL de Prod do backend: https://broom-api.onrender.com/
-const String host = 'localhost:3000';
+const String host = '192.168.100.50:3000';
 Uri urlRegister = Uri.http(host, '/register');
 Uri urlLogin = Uri.http(host, '/login');
 Uri urlViewDiarist = Uri.http(host, '');
@@ -447,11 +447,12 @@ class ApiService {
   }
 }
 
+
 Future<String> sendImage(File file) async {
   try {
     final token = await autentication.getToken();
     final userId = await autentication.getUserId();
-    var request = http.MultipartRequest('POST', Uri.https(host, '/user/upload/$userId'));
+    var request = http.MultipartRequest('POST', Uri.http(host, '/user/upload/$userId'));
     request.headers['Authorization'] = 'Bearer $token';
 
     if (file.existsSync()) {
@@ -499,7 +500,7 @@ Future<String> sendImage(File file) async {
 
 Future<Map<String, dynamic>> fetchCEP(String cep) async {
   try {
-    var response = await http.get(Uri.https('viacep.com.br', '/ws/$cep/json/'));
+    var response = await http.get(Uri.http('viacep.com.br', '/ws/$cep/json/'));
 
     if (response.statusCode == 200) {
       Map<String, dynamic> CEP = json.decode(response.body);

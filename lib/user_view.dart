@@ -129,7 +129,7 @@ class UserView extends StatelessWidget {
                               Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
                               SizedBox(width: 10),
                               Text(
-                                'Tipo de serviço que estou procurando:',
+                                'Procurando o serviço:',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,

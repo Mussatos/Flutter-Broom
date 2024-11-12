@@ -239,14 +239,11 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            customDataZones!
-                                    .map((actv) =>
-                                        actv['state'] ??
-                                        actv['zone_id']
-                                            .toString()
-                                            .replaceAll('_', ' '))
-                                    .join(', ') ??
-                                'Não especificado',
+                            customDataZones != null && customDataZones.isNotEmpty
+                                ? customDataZones
+                                    .map((actv) => (actv['state'] ?? actv['zone_id'].toString()).replaceAll('_', ' '))
+                                    .join(', ')
+                                : 'Não especificado',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
@@ -276,13 +273,12 @@ class UserView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            customDataSpeciality!
-                                    .map((spec) => spec['speciality']
-                                        .toString()
-                                        .replaceAll('_', ' '))
-                                    .join(', ') ??
-                                'Não especificado',
+                         Text(
+                            customDataSpeciality != null && customDataSpeciality.isNotEmpty
+                                ? customDataSpeciality
+                                    .map((spec) => spec['speciality'].toString().replaceAll('_', ' '))
+                                    .join(', ')
+                                : 'Não especificado',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,

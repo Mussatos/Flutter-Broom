@@ -374,7 +374,7 @@ class _EditUserFormState extends State<EditUserForm> {
                           onChanged: (bool? value) {
                             setState(() {
                               if (value == true) {
-                                if (zoneAtendimentSelected!.length < 4) {
+                                if (zoneAtendimentSelected!.length < 3) {
                                   zoneAtendimentSelected?.add(zone['value']);
                                 }
                               } else {

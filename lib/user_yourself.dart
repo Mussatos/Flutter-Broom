@@ -262,13 +262,18 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          '${customDataActivity!.map((actv) => actv['state'] ?? actv['zone_id'].toString().replaceAll('_', ' ')).join(', ') ?? 'Não especificado'}',
+                          (customDataActivity != null && customDataActivity!.isNotEmpty)
+                              ? customDataActivity!
+                                  .map((actv) => (actv['state'] ?? actv['zone_id'].toString()).replaceAll('_', ' '))
+                                  .join(', ')
+                              : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey.shade700,
                           ),
                         ),
+
                         SizedBox(height: 15),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -287,14 +292,20 @@ class _UserYourselfState extends State<UserYourself> {
                           ],
                         ),
                         SizedBox(height: 8),
-                        Text(
-                          '${customDataSpecialties!.map((spec) => spec['speciality'].toString().replaceAll('_', ' ')).join(', ') ?? 'Não especificado'}',
+                       Text(
+                          (customDataSpecialties != null && customDataSpecialties!.isNotEmpty)
+                              ? customDataSpecialties!
+                                  .map((spec) => spec['speciality'].toString().replaceAll('_', ' '))
+                                  .join(', ')
+                              : 'Não especificado',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey.shade700,
                           ),
                         ),
+
+
                       ],
                       SizedBox(height: 150),
                       Row(

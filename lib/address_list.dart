@@ -124,19 +124,26 @@ class _AddressListState extends State<AddressList> {
                   subtitle: Text(getListAddressMore(address[index])),
                   trailing: PopupMenuButton<String>(
                     icon: Icon(Icons.more_vert),
-                    onSelected: (value) {
+                    onSelected: (value) async {
                       if (value == 'edit') {
-                        Navigator.push(
+                      final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  EditAddressForm(address: userAddress)),
-                        );
-                      } else if (value == 'delete') {
-                        _showDeleteConfirmationDialog(context, userAddress.id,
-                            () => removeAddressAt(index));
+                              builder: (context) => 
+                                  EditAddressForm(address: userAddress),
+                        ),
+                      );
+
+                      if (result != null && result is Address) {
+                        setState(() {
+                          address[index] = result;
+                        });
                       }
-                    },
+                    } else if (value == 'delete') {
+                      _showDeleteConfirmationDialog(context, userAddress.id,
+                          () => removeAddressAt(index));
+                    }
+                  },
                     itemBuilder: (BuildContext context) {
                       return [
                         PopupMenuItem(
@@ -178,9 +185,9 @@ void _showDeleteConfirmationDialog(
           ),
           TextButton(
             child: Text('Confirmar'),
-            onPressed: () {
+            onPressed: () async {
+              await deleteAddress(id);
               removeAddressAt();
-              deleteAddress(id);
               Navigator.of(context).pop();
             },
           ),

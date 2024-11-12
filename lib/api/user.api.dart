@@ -143,7 +143,7 @@ Future<Uint8List?> fetchUserImage(String imageName) async {
   final token = await autentication.getToken();
 
   try {
-    final response = await http.get(Uri.http(host, '/file/$imageName'),
+    final response = await http.get(Uri.https(host, '/file/$imageName'),
         headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
@@ -451,7 +451,7 @@ Future sendImage(PlatformFile file) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
   var request =
-      http.MultipartRequest('POST', Uri.http(host, '/user/upload/$userId'));
+      http.MultipartRequest('POST', Uri.https(host, '/user/upload/$userId'));
   request.headers['Authorization'] = 'Bearer $token';
   request.files.add(await http.MultipartFile.fromBytes(
     'file',

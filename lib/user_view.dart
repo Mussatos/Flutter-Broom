@@ -284,6 +284,7 @@ class UserView extends StatelessWidget {
                               fontWeight: FontWeight.w400,
                               color: Colors.grey.shade700,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),

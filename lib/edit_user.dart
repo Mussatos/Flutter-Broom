@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:js_interop';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';

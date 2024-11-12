@@ -19,6 +19,8 @@ class UserYourself extends StatefulWidget {
 class _UserYourselfState extends State<UserYourself> {
   int? profileId;
   ContractorCustomInformation? customData;
+  List<dynamic>? customDataSpecialties = [];
+  List<dynamic>? customDataActivity = [];
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,9 @@ class _UserYourselfState extends State<UserYourself> {
 
       if (userData != null && profileId == 1) {
         customData = await fetchCustomContractorProfile(userData.id);
+      } else if (userData != null && profileId == 2) {
+        customDataSpecialties = await fetchDataDiaristSpecialties(userData.id);
+        customDataActivity = await fetchDataDiaristZones(userData.id);
       }
 
       return userData;
@@ -237,66 +242,59 @@ class _UserYourselfState extends State<UserYourself> {
                           ),
                         ),
                         SizedBox(height: 15),
-                      ] else ...[
+                      ] else if (profileId == 2) ...[
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.pin_drop,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Atendo nas seguintes regiões:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
                         Text(
-                          'Atendo nas seguintes regiões:',
+                          '${customDataActivity!.map((actv) => actv['state'] ?? actv['zone_id'].toString().replaceAll('_', ' ')).join(', ') ?? 'Não especificado'}',
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 15),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Icon(Icons.cleaning_services,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
-                            RegionTag(text: 'Campo Grande'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'Toda região da cidade'),
+                            Text(
+                              'Especialidades:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 8),
                         Text(
-                          'Especialidades:',
+                          '${customDataSpecialties!.map((spec) => spec['speciality'].toString().replaceAll('_', ' ')).join(', ') ?? 'Não especificado'}',
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
                           ),
                         ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 10),
-                            RegionTag(text: 'Faxinar'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'Lavar'),
-                            SizedBox(width: 10),
-                            RegionTag(text: 'Limpeza pós-obra'),
-                            SizedBox(width: 8),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            RegionTag(text: 'Limpeza residencial'),
-                            SizedBox(width: 10),
-                            RegionTag(text: 'organizar'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'passar'),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 10),
-                            RegionTag(text: 'vidros e fachadas'),
-                          ],
-                        )
                       ],
                       SizedBox(height: 150),
                       Row(
@@ -322,28 +320,38 @@ class _UserYourselfState extends State<UserYourself> {
                           ),
                           ElevatedButton.icon(
                             onPressed: () {
-                              GoRouter.of(context).push(
-                                '/accont/edit',
-                                extra: EditUser(
-                                                name: snapshot.data?.name,
-                                                lastName:
-                                                    snapshot.data?.lastName,
-                                                email: snapshot.data?.email,
-                                                cellphoneNumber: snapshot
-                                                    .data?.cellphoneNumber,
-                                                description:
-                                                    snapshot.data?.description,
-                                                wantService:
-                                                    snapshot.data?.wantService,
-                                                userActualImage:
-                                                    snapshot.data?.userImage,
-                                                favoriteDaytime:
-                                                    customData?.favoriteDaytime,
-                                                serviceType:
-                                                    customData?.serviceType,
-                                                valueWillingToPay: customData
-                                                    ?.valueWillingToPay),
-                                          );
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditUserForm(
+                                      usersEdit: EditUser(
+                                        name: snapshot.data?.name,
+                                        lastName: snapshot.data?.lastName,
+                                        email: snapshot.data?.email,
+                                        cellphoneNumber:
+                                            snapshot.data?.cellphoneNumber,
+                                        description: snapshot.data?.description,
+                                        wantService: snapshot.data?.wantService,
+                                        userActualImage:
+                                            snapshot.data?.userImage,
+                                        favoriteDaytime:
+                                            customData?.favoriteDaytime,
+                                        serviceType: customData?.serviceType,
+                                        valueWillingToPay:
+                                            customData?.valueWillingToPay,
+                                        specialties: customDataSpecialties
+                                            ?.map(
+                                              (e) => e['speciality'].toString(),
+                                            )
+                                            .toList(),
+                                        regionAtendiment: customDataActivity
+                                            ?.map(
+                                              (e) => e['zone_id'].toString(),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ));
                             },
                             icon: Icon(Icons.edit, color: Colors.white),
                             label: Text(

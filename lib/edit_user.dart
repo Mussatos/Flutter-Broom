@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:js_interop';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
@@ -27,6 +28,12 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController valueWillingToPayController;
   String? serviceTypeSelected;
   String? favoriteDaytimeSelected;
+  List<String>? zoneAtendimentSelected = [];
+  String? stateAtendimentSelected;
+  List<String>? specialtiesSelected = [];
+  List<dynamic>? listSpecialties = [];
+  List<dynamic>? listZones = [];
+  List<dynamic>? listState = [];
 
   late String userActualImage;
   late bool? wantService;
@@ -74,9 +81,16 @@ class _EditUserFormState extends State<EditUserForm> {
 
   Future<Yourself?> fetchUserById() async {
     profileId = await autentication.getProfileId();
-    print('id: $profileId');
-    print(getUserById());
     return await getUserById();
+  }
+
+  Future<void> fetchSpecialties() async {
+    listSpecialties = await fetchCustomDiaristProfileSpecialties();
+  }
+
+  Future<void> fetchActivityArea() async {
+    listState = await fetchCustomDiaristProfileStates();
+    listZones = await fetchCustomDiaristProfileZone();
   }
 
   @override
@@ -94,11 +108,19 @@ class _EditUserFormState extends State<EditUserForm> {
 
     serviceTypeSelected = widget.usersEdit.serviceType;
     favoriteDaytimeSelected = widget.usersEdit.favoriteDaytime;
+    zoneAtendimentSelected = widget.usersEdit.regionAtendiment;
+    stateAtendimentSelected = widget.usersEdit.stateAtendiment;
+    specialtiesSelected = widget.usersEdit.specialties;
 
     wantService = widget.usersEdit.wantService ?? false;
     userActualImage = widget.usersEdit.userActualImage ?? '';
-
     fetchUserById().then((_) {
+      setState(() {});
+    });
+    fetchSpecialties().then((_) {
+      setState(() {});
+    });
+    fetchActivityArea().then((_) {
       setState(() {});
     });
   }
@@ -133,6 +155,19 @@ class _EditUserFormState extends State<EditUserForm> {
           valueWillingToPay:
               double.tryParse(valueWillingToPayController.text) ?? 0.0,
         );
+      } else if (profileId == 2) {
+        specialtiesSelected!.forEach(
+          (element) async {
+            await sendCustomDiaristProfileSpecialties(specialties: element);
+          },
+        );
+        zoneAtendimentSelected!.forEach(
+          (element) async {
+            await sendCustomDiaristProfileZone(regionAtendiment: element);
+          },
+        );
+        await sendCustomDiaristProfileState(
+            stateAtendiment: stateAtendimentSelected);
       }
 
     if (_selectedFile != null && _selectedFile!.path != null) {
@@ -347,6 +382,78 @@ class _EditUserFormState extends State<EditUserForm> {
                         prefixText: 'R\$',
                       ),
                     ),
+                  ] else if (profileId == 2) ...[
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                        value: stateAtendimentSelected,
+                        decoration: InputDecoration(
+                          labelText: 'Informe o estado que você atua',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: listState!
+                            .map<DropdownMenuItem<String>>((dynamic value) {
+                          return DropdownMenuItem<String>(
+                              value: value!['value'],
+                              child: Text(value!['text']));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            stateAtendimentSelected = value!;
+                          });
+                        }),
+                    SizedBox(height: 10),
+                    Text(
+                      'Informe as suas regiões de atuação (máximo 3)',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Column(
+                      children: listZones!.map((zone) {
+                        return CheckboxListTile(
+                          title: Text(zone['text'] ?? ''),
+                          value:
+                              zoneAtendimentSelected!.contains(zone['value']),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value == true) {
+                                if (zoneAtendimentSelected!.length < 4) {
+                                  zoneAtendimentSelected?.add(zone['value']);
+                                }
+                              } else {
+                                zoneAtendimentSelected?.remove(zone['value']);
+                                deleteDataDiaristZone(zone['value']);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Informe as suas especialidades (máximo 4)',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Column(
+                      children: listSpecialties!.map((specialty) {
+                        return CheckboxListTile(
+                          title: Text(specialty['text'] ?? ''),
+                          value:
+                              specialtiesSelected!.contains(specialty['value']),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value == true) {
+                                if (specialtiesSelected!.length < 4) {
+                                  specialtiesSelected?.add(specialty['value']);
+                                }
+                              } else {
+                                specialtiesSelected?.remove(specialty['value']);
+                                deleteDataDiaristSpecialties(
+                                    specialty['value']);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
                   ],
                   SizedBox(height: 10),
                   TextFormField(
@@ -389,7 +496,7 @@ class _EditUserFormState extends State<EditUserForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                     onPressed: () async {
+                      onPressed: () async {
                         try {
                           await saveUser();
                           if (_selectedFile != null) {

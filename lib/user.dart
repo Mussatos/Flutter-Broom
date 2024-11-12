@@ -314,6 +314,9 @@ class EditUser {
   String? serviceType;
   String? favoriteDaytime;
   num? valueWillingToPay;
+  List<String>? regionAtendiment;
+  List<String>? specialties;
+  String? stateAtendiment;
 
   EditUser(
       {required this.name,
@@ -322,6 +325,8 @@ class EditUser {
       required this.description,
       required this.wantService,
       required this.email,
+      this.specialties,
+      this.regionAtendiment,
       this.userActualImage,
       this.serviceType,
       this.favoriteDaytime,
@@ -377,5 +382,43 @@ class ContractorCustomInformation {
       'favorite_daytime': favoriteDaytime,
       'value_willing_to_pay': valueWillingToPay
     };
+  }
+}
+
+class DiaristCustomInformationSpeciality {
+  List<String>? specialties;
+
+  DiaristCustomInformationSpeciality({
+    required this.specialties,
+  });
+
+  factory DiaristCustomInformationSpeciality.fromJson(
+      Map<String, dynamic> json) {
+    return DiaristCustomInformationSpeciality(
+      specialties: json['speciality'] ?? '',
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'speciality': specialties,
+    };
+  }
+}
+
+class DiaristCustomInformationActivity {
+  List<String>? regionAtendiment;
+  List<String>? stateAtendiment;
+
+  DiaristCustomInformationActivity(
+      {required this.regionAtendiment, required this.stateAtendiment});
+
+  factory DiaristCustomInformationActivity.fromJson(Map<String, dynamic> json) {
+    return DiaristCustomInformationActivity(
+      regionAtendiment: json['zone_id'] ?? '',
+      stateAtendiment: json['state'] ?? '',
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {'zone_id': regionAtendiment, 'state': stateAtendiment};
   }
 }

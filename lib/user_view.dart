@@ -12,7 +12,7 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  int profileId = usuario.profileId;
+    int profileId = usuario.profileId;
 
     final address = (usuario.address != null && usuario.address.isNotEmpty)
         ? usuario.address[0]
@@ -41,7 +41,12 @@ class UserView extends StatelessWidget {
         ),
       ),
       body: FutureBuilder(
-        future: Future.wait([fetchUsuario(usuario.id), fetchCustomContractorProfile(usuario.id)]),
+        future: Future.wait([
+          fetchUsuario(usuario.id),
+          fetchCustomContractorProfile(usuario.id),
+          fetchDataDiaristSpecialties(usuario.id),
+          fetchDataDiaristZones(usuario.id)
+        ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -50,13 +55,15 @@ class UserView extends StatelessWidget {
           } else if (!snapshot.hasData) {
             return const Center(child: Text('Nenhum usuário encontrado'));
           } else {
+            var userData = snapshot.data?[0] as UserModel?;
+            var customData = snapshot.data?[1] as ContractorCustomInformation?;
+            List<dynamic>? customDataSpeciality =
+                snapshot.data?[2] as List<dynamic>;
+            List<dynamic>? customDataZones = snapshot.data?[3] as List<dynamic>;
 
-        var userData = snapshot.data?[0] as UserModel?;
-        var customData = snapshot.data?[1] as ContractorCustomInformation?;
-
-        if (userData == null) {
-          return const Center(child: Text('Erro ao carregar dados'));
-        }
+            if (userData == null) {
+              return const Center(child: Text('Erro ao carregar dados'));
+            }
 
             return SingleChildScrollView(
               child: Padding(
@@ -71,7 +78,7 @@ class UserView extends StatelessWidget {
                     ),
                     SizedBox(height: 20),
                     Text(
-                      '${userData.name} ${userData.lastName}',  // Usando dados diretamente do UserModel
+                      '${userData.name} ${userData.lastName}', // Usando dados diretamente do UserModel
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -121,162 +128,236 @@ class UserView extends StatelessWidget {
                       ),
                       textAlign: TextAlign.justify,
                     ),
-                  if (profileId == 1) ...[
-                          SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
-                              SizedBox(width: 10),
-                              Text(
-                                'Procurando o serviço:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
+                    if (profileId == 1) ...[
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
                           Text(
-                            customData?.serviceType != null && customData?.serviceType != ""
-                                ? '${customData?.serviceType}'
-                                : 'Não especificado',
+                            'Procurando o serviço:',
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade700,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
                             ),
                           ),
-                          SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.access_time, color: Color(0xFF2ECC8F), size: 20),
-                              SizedBox(width: 10),
-                              Text(
-                                'Horário de preferência:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            customData?.favoriteDaytime != null && customData?.favoriteDaytime != ""
-                                ? '${customData?.favoriteDaytime}'
-                                : 'Não especificado',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade700,
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.attach_money, color: Color(0xFF2ECC8F), size: 20),
-                              SizedBox(width: 10),
-                              Text(
-                                'Valor que estou disposto a pagar:',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            customData?.valueWillingToPay != null && customData?.valueWillingToPay != 0
-                                ? 'R\$${customData?.valueWillingToPay}'
-                                : 'Não especificado',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade700,
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                        ] else ...[
-
                         ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customData?.serviceType != null &&
+                                customData?.serviceType != ""
+                            ? '${customData?.serviceType}'
+                            : 'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.access_time,
+                              color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Horário de preferência:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customData?.favoriteDaytime != null &&
+                                customData?.favoriteDaytime != ""
+                            ? '${customData?.favoriteDaytime}'
+                            : 'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.attach_money,
+                              color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Valor que estou disposto a pagar:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customData?.valueWillingToPay != null &&
+                                customData?.valueWillingToPay != 0
+                            ? 'R\$${customData?.valueWillingToPay}'
+                            : 'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                    ] else if (profileId == 2) ...[
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Atendo nas seguintes regiões:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customDataZones!
+                                .map((actv) =>
+                                    actv['state'] ??
+                                    actv['zone_id']
+                                        .toString()
+                                        .replaceAll('_', ' '))
+                                .join(', ') ??
+                            'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.access_time,
+                              color: Color(0xFF2ECC8F), size: 20),
+                          SizedBox(width: 10),
+                          Text(
+                            'Especialidades:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        customDataSpeciality!
+                                .map((spec) => spec['speciality']
+                                    .toString()
+                                    .replaceAll('_', ' '))
+                                .join(', ') ??
+                            'Não especificado',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                    ],
                     SizedBox(height: 40),
                     Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    /*
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        /*
                         SE PROFILE ID DOS USUARIOS QUE ESTAO NA LISTA!!!!! nao o que esta logado
                         SE O USUARIO Q ESTA NA LISTA FOR CONTRATANTE VAI APARECER APENAS O BOTAO DE CONTATO
                         SE O USUARIO Q ESTA NA LISTA FOR DIARISTA APARECE O BOTAO DE CRIAR CONTRATO
                     */
-                    if (profileId == 1)
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final phoneNumber = userData.cellphoneNumber;
-                          if (phoneNumber != null) {
-                            final whatsappUrl = 'https://wa.me/$phoneNumber';
-                            if (await canLaunch(whatsappUrl)) {
-                              await launch(whatsappUrl);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Não foi possível abrir o WhatsApp.'),
-                                ),
-                              );
-                            }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Número de telefone não cadastrado.'),
-                              ),
-                            );
-                          }
-                        },
-                        icon: Icon(Icons.message, color: Colors.white),
-                        label: Text(
-                          'Contatar pelo WhatsApp',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF2ECC8F),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      )
-                    else
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Contract(
-                                idDoUser: usuario.id,
+                        if (profileId == 1) ...[
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final phoneNumber = userData.cellphoneNumber;
+                              if (phoneNumber != null) {
+                                final whatsappUrl =
+                                    'https://wa.me/$phoneNumber';
+                                if (await canLaunch(whatsappUrl)) {
+                                  await launch(whatsappUrl);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Não foi possível abrir o WhatsApp.'),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Número de telefone não cadastrado.'),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: Icon(Icons.message, color: Colors.white),
+                            label: Text(
+                              'Contatar pelo WhatsApp',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF2ECC8F),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                          );
-                        },
-                        icon: Icon(Icons.message, color: Colors.white),
-                        label: Text(
-                          'Criar contrato',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF2ECC8F),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                          )
+                        ] else if (profileId == 2) ...[
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Contract(
+                                    idDoUser: usuario.id,
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.message, color: Colors.white),
+                            label: Text(
+                              'Criar contrato',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF2ECC8F),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
                           ),
-                          ),
-                        ),
+                        ],
                       ],
                     ),
                   ],

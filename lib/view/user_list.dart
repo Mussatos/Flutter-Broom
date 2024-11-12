@@ -78,15 +78,18 @@ class _UserListState extends State<UserList> {
             icon: Icon(Icons.person),
             color: Colors.white,
             onPressed: () {
+            Future.delayed(Duration(milliseconds: 100), () {
               GoRouter.of(context).push('/account/view');
+            });
             },
           ),
           IconButton(
             icon: Icon(Icons.settings),
             color: Colors.grey.shade800,
             onPressed: () {
+            Future.delayed(Duration(milliseconds: 100), () {
               GoRouter.of(context).push('/account/settings');
-            },
+            });}
           ),
         ],
         elevation: 0,

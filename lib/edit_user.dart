@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:js_interop';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
@@ -27,8 +28,12 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController valueWillingToPayController;
   String? serviceTypeSelected;
   String? favoriteDaytimeSelected;
-  String? regionAtendimentSelected;
-  List<String?> specialtiesSelected = [];
+  List<String>? zoneAtendimentSelected = [];
+  String? stateAtendimentSelected;
+  List<String>? specialtiesSelected = [];
+  List<dynamic>? listSpecialties = [];
+  List<dynamic>? listZones = [];
+  List<dynamic>? listState = [];
 
   late String userActualImage;
   late bool? wantService;
@@ -48,24 +53,6 @@ class _EditUserFormState extends State<EditUserForm> {
 
   List<String> daytimeType = ['Manhã', 'Tarde', 'Integral'];
 
-  List<String> regionAtendiment = [
-    'Lado norte',
-    'Lado sul',
-    'Lado leste',
-    'Lado oeste',
-    'Toda a região'
-  ];
-
-  List<String> specialties = [
-    'Faxinar',
-    'Lavar',
-    'Limpeza pós-obra',
-    'Limpeza residencial',
-    'Organizar',
-    'Passar',
-    'Vidros e fachadas'
-  ];
-
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -84,8 +71,16 @@ class _EditUserFormState extends State<EditUserForm> {
 
   Future<Yourself?> fetchUserById() async {
     profileId = await autentication.getProfileId();
-    print(getUserById());
     return await getUserById();
+  }
+
+  Future<void> fetchSpecialties() async {
+    listSpecialties = await fetchCustomDiaristProfileSpecialties();
+  }
+
+  Future<void> fetchActivityArea() async {
+    listState = await fetchCustomDiaristProfileStates();
+    listZones = await fetchCustomDiaristProfileZone();
   }
 
   @override
@@ -103,34 +98,19 @@ class _EditUserFormState extends State<EditUserForm> {
 
     serviceTypeSelected = widget.usersEdit.serviceType;
     favoriteDaytimeSelected = widget.usersEdit.favoriteDaytime;
-    regionAtendimentSelected = widget.usersEdit.regionAtendiment;
-
-    if (widget.usersEdit.specialties != null) {
-      if (widget.usersEdit.specialties is String) {
-        // Se specialties for uma string, dividir por vírgula para criar uma lista
-        specialtiesSelected = widget.usersEdit.specialties!
-            .split(',')
-            .map((s) => s.trim())
-            .toList();
-      } else if (widget.usersEdit.specialties is List) {
-        // Se specialties já for uma lista, converta cada item para String
-        specialtiesSelected = (widget.usersEdit.specialties as List)
-            .map((e) => e.toString())
-            .toList();
-      } else {
-        // Caso não tenha specialties definidas, inicializar com uma lista vazia
-        specialtiesSelected = [];
-      }
-    } else {
-      specialtiesSelected = [];
-    }
+    zoneAtendimentSelected = widget.usersEdit.regionAtendiment;
+    stateAtendimentSelected = widget.usersEdit.stateAtendiment;
+    specialtiesSelected = widget.usersEdit.specialties;
 
     wantService = widget.usersEdit.wantService ?? false;
     userActualImage = widget.usersEdit.userActualImage ?? '';
-    print(valueWillingToPayController.text);
-    print(serviceTypeSelected);
-    print(favoriteDaytimeSelected);
     fetchUserById().then((_) {
+      setState(() {});
+    });
+    fetchSpecialties().then((_) {
+      setState(() {});
+    });
+    fetchActivityArea().then((_) {
       setState(() {});
     });
   }
@@ -166,52 +146,24 @@ class _EditUserFormState extends State<EditUserForm> {
           valueWillingToPay:
               int.tryParse(valueWillingToPayController.text) ?? 0,
         );
+      } else if (profileId == 2) {
+        specialtiesSelected!.forEach(
+          (element) async {
+            await sendCustomDiaristProfileSpecialties(specialties: element);
+          },
+        );
+        zoneAtendimentSelected!.forEach(
+          (element) async {
+            await sendCustomDiaristProfileZone(regionAtendiment: element);
+          },
+        );
+        await sendCustomDiaristProfileState(
+            stateAtendiment: stateAtendimentSelected);
       }
-      // else if(profileId == 2){
-
-      // }
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => UserYourself()));
     }
-  }
-
-  Future<void> _showSpecialtiesDialog() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Selecione as Especialidades"),
-          content: SingleChildScrollView(
-            child: Column(
-              children: specialties.map((specialty) {
-                return CheckboxListTile(
-                  title: Text(specialty),
-                  value: specialtiesSelected.contains(specialty),
-                  onChanged: (bool? selected) {
-                    setState(() {
-                      if (selected == true) {
-                        specialtiesSelected.add(specialty);
-                      } else {
-                        specialtiesSelected.remove(specialty);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text("Fechar"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -392,64 +344,75 @@ class _EditUserFormState extends State<EditUserForm> {
                   ] else if (profileId == 2) ...[
                     SizedBox(height: 10),
                     DropdownButtonFormField<String>(
-                      value: regionAtendimentSelected,
-                      decoration: InputDecoration(
-                        labelText:
-                            'Informe a região de Campo grande que você atua',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: regionAtendiment
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                            value: value, child: Text(value));
+                        value: stateAtendimentSelected,
+                        decoration: InputDecoration(
+                          labelText: 'Informe o estado que você atua',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: listState!
+                            .map<DropdownMenuItem<String>>((dynamic value) {
+                          return DropdownMenuItem<String>(
+                              value: value!['value'],
+                              child: Text(value!['text']));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            stateAtendimentSelected = value!;
+                          });
+                        }),
+                    SizedBox(height: 10),
+                    Text(
+                      'Informe as suas regiões de atuação (máximo 3)',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Column(
+                      children: listZones!.map((zone) {
+                        return CheckboxListTile(
+                          title: Text(zone['text'] ?? ''),
+                          value:
+                              zoneAtendimentSelected!.contains(zone['value']),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value == true) {
+                                if (zoneAtendimentSelected!.length < 4) {
+                                  zoneAtendimentSelected?.add(zone['value']);
+                                }
+                              } else {
+                                zoneAtendimentSelected?.remove(zone['value']);
+                                deleteDataDiaristZone(zone['value']);
+                              }
+                            });
+                          },
+                        );
                       }).toList(),
-                      onChanged: (String? value) {
-                        setState(() {
-                          regionAtendimentSelected = value!;
-                        });
-                      },
                     ),
                     SizedBox(height: 10),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Especialidades:',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                        ElevatedButton(
-                          onPressed: _showSpecialtiesDialog,
-                          child: Text("Selecionar"),
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.black),
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      'Informe as suas especialidades (máximo 4)',
+                      style: TextStyle(fontSize: 16),
                     ),
-                    SizedBox(height: 10),
-                    Wrap(
-                      spacing: 8.0,
-                      children: specialtiesSelected
-                          .map((specialty) => Chip(
-                                label: Text(specialty!),
-                                labelStyle: TextStyle(
-                                  color: Colors.white,
-                                ),
-                                backgroundColor: Color(0xFF2ECC8F),
-                                deleteIconColor: Colors.white,
-                                onDeleted: () {
-                                  setState(() {
-                                    specialtiesSelected.remove(specialty);
-                                  });
-                                },
-                              ))
-                          .toList(),
+                    Column(
+                      children: listSpecialties!.map((specialty) {
+                        return CheckboxListTile(
+                          title: Text(specialty['text'] ?? ''),
+                          value:
+                              specialtiesSelected!.contains(specialty['value']),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value == true) {
+                                if (specialtiesSelected!.length < 4) {
+                                  specialtiesSelected?.add(specialty['value']);
+                                }
+                              } else {
+                                specialtiesSelected?.remove(specialty['value']);
+                                deleteDataDiaristSpecialties(
+                                    specialty['value']);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
                     ),
-                    SizedBox(height: 10),
                   ],
                   SizedBox(height: 10),
                   TextFormField(

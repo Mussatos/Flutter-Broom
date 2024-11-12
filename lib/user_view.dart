@@ -12,7 +12,7 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  int profileId = usuario.profileId;
+    int profileId = usuario.profileId;
 
     final address = (usuario.address != null && usuario.address.isNotEmpty)
         ? usuario.address[0]
@@ -115,74 +115,82 @@ class UserView extends StatelessWidget {
                     ),
                     SizedBox(height: 40),
                     Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    /*
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        /*
                         SE PROFILE ID DOS USUARIOS QUE ESTAO NA LISTA!!!!! nao o que esta logado
                         SE O USUARIO Q ESTA NA LISTA FOR CONTRATANTE VAI APARECER APENAS O BOTAO DE CONTATO
                         SE O USUARIO Q ESTA NA LISTA FOR DIARISTA APARECE O BOTAO DE CRIAR CONTRATO
                     */
-                    if (profileId == 1)
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          final phoneNumber = snapshot.data?.cellphoneNumber;
-                          if (phoneNumber != null) {
-                            final whatsappUrl = 'https://wa.me/$phoneNumber';
-                            if (await canLaunch(whatsappUrl)) {
-                              await launch(whatsappUrl);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Não foi possível abrir o WhatsApp.'),
-                                ),
-                              );
-                            }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Número de telefone não cadastrado.'),
-                              ),
-                            );
-                          }
-                        },
-                        icon: Icon(Icons.message, color: Colors.white),
-                        label: Text(
-                          'Contatar pelo WhatsApp',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF2ECC8F),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      )
-                    else
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Contract(
-                                idDoUser: usuario.id,
+                        if (profileId == 1) ...[
+                          
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final phoneNumber =
+                                  snapshot.data?.cellphoneNumber;
+                              if (phoneNumber != null) {
+                                final whatsappUrl =
+                                    'https://wa.me/$phoneNumber';
+                                if (await canLaunch(whatsappUrl)) {
+                                  await launch(whatsappUrl);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Não foi possível abrir o WhatsApp.'),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Número de telefone não cadastrado.'),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: Icon(Icons.message, color: Colors.white),
+                            label: Text(
+                              'Contatar pelo WhatsApp',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF2ECC8F),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                          );
-                        },
-                        icon: Icon(Icons.message, color: Colors.white),
-                        label: Text(
-                          'Criar contrato',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF2ECC8F),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                          )
+                        ] else if (profileId == 2) ...[
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Contract(
+                                    idDoUser: usuario.id,
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: Icon(Icons.message, color: Colors.white),
+                            label: Text(
+                              'Criar contrato',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF2ECC8F),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
                           ),
-                          ),
-                        ),
+                        ],
                       ],
                     ),
                   ],

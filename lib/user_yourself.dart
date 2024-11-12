@@ -19,6 +19,8 @@ class UserYourself extends StatefulWidget {
 class _UserYourselfState extends State<UserYourself> {
   int? profileId;
   Map<String, dynamic>? customData;
+  List<dynamic>? customDataSpecialties = [];
+  List<dynamic>? customDataActivity = [];
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,9 @@ class _UserYourselfState extends State<UserYourself> {
 
       if (userData != null && profileId == 1) {
         customData = await fetchCustomContractorProfile(userData.id);
+      } else if (userData != null && profileId == 2) {
+        customDataSpecialties = await fetchDataDiaristSpecialties(userData.id);
+        customDataActivity = await fetchDataDiaristZones(userData.id);
       }
       return await getUserById();
     }
@@ -227,13 +232,12 @@ class _UserYourselfState extends State<UserYourself> {
                           ),
                         ),
                         SizedBox(height: 15),
-                      ] else if(profileId == 2)...[
-
+                      ] else if (profileId == 2) ...[
                         SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.build,
+                            Icon(Icons.pin_drop,
                                 color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
                             Text(
@@ -248,7 +252,7 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          '${customData?['service_type'] ?? 'Não especificado'}',
+                          '${customDataActivity!.map((actv) => actv['state'] ?? actv['zone_id'].toString().replaceAll('_', ' ')).join(', ') ?? 'Não especificado'}',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -259,11 +263,11 @@ class _UserYourselfState extends State<UserYourself> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.access_time,
+                            Icon(Icons.cleaning_services,
                                 color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
                             Text(
-                              'Horário de preferência:',
+                              'Especialidades:',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -271,6 +275,15 @@ class _UserYourselfState extends State<UserYourself> {
                               ),
                             ),
                           ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          '${customDataSpecialties!.map((spec) => spec['speciality'].toString().replaceAll('_', ' ')).join(', ') ?? 'Não especificado'}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
                         ),
                       ],
                       SizedBox(height: 150),
@@ -302,18 +315,31 @@ class _UserYourselfState extends State<UserYourself> {
                                   MaterialPageRoute(
                                       builder: (context) => EditUserForm(
                                             usersEdit: EditUser(
-                                                name: snapshot.data?.name,
-                                                lastName:
-                                                    snapshot.data?.lastName,
-                                                email: snapshot.data?.email,
-                                                cellphoneNumber: snapshot
-                                                    .data?.cellphoneNumber,
-                                                description:
-                                                    snapshot.data?.description,
-                                                wantService:
-                                                    snapshot.data?.wantService,
-                                                userActualImage:
-                                                    snapshot.data?.userImage),
+                                              name: snapshot.data?.name,
+                                              lastName: snapshot.data?.lastName,
+                                              email: snapshot.data?.email,
+                                              cellphoneNumber: snapshot
+                                                  .data?.cellphoneNumber,
+                                              description:
+                                                  snapshot.data?.description,
+                                              wantService:
+                                                  snapshot.data?.wantService,
+                                              userActualImage:
+                                                  snapshot.data?.userImage,
+                                              specialties: customDataSpecialties
+                                                  ?.map(
+                                                    (e) => e['speciality']
+                                                        .toString(),
+                                                  )
+                                                  .toList(),
+                                              regionAtendiment:
+                                                  customDataActivity
+                                                      ?.map(
+                                                        (e) => e['zone_id']
+                                                            .toString(),
+                                                      )
+                                                      .toList(),
+                                            ),
                                           )));
                             },
                             icon: Icon(Icons.edit, color: Colors.white),

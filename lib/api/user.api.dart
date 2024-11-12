@@ -612,11 +612,9 @@ Future<void> sendCustomContractorProfile({
   required String? favoriteDaytime,
   required int valueWillingToPay,
 }) async {
-
   final url = Uri.http(host, '/contractor/profile/custom');
   final token = await autentication.getToken();
   int? userId = await autentication.getUserId();
-
 
   final body = jsonEncode({
     'service_type': serviceType,
@@ -661,5 +659,241 @@ Future<Map<String, dynamic>?> fetchCustomContractorProfile(int userId) async {
   } else {
     print('Failed to fetch custom contractor profile');
     return null;
+  }
+}
+
+Future<void> sendCustomDiaristProfileSpecialties({
+  required String? specialties,
+}) async {
+  final url = Uri.http(host, '/specialities/diarist/');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'speciality': specialties,
+    'diarist_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<void> sendCustomDiaristProfileState({
+  required String? stateAtendiment,
+}) async {
+  final url = Uri.http(host, '/diarist/activity/state');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'state': stateAtendiment,
+    'diarist_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<void> sendCustomDiaristProfileZone({
+  required String? regionAtendiment,
+}) async {
+  final url = Uri.http(host, '/diarist/activity/zone');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'zone_id': regionAtendiment,
+    'diarist_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<List<dynamic>> fetchCustomDiaristProfileSpecialties() async {
+  final url = Uri.http(host, '/specialities');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<dynamic>> fetchCustomDiaristProfileStates() async {
+  final url = Uri.http(host, '/activity/states');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<dynamic>> fetchCustomDiaristProfileZone() async {
+  final url = Uri.http(host, '/activity/zones');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<dynamic>> fetchDataDiaristSpecialties(int? userId) async {
+  final url = Uri.http(host, '/specialities/$userId');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<dynamic>> fetchDataDiaristZones(int? userId) async {
+  final url = Uri.http(host, '/diarist/activity/$userId');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<void> deleteDataDiaristSpecialties(String? speciality) async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  try {
+    final response = await http.delete(
+      Uri.http(host, '/specialities',
+          {'id': userId.toString(), 'speciality': speciality}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+  }
+}
+
+Future<void> deleteDataDiaristZone(String? zone) async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  try {
+    final response = await http.delete(
+      Uri.http(host, '/diarist/activity/zone',
+          {'id': userId.toString(), 'zone_id': zone}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
   }
 }

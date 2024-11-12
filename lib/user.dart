@@ -314,8 +314,9 @@ class EditUser {
   String? serviceType;
   String? favoriteDaytime;
   num? valueWillingToPay;
-  String? regionAtendiment;
-  String? specialties;
+  List<String>? regionAtendiment;
+  List<String>? specialties;
+  String? stateAtendiment;
 
   EditUser(
       {required this.name,
@@ -324,6 +325,8 @@ class EditUser {
       required this.description,
       required this.wantService,
       required this.email,
+      this.specialties,
+      this.regionAtendiment,
       this.userActualImage});
 
   factory EditUser.fromJson(Map<String, dynamic> json) {

@@ -313,7 +313,7 @@ class EditUser {
   String? userActualImage;
   String? serviceType;
   String? favoriteDaytime;
-  num? valueWillingToPay;
+  double? valueWillingToPay;
   List<String>? regionAtendiment;
   List<String>? specialties;
   String? stateAtendiment;
@@ -373,7 +373,7 @@ class ContractorCustomInformation {
     return ContractorCustomInformation(
       serviceType: json['service_type'] ?? '',
       favoriteDaytime: json['favorite_daytime'] ?? '',
-      valueWillingToPay: json['value_willing_to_pay'] ?? 0.0,
+      valueWillingToPay: (json['value_willing_to_pay'] ?? 0.0).toDouble(),
     );
   }
   Map<String, dynamic> toJson() {

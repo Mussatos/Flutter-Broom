@@ -136,7 +136,7 @@ class UserView extends StatelessWidget {
                           Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
                           SizedBox(width: 10),
                           Text(
-                            'Procurando o serviço:',
+                            'Procurando serviço:',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -221,7 +221,8 @@ class UserView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
+                          Icon(Icons.pin_drop,
+                              color: Color(0xFF2ECC8F), size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Atendo nas seguintes regiões:',
@@ -234,26 +235,31 @@ class UserView extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 8),
-                      Text(
-                        customDataZones!
-                                .map((actv) =>
-                                    actv['state'] ??
-                                    actv['zone_id']
-                                        .toString()
-                                        .replaceAll('_', ' '))
-                                .join(', ') ??
-                            'Não especificado',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            customDataZones!
+                                    .map((actv) =>
+                                        actv['state'] ??
+                                        actv['zone_id']
+                                            .toString()
+                                            .replaceAll('_', ' '))
+                                    .join(', ') ??
+                                'Não especificado',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 15),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.access_time,
+                          Icon(Icons.cleaning_services,
                               color: Color(0xFF2ECC8F), size: 20),
                           SizedBox(width: 10),
                           Text(
@@ -267,18 +273,23 @@ class UserView extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 8),
-                      Text(
-                        customDataSpeciality!
-                                .map((spec) => spec['speciality']
-                                    .toString()
-                                    .replaceAll('_', ' '))
-                                .join(', ') ??
-                            'Não especificado',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            customDataSpeciality!
+                                    .map((spec) => spec['speciality']
+                                        .toString()
+                                        .replaceAll('_', ' '))
+                                    .join(', ') ??
+                                'Não especificado',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 15),
                     ],

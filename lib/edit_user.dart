@@ -91,6 +91,16 @@ class _EditUserFormState extends State<EditUserForm> {
     listState = await fetchCustomDiaristProfileStates();
     listZones = await fetchCustomDiaristProfileZone();
   }
+  
+  @override
+  void dispose() {
+    nameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    cellphoneNumberController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -124,15 +134,6 @@ class _EditUserFormState extends State<EditUserForm> {
     });
   }
 
-  @override
-  void dispose() {
-    nameController.dispose();
-    lastNameController.dispose();
-    emailController.dispose();
-    cellphoneNumberController.dispose();
-    descriptionController.dispose();
-    super.dispose();
-  }
 
  Future<void> saveUser() async {
   if (_formKey.currentState!.validate()) {
@@ -169,7 +170,7 @@ class _EditUserFormState extends State<EditUserForm> {
             stateAtendiment: stateAtendimentSelected);
       }
 
-    if (_selectedFile != null && _selectedFile!.path != null) {
+     if (_selectedFile != null && _selectedFile!.path != null) {
       File selectedFile = File(_selectedFile!.path!);
 
       if (await selectedFile.exists()) {

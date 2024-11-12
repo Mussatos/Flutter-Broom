@@ -70,8 +70,14 @@ class _AddressListState extends State<AddressList> {
           IconButton(
             icon: Icon(Icons.add),
             color: Colors.white,
-            onPressed: () {
-              GoRouter.of(context).push("/address/form");
+            onPressed: () async {
+              final result = await GoRouter.of(context).push("/address/form");
+
+              if (result != null && result is Address) {
+                setState(() {
+                  address.add(result);
+                });
+              }
             },
           ),
         ],

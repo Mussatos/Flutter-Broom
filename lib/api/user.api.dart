@@ -13,15 +13,16 @@ import 'package:broom_main_vscode/utils/user_autentication.dart';
 
 UserAutentication autentication = UserAutentication();
 //URL de Prod do backend: https://broom-api.onrender.com/
-const String host = 'localhost:3000';
-Uri urlRegister = Uri.http(host, '/register');
-Uri urlLogin = Uri.http(host, '/login');
-Uri urlViewDiarist = Uri.http(host, '');
-Uri urlForgetPassword = Uri.http(host, '/forget');
-Uri urlResetPassword = Uri.http(host, '/reset');
-Uri urlPaymentIntent = Uri.http(host, '/payment');
-Uri urlPaymentCheckout = Uri.http(host, '/payment/checkout');
-Uri urlAddress = Uri.http(host, '/address');
+const String host = 'broom-api.onrender.com';
+// localhost:3000
+Uri urlRegister = Uri.https(host, '/register');
+Uri urlLogin = Uri.https(host, '/login');
+Uri urlViewDiarist = Uri.https(host, '');
+Uri urlForgetPassword = Uri.https(host, '/forget');
+Uri urlResetPassword = Uri.https(host, '/reset');
+Uri urlPaymentIntent = Uri.https(host, '/payment');
+Uri urlPaymentCheckout = Uri.https(host, '/payment/checkout');
+Uri urlAddress = Uri.https(host, '/address');
 
 Future<bool> register(Map<String, dynamic> user) async {
   try {
@@ -136,15 +137,15 @@ Future<List<ListUsers>> fetchUsuarios() async {
 
 Uri getListUrl(int? userProfileId, int? userId) {
   return userProfileId == 1
-      ? Uri.http(host, '/list/diarists', {'id': userId.toString()})
-      : Uri.http(host, '/list/contractors', {'id': userId.toString()});
+      ? Uri.https(host, '/list/diarists', {'id': userId.toString()})
+      : Uri.https(host, '/list/contractors', {'id': userId.toString()});
 }
 
 Future<Uint8List?> fetchUserImage(String imageName) async {
   final token = await autentication.getToken();
 
   try {
-    final response = await http.get(Uri.http(host, '/file/$imageName'),
+    final response = await http.get(Uri.https(host, '/file/$imageName'),
         headers: {'Authorization': 'Bearer $token'});
 
     if (response.statusCode == 200) {
@@ -193,8 +194,8 @@ Future<UserModel> fetchUsuario(int? id) async {
 
 Uri getViewUrl(int? userProfileId, int? id) {
   return userProfileId == 1
-      ? Uri.http(host, '/diarist/${id}')
-      : Uri.http(host, '/contractor/${id}');
+      ? Uri.https(host, '/diarist/${id}')
+      : Uri.https(host, '/contractor/${id}');
 }
 
 Future<void> createAddress(Map<String, dynamic> payload) async {
@@ -225,7 +226,7 @@ Future<void> createAddress(Map<String, dynamic> payload) async {
 Future<Address?> getAddressByUserId() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http(host, '/address/$userId');
+  final url = Uri.https(host, '/address/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -253,7 +254,7 @@ Future<Address?> getAddressByUserId() async {
 Future<Yourself?> getUserById() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http(host, '/user/$userId');
+  final url = Uri.https(host, '/user/$userId');
 
   try {
     final http.Response response = await http.get(
@@ -281,7 +282,7 @@ Future<Yourself?> getUserById() async {
 Future<List<Address>> fetchAddress() async {
   final id = await autentication.getUserId();
   final token = await autentication.getToken();
-  final url = Uri.http(host, '/address/$id');
+  final url = Uri.https(host, '/address/$id');
 
   try {
     final response = await http.get(
@@ -306,7 +307,7 @@ Future<List<Address>> fetchAddress() async {
 
 Future<void> deleteAddress(int? idDoEndereco) async {
   final token = await autentication.getToken();
-  final url = Uri.http(host, '/address/$idDoEndereco');
+  final url = Uri.https(host, '/address/$idDoEndereco');
 
   try {
     final response = await http.delete(
@@ -331,7 +332,7 @@ Future<void> deleteAddress(int? idDoEndereco) async {
 Future<void> updateAddress(
     int? addressId, Map<String, dynamic> addressData) async {
   final token = await autentication.getToken();
-  final url = Uri.http(host, '/address/$addressId');
+  final url = Uri.https(host, '/address/$addressId');
 
   try {
     final response = await http.put(
@@ -357,7 +358,7 @@ Future<void> updateAddress(
 Future<void> updateUser(Map<String, dynamic> usersData) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
-  final url = Uri.http(host, '/user/$userId');
+  final url = Uri.https(host, '/user/$userId');
 
   try {
     final response = await http.put(
@@ -397,7 +398,7 @@ class ApiService {
     required int id,
   }) async {
     final token = await autentication.getToken();
-    final url = Uri.http(host, '/contract/sendContract/$id');
+    final url = Uri.https(host, '/contract/sendContract/$id');
 
     Map<String, dynamic> body = {
       "tiposDeServico": tiposDeServico,
@@ -452,7 +453,7 @@ Future sendImage(PlatformFile file) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
   var request =
-      http.MultipartRequest('POST', Uri.http(host, '/user/upload/$userId'));
+      http.MultipartRequest('POST', Uri.https(host, '/user/upload/$userId'));
   request.headers['Authorization'] = 'Bearer $token';
   request.files.add(await http.MultipartFile.fromBytes(
     'file',
@@ -544,7 +545,7 @@ Future<String> paymentCheckout(
 Future<List<ListUsers>> getUserFavorite() async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  Uri urlFavorite = Uri.https(host, '/favorites/$userId');
   try {
     final response = await http.get(
       urlFavorite,
@@ -569,7 +570,7 @@ Future<List<ListUsers>> getUserFavorite() async {
 Future<bool> setUserFavorite(int? favoritedId) async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  Uri urlFavorite = Uri.https(host, '/favorites/$userId');
   try {
     final response = await http.post(
       urlFavorite,
@@ -595,7 +596,7 @@ Future<bool> setUserFavorite(int? favoritedId) async {
 Future<bool> deleteUserFavorite(int? favoritedId) async {
   final userId = await autentication.getUserId();
   final token = await autentication.getToken();
-  Uri urlFavorite = Uri.http(host, '/favorites/$userId');
+  Uri urlFavorite = Uri.https(host, '/favorites/$userId');
   try {
     final response = await http.delete(
       urlFavorite,
@@ -615,5 +616,304 @@ Future<bool> deleteUserFavorite(int? favoritedId) async {
     }
   } catch (e) {
     return false;
+  }
+}
+
+Future<void> sendCustomContractorProfile({
+  required String? serviceType,
+  required String? favoriteDaytime,
+  required double valueWillingToPay,
+}) async {
+  final url = Uri.https(host, '/contractor/profile/custom');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'service_type': serviceType,
+    'favorite_daytime': favoriteDaytime,
+    'value_willing_to_pay': valueWillingToPay,
+    'contractor_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<ContractorCustomInformation> fetchCustomContractorProfile(
+    int userId) async {
+  final url = Uri.https(host, '/contractor/profile/custom/$userId');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200 && response.body.isNotEmpty) {
+    try {
+      return ContractorCustomInformation.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      print('Erro ao decodificar JSON: $e');
+      return ContractorCustomInformation(
+          serviceType: null, favoriteDaytime: null, valueWillingToPay: null);
+    }
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return ContractorCustomInformation(
+        serviceType: null, favoriteDaytime: null, valueWillingToPay: null);
+  }
+}
+
+Future<void> sendCustomDiaristProfileSpecialties({
+  required String? specialties,
+}) async {
+  final url = Uri.https(host, '/specialities/diarist/');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'speciality': specialties,
+    'diarist_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<void> sendCustomDiaristProfileState({
+  required String? stateAtendiment,
+}) async {
+  final url = Uri.https(host, '/diarist/activity/state');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'state': stateAtendiment,
+    'diarist_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<void> sendCustomDiaristProfileZone({
+  required String? regionAtendiment,
+}) async {
+  final url = Uri.https(host, '/diarist/activity/zone');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'zone_id': regionAtendiment,
+    'diarist_id': userId,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Custom contractor profile sent successfully');
+    } else {
+      print(
+          'Failed to send custom contractor profile. Status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (e) {
+    print('Error occurred while sending custom contractor profile: $e');
+  }
+}
+
+Future<List<dynamic>> fetchCustomDiaristProfileSpecialties() async {
+  final url = Uri.https(host, '/specialities');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<dynamic>> fetchCustomDiaristProfileStates() async {
+  final url = Uri.https(host, '/activity/states');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<dynamic>> fetchCustomDiaristProfileZone() async {
+  final url = Uri.https(host, '/activity/zones');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<dynamic>> fetchDataDiaristSpecialties(int? userId) async {
+  final url = Uri.https(host, '/specialities/$userId');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<dynamic>> fetchDataDiaristZones(int? userId) async {
+  final url = Uri.https(host, '/diarist/activity/$userId');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<void> deleteDataDiaristSpecialties(String? speciality) async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  try {
+    final response = await http.delete(
+      Uri.https(host, '/specialities',
+          {'id': userId.toString(), 'speciality': speciality}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+  }
+}
+
+Future<void> deleteDataDiaristZone(String? zone) async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  try {
+    final response = await http.delete(
+      Uri.https(host, '/diarist/activity/zone',
+          {'id': userId.toString(), 'zone_id': zone}),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
   }
 }

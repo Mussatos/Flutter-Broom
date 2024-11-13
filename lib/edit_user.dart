@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:js_interop';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/user_image.dart';
 import 'package:broom_main_vscode/user.dart';
@@ -24,18 +25,23 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController emailController;
   late TextEditingController cellphoneNumberController;
   late TextEditingController descriptionController;
-  late TextEditingController favoriteDaytimeController;
   late TextEditingController valueWillingToPayController;
-  late TextEditingController serviceTypeController;
+  String? serviceTypeSelected;
+  String? favoriteDaytimeSelected;
+  List<String>? zoneAtendimentSelected = [];
+  String? stateAtendimentSelected;
+  List<String>? specialtiesSelected = [];
+  List<dynamic>? listSpecialties = [];
+  List<dynamic>? listZones = [];
+  List<dynamic>? listState = [];
 
   late String userActualImage;
   late bool? wantService;
   File? userImage;
   PlatformFile? _selectedFile;
   String _urlImagem = '';
-  String? serviceType;
 
-  final List<String> serviceOptions = [
+  List<String> serviceType = [
     'Limpeza leve',
     'Limpeza média',
     'Limpeza pesada',
@@ -44,8 +50,9 @@ class _EditUserFormState extends State<EditUserForm> {
     'Passar roupas',
     'Organização'
   ];
+  ];
 
-  final List<String> daytimeOptions = ['Manhã', 'Tarde', 'Integral'];
+  List<String> daytimeType = ['Manhã', 'Tarde', 'Integral'];
 
   Future<void> _pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -63,10 +70,20 @@ class _EditUserFormState extends State<EditUserForm> {
 
   int? profileId;
 
+  int? profileId;
+
   Future<Yourself?> fetchUserById() async {
     profileId = await autentication.getProfileId();
-    print('id: $profileId');
     return await getUserById();
+  }
+
+  Future<void> fetchSpecialties() async {
+    listSpecialties = await fetchCustomDiaristProfileSpecialties();
+  }
+
+  Future<void> fetchActivityArea() async {
+    listState = await fetchCustomDiaristProfileStates();
+    listZones = await fetchCustomDiaristProfileZone();
   }
 
   @override
@@ -79,18 +96,24 @@ class _EditUserFormState extends State<EditUserForm> {
         mask: '(00)0 0000-0000', text: widget.usersEdit.cellphoneNumber);
     descriptionController =
         TextEditingController(text: widget.usersEdit.description);
-    favoriteDaytimeController =
-        TextEditingController(text: widget.usersEdit.favoriteDaytime);
     valueWillingToPayController = TextEditingController(
         text: widget.usersEdit.valueWillingToPay?.toString() ?? '');
-    serviceTypeController =
-        TextEditingController(text: widget.usersEdit.serviceType);
+
+    serviceTypeSelected = widget.usersEdit.serviceType;
+    favoriteDaytimeSelected = widget.usersEdit.favoriteDaytime;
+    zoneAtendimentSelected = widget.usersEdit.regionAtendiment;
+    stateAtendimentSelected = widget.usersEdit.stateAtendiment;
+    specialtiesSelected = widget.usersEdit.specialties;
+
     wantService = widget.usersEdit.wantService ?? false;
     userActualImage = widget.usersEdit.userActualImage ?? '';
-    print(valueWillingToPayController.text);
-    print(serviceTypeController.text);
-    print(favoriteDaytimeController.text);
     fetchUserById().then((_) {
+      setState(() {});
+    });
+    fetchSpecialties().then((_) {
+      setState(() {});
+    });
+    fetchActivityArea().then((_) {
       setState(() {});
     });
   }
@@ -118,6 +141,28 @@ class _EditUserFormState extends State<EditUserForm> {
       );
 
       updateUser(updatedUser.toJson());
+
+      if (profileId == 1) {
+        await sendCustomContractorProfile(
+          serviceType: serviceTypeSelected,
+          favoriteDaytime: favoriteDaytimeSelected,
+          valueWillingToPay:
+              double.tryParse(valueWillingToPayController.text) ?? 0.0,
+        );
+      } else if (profileId == 2) {
+        specialtiesSelected!.forEach(
+          (element) async {
+            await sendCustomDiaristProfileSpecialties(specialties: element);
+          },
+        );
+        zoneAtendimentSelected!.forEach(
+          (element) async {
+            await sendCustomDiaristProfileZone(regionAtendiment: element);
+          },
+        );
+        await sendCustomDiaristProfileState(
+            stateAtendiment: stateAtendimentSelected);
+      }
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => UserYourself()));
@@ -255,43 +300,38 @@ class _EditUserFormState extends State<EditUserForm> {
                     SizedBox(height: 10),
                     SizedBox(height: 10),
                     DropdownButtonFormField<String>(
-                      value: serviceTypeController.text.isNotEmpty
-                          ? serviceTypeController.text
-                          : null,
+                      value: serviceTypeSelected,
                       decoration: InputDecoration(
                         labelText: 'Informe o serviço que está procurando',
                         border: OutlineInputBorder(),
                       ),
-                      items: serviceOptions.map((String option) {
+                      items: serviceType
+                          .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
-                          value: option,
-                          child: Text(option),
-                        );
+                            value: value, child: Text(value));
                       }).toList(),
-                      onChanged: (String? newValue) {
+                      onChanged: (String? value) {
                         setState(() {
-                          serviceTypeController.text = newValue ?? '';
+                          serviceTypeSelected = value!;
                         });
                       },
                     ),
                     SizedBox(height: 10),
                     DropdownButtonFormField<String>(
-                      value: favoriteDaytimeController.text.isNotEmpty
-                          ? favoriteDaytimeController.text
-                          : null,
+                      value: favoriteDaytimeSelected,
                       decoration: InputDecoration(
                         labelText: 'Informe o período de preferência',
                         border: OutlineInputBorder(),
                       ),
-                      items: daytimeOptions.map((String option) {
+                      items: daytimeType.map((String option) {
                         return DropdownMenuItem<String>(
                           value: option,
                           child: Text(option),
                         );
                       }).toList(),
-                      onChanged: (String? newValue) {
+                      onChanged: (String? value) {
                         setState(() {
-                          favoriteDaytimeController.text = newValue ?? '';
+                          favoriteDaytimeSelected = value!;
                         });
                       },
                     ),
@@ -303,6 +343,78 @@ class _EditUserFormState extends State<EditUserForm> {
                         border: OutlineInputBorder(),
                         prefixText: 'R\$',
                       ),
+                    ),
+                  ] else if (profileId == 2) ...[
+                    SizedBox(height: 10),
+                    DropdownButtonFormField<String>(
+                        value: stateAtendimentSelected,
+                        decoration: InputDecoration(
+                          labelText: 'Informe o estado que você atua',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: listState!
+                            .map<DropdownMenuItem<String>>((dynamic value) {
+                          return DropdownMenuItem<String>(
+                              value: value!['value'],
+                              child: Text(value!['text']));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            stateAtendimentSelected = value!;
+                          });
+                        }),
+                    SizedBox(height: 10),
+                    Text(
+                      'Informe as suas regiões de atuação (máximo 3)',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Column(
+                      children: listZones!.map((zone) {
+                        return CheckboxListTile(
+                          title: Text(zone['text'] ?? ''),
+                          value:
+                              zoneAtendimentSelected!.contains(zone['value']),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value == true) {
+                                if (zoneAtendimentSelected!.length < 3) {
+                                  zoneAtendimentSelected?.add(zone['value']);
+                                }
+                              } else {
+                                zoneAtendimentSelected?.remove(zone['value']);
+                                deleteDataDiaristZone(zone['value']);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Informe as suas especialidades (máximo 4)',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Column(
+                      children: listSpecialties!.map((specialty) {
+                        return CheckboxListTile(
+                          title: Text(specialty['text'] ?? ''),
+                          value:
+                              specialtiesSelected!.contains(specialty['value']),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value == true) {
+                                if (specialtiesSelected!.length < 4) {
+                                  specialtiesSelected?.add(specialty['value']);
+                                }
+                              } else {
+                                specialtiesSelected?.remove(specialty['value']);
+                                deleteDataDiaristSpecialties(
+                                    specialty['value']);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
                     ),
                   ],
                   SizedBox(height: 10),
@@ -346,7 +458,7 @@ class _EditUserFormState extends State<EditUserForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () async {
+                       onPressed: () async {
                         try {
                           await saveUser();
                           if (_selectedFile != null) {

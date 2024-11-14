@@ -1,9 +1,20 @@
+import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/ui-components/icon_button.dart';
 import 'package:broom_main_vscode/ui-components/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AccountSettings extends StatelessWidget {
+
   const AccountSettings({super.key});
+
+  void goToBankInfo(context) {
+    GoRouter.of(context).push('/bank/information');
+  }
+
+  void goToFavorites(context) {
+    GoRouter.of(context).push('/favorite-page');
+  }
 
   void confirmLogout(context) {
     showDialog(
@@ -49,63 +60,26 @@ class AccountSettings extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: 250,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          GoRouter.of(context).push('/favorite-page');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2ECC8F),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'Meus Favoritos',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Icon(
-                              color: Colors.red,
-                              Icons.favorite,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    ButtonIcon(
+                        btnText: 'Meus Favoritos',
+                        btnIcon: Icons.favorite,
+                        function: () => goToFavorites(context)),
                     SizedBox(
                       height: 10,
                     ),
-                    SizedBox(
-                      width: 250,
-                      child: ElevatedButton.icon(
-                        onPressed: () => confirmLogout(context),
-                        label: const Text(
-                          'Sair',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        icon: const Icon(
-                          Icons.logout,
-                          color: Colors.white,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2ECC8F),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
+                    if (true)
+                      ButtonIcon(
+                        btnIcon: Icons.monetization_on_outlined,
+                        btnText: 'Informações bancárias',
+                        function: () => goToBankInfo(context),
                       ),
-                    )
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ButtonIcon(
+                        btnText: 'Sair',
+                        btnIcon: Icons.logout,
+                        function: () => confirmLogout(context)),
                   ],
                 ),
               ],

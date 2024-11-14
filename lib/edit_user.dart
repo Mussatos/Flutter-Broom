@@ -50,7 +50,6 @@ class _EditUserFormState extends State<EditUserForm> {
     'Passar roupas',
     'Organização'
   ];
-  ];
 
   List<String> daytimeType = ['Manhã', 'Tarde', 'Integral'];
 
@@ -67,8 +66,6 @@ class _EditUserFormState extends State<EditUserForm> {
       print('Nenhum arquivo selecionado.');
     }
   }
-
-  int? profileId;
 
   int? profileId;
 
@@ -458,7 +455,7 @@ class _EditUserFormState extends State<EditUserForm> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                       onPressed: () async {
+                      onPressed: () async {
                         try {
                           await saveUser();
                           if (_selectedFile != null) {

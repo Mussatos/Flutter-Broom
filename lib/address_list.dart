@@ -19,6 +19,14 @@ class AddressList extends StatefulWidget {
 }
 
 class _AddressListState extends State<AddressList> {
+  Future<List<Address>>? addresses;
+
+  @override
+  void initState() {
+    addresses = fetchAddress();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Address> address = [];
@@ -95,7 +103,7 @@ class _AddressListState extends State<AddressList> {
         ),
       ),
       body: FutureBuilder<List<Address>>(
-        future: fetchAddress(),
+        future: addresses,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -126,24 +134,24 @@ class _AddressListState extends State<AddressList> {
                     icon: Icon(Icons.more_vert),
                     onSelected: (value) async {
                       if (value == 'edit') {
-                      final result = await Navigator.push(
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => 
-                                  EditAddressForm(address: userAddress),
-                        ),
-                      );
+                            builder: (context) =>
+                                EditAddressForm(address: userAddress),
+                          ),
+                        );
 
-                      if (result != null && result is Address) {
-                        setState(() {
-                          address[index] = result;
-                        });
+                        if (result != null && result is Address) {
+                          setState(() {
+                            address[index] = result;
+                          });
+                        }
+                      } else if (value == 'delete') {
+                        _showDeleteConfirmationDialog(context, userAddress.id,
+                            () => removeAddressAt(index));
                       }
-                    } else if (value == 'delete') {
-                      _showDeleteConfirmationDialog(context, userAddress.id,
-                          () => removeAddressAt(index));
-                    }
-                  },
+                    },
                     itemBuilder: (BuildContext context) {
                       return [
                         PopupMenuItem(

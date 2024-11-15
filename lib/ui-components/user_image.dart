@@ -1,16 +1,31 @@
+import 'dart:typed_data';
+
 import 'package:broom_main_vscode/user.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 
-class UserImage extends StatelessWidget {
+class UserImage extends StatefulWidget {
   final ListUsers user;
 
   const UserImage({required this.user, super.key});
 
   @override
+  State<UserImage> createState() => _UserImageState();
+}
+
+class _UserImageState extends State<UserImage> {
+  Future<Uint8List?>? userImage;
+
+  @override
+  void initState() {
+    userImage = fetchUserImage(widget.user.userImage);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetchUserImage(user.userImage),
+      future: userImage,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();

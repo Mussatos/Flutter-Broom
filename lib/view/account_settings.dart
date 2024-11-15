@@ -4,9 +4,21 @@ import 'package:broom_main_vscode/ui-components/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class AccountSettings extends StatelessWidget {
-
+class AccountSettings extends StatefulWidget {
   const AccountSettings({super.key});
+
+  @override
+  State<AccountSettings> createState() => _AccountSettingsState();
+}
+
+class _AccountSettingsState extends State<AccountSettings> {
+  Future<int?>? profileId;
+
+  @override
+  void initState() {
+    profileId = autentication.getProfileId();
+    super.initState();
+  }
 
   void goToBankInfo(context) {
     GoRouter.of(context).push('/bank/information');
@@ -52,38 +64,43 @@ class AccountSettings extends StatelessWidget {
               ),
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+          body: FutureBuilder(
+            future: profileId,
+            builder: (context, snapshot) {
+              return Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ButtonIcon(
-                        btnText: 'Meus Favoritos',
-                        btnIcon: Icons.favorite,
-                        function: () => goToFavorites(context)),
-                    SizedBox(
-                      height: 10,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ButtonIcon(
+                            btnText: 'Meus Favoritos',
+                            btnIcon: Icons.favorite,
+                            function: () => goToFavorites(context)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        if (snapshot.data == 2)
+                          ButtonIcon(
+                            btnIcon: Icons.monetization_on_outlined,
+                            btnText: 'Informações bancárias',
+                            function: () => goToBankInfo(context),
+                          ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        ButtonIcon(
+                            btnText: 'Sair',
+                            btnIcon: Icons.logout,
+                            function: () => confirmLogout(context)),
+                      ],
                     ),
-                    if (true)
-                      ButtonIcon(
-                        btnIcon: Icons.monetization_on_outlined,
-                        btnText: 'Informações bancárias',
-                        function: () => goToBankInfo(context),
-                      ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ButtonIcon(
-                        btnText: 'Sair',
-                        btnIcon: Icons.logout,
-                        function: () => confirmLogout(context)),
                   ],
                 ),
-              ],
-            ),
+              );
+            },
           )),
     );
   }

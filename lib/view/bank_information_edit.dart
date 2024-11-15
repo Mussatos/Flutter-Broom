@@ -133,79 +133,82 @@ class _BankInformationEditState extends State<BankInformationEdit> {
           ),
         ),
       ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(12.0),
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: bankNameController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Nome do banco',
-                errorText: errors['bank_name']! ? 'Valor inválido' : null,
-                border: const OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(12.0),
+          color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: bankNameController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Nome do banco',
+                  errorText: errors['bank_name']! ? 'Valor inválido' : null,
+                  border: const OutlineInputBorder(),
+                ),
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.03,
-            ),
-            TextFormField(
-              controller: accountNameController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Nome da conta',
-                errorText: errors['account_name']! ? 'Valor inválido' : null,
-                border: const OutlineInputBorder(),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.03,
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.03,
-            ),
-            TextFormField(
-              controller: pixKeyController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Chave pix',
-                errorText: errors['pix_key']! ? 'Valor inválido' : null,
-                border: const OutlineInputBorder(),
+              TextFormField(
+                controller: accountNameController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Nome da conta',
+                  errorText: errors['account_name']! ? 'Valor inválido' : null,
+                  border: const OutlineInputBorder(),
+                ),
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.03,
-            ),
-            TextFormField(
-              controller: agencyController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Agência da conta',
-                errorText: errors['agency']! ? 'Valor inválido' : null,
-                border: const OutlineInputBorder(),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.03,
               ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.03,
-            ),
-            TextFormField(
-              controller: accountNumberController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Número da conta',
-                errorText: errors['account_number']! ? 'Valor inválido' : null,
-                border: const OutlineInputBorder(),
+              TextFormField(
+                controller: pixKeyController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Chave pix',
+                  errorText: errors['pix_key']! ? 'Valor inválido' : null,
+                  border: const OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 14,
-            ),
-            ButtonText(
-                btnText: 'Salvar',
-                width: 150,
-                function: () => {saveInfos(context)})
-          ],
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.03,
+              ),
+              TextFormField(
+                controller: agencyController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Agência da conta',
+                  errorText: errors['agency']! ? 'Valor inválido' : null,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.03,
+              ),
+              TextFormField(
+                controller: accountNumberController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Número da conta',
+                  errorText:
+                      errors['account_number']! ? 'Valor inválido' : null,
+                  border: const OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(
+                height: 14,
+              ),
+              ButtonText(
+                  btnText: 'Salvar',
+                  width: 150,
+                  function: () => {saveInfos(context)})
+            ],
+          ),
         ),
       ),
     );

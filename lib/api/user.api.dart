@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:broom_main_vscode/models/bank_info.model.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
@@ -921,11 +922,12 @@ Future<void> deleteDataDiaristZone(String? zone) async {
   }
 }
 
-Future<void> createDiaistBankInformationRelation() async {
+Future<bool> createDiaistBankInformationRelation() async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
   try {
-    final response = await http.post(Uri.http(host, '/bank-information/diarist'),
+    final response = await http.post(
+        Uri.http(host, '/bank-information/diarist'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -934,11 +936,13 @@ Future<void> createDiaistBankInformationRelation() async {
             {'diarist_id': userId, 'bank_name': '', 'account_name': ''}));
 
     if (response.statusCode == 201) {
+      return true;
     } else {
       throw Exception('Falha ao carregar dados');
     }
   } catch (err) {
     print(err);
+    return false;
   }
 }
 
@@ -946,14 +950,13 @@ Future<void> updateDiaistBankInformation(Map<String, dynamic> body) async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
   try {
-    final response = await http.patch(
-      Uri.http(host, '/bank-information/diarist/$userId'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(body)
-    );
+    final response =
+        await http.patch(Uri.http(host, '/bank-information/diarist/$userId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(body));
 
     if (response.statusCode == 200) {
     } else {
@@ -964,7 +967,7 @@ Future<void> updateDiaistBankInformation(Map<String, dynamic> body) async {
   }
 }
 
-Future<Map<String, dynamic>> fetcheDiaistBankInformation() async {
+Future<BankInfo?> fetcheDiaistBankInformation() async {
   final token = await autentication.getToken();
   final userId = await autentication.getUserId();
   try {
@@ -977,11 +980,12 @@ Future<Map<String, dynamic>> fetcheDiaistBankInformation() async {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final bankInfo = jsonDecode(response.body);
+      return BankInfo.fromJson(bankInfo['data']);
     } else {
       throw Exception('Falha ao carregar dados');
     }
   } catch (err) {
-    return {'message': err};
+    return null;
   }
 }

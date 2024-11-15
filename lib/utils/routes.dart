@@ -7,6 +7,7 @@ import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:broom_main_vscode/view/account_settings.dart';
 import 'package:broom_main_vscode/view/bank_information.dart';
+import 'package:broom_main_vscode/view/bank_information_edit.dart';
 import 'package:broom_main_vscode/view/userFavorite_list.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -86,7 +87,16 @@ GoRouter createRouter(String initialLocation) {
         builder: (context, state) => const BankInformation(),
         redirect: (context, state) async {
           final bool isDiarist = await autentication.getProfileId() == 2;
-          print(isDiarist);
+          if (isDiarist) return null;
+
+          return '/List';
+        },
+      ),
+      GoRoute(
+        path: '/bank/information/edit',
+        builder: (context, state) => const BankInformationEdit(),
+        redirect: (context, state) async {
+          final bool isDiarist = await autentication.getProfileId() == 2;
           if (isDiarist) return null;
 
           return '/List';

@@ -17,6 +17,12 @@ bool validName(String input) {
   return input == '' ? false : RegExp(validator).hasMatch(input);
 }
 
+bool isNotNumber(String input) {
+  const validator = r'[^0-9]';
+
+  return input == '' ? false : RegExp(validator).hasMatch(input);
+}
+
 bool validCpf(String cpf){
     var notNumber = new RegExp(r'^[^0-9]$');
     if(cpf.replaceAll(notNumber, '').length != 11 || isRepeatedNumbers(cpf)) return false;

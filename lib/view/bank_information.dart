@@ -15,9 +15,10 @@ class BankInformation extends StatefulWidget {
 class _BankInformationState extends State<BankInformation> {
   Future<BankInfo?>? bankInformation;
   bool isLoading = false;
+  BankInfo? diaristInfo;
 
   void goToEditInformations() {
-    GoRouter.of(context).push('/bank/information/edit');
+    GoRouter.of(context).push('/bank/information/edit', extra: diaristInfo);
   }
 
   Future<void> handleCreateDiaristInformation() async {
@@ -90,7 +91,7 @@ class _BankInformationState extends State<BankInformation> {
         body: FutureBuilder(
           future: bankInformation,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            BankInfo? diaristInfo = snapshot.data;
+            diaristInfo = snapshot.data;
             return isLoading
                 ? const CircularProgressIndicator()
                 : Column(
@@ -147,13 +148,105 @@ class _BankInformationState extends State<BankInformation> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(
-                                        'Nome da conta: ${diaristInfo.accountName}'),
-                                    Text('Banco: ${diaristInfo.bankName}'),
+                                    Row(
+                                      children: [
+                                        const Text(
+                                          'Nome da conta:',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        Text('${diaristInfo!.accountName}',
+                                            style: TextStyle(
+                                                color: Colors.grey[800],
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14)),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Text('Banco:',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600)),
+                                        Text(' ${diaristInfo!.bankName}',
+                                            style: TextStyle(
+                                                color: Colors.grey[800],
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14)),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    if (diaristInfo!.pixKey != null)
+                                      Row(
+                                        children: [
+                                          const Text('Chave Pix:',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600)),
+                                          Text(' ${diaristInfo!.pixKey}',
+                                              style: TextStyle(
+                                                  color: Colors.grey[800],
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 14)),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                    if (diaristInfo!.agency != null)
+                                      Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Text('Agência: ',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600)),
+                                              Text(' ${diaristInfo!.agency}',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[800],
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 14)),
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Text('Número da conta:',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600)),
+                                              Text(
+                                                  ' ${diaristInfo!.accountNumber}',
+                                                  style: TextStyle(
+                                                      color: Colors.grey[800],
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 14)),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    const SizedBox(
+                                      height: 12,
+                                    ),
                                     ButtonIcon(
-                                        btnText: 'Editar informações',
+                                        btnText: 'Editar',
                                         btnIcon: Icons.edit_square,
-                                        function: () => {goToEditInformations()})
+                                        width: 200,
+                                        function: () =>
+                                            {goToEditInformations()})
                                   ],
                                 ),
                               ),

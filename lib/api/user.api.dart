@@ -1,14 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:broom_main_vscode/models/bank_info.model.dart';
 import 'package:broom_main_vscode/user.dart';
-import 'package:broom_main_vscode/user_provider.dart';
-import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 

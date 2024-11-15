@@ -68,7 +68,7 @@ class _UserListState extends State<UserList> {
 
     Future<void> changeFavorite(ListUsers usuario) async {
       usuario.isFavorite = !usuario.isFavorite;
-      print(usuario.isFavorite);
+
       if (usuario.isFavorite) {
         await setUserFavorite(usuario.id);
         return;

@@ -11,8 +11,6 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:broom_main_vscode/utils/routes.dart';
-import 'package:splash_view/source/presentation/pages/pages.dart';
-import 'package:splash_view/splash_view.dart';
 
 void main() async {
   String stripePublishableKey =

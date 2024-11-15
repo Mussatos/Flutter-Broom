@@ -3,6 +3,7 @@ import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/confirmEmail.dart';
 import 'package:broom_main_vscode/edit_address.dart';
+import 'package:broom_main_vscode/models/bank_info.model.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:broom_main_vscode/view/account_settings.dart';
@@ -94,7 +95,10 @@ GoRouter createRouter(String initialLocation) {
       ),
       GoRoute(
         path: '/bank/information/edit',
-        builder: (context, state) => const BankInformationEdit(),
+        builder: (context, state) {
+          BankInfo diaristInfo = state.extra as BankInfo;
+          return BankInformationEdit(diaristInfo: diaristInfo);
+        },
         redirect: (context, state) async {
           final bool isDiarist = await autentication.getProfileId() == 2;
           if (isDiarist) return null;

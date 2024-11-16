@@ -11,12 +11,10 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:broom_main_vscode/utils/routes.dart';
-import 'package:splash_view/source/presentation/pages/pages.dart';
-import 'package:splash_view/splash_view.dart';
 
 void main() async {
   String stripePublishableKey =
-      "pk_live_51Plexm08Kz6lXWDqdCco7V1icaeMZTQBZJEdDt1jeZLOB38iG15vgJOSlvFb8YTF5Q2DQLzl7BqUx57WDJb9Tr2100ydrJ3YUw";
+      "pk_test_51Plexm08Kz6lXWDqBKmn4sBXxiQkiH85DuU3BDV4Zi8Zib7qRKMHviqMn9wwTNiDimlf5TBJ3X2MhXVxQoN1itlm009JR1umMA";
 
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = stripePublishableKey;

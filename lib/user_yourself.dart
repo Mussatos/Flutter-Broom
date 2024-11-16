@@ -18,6 +18,30 @@ class UserYourself extends StatefulWidget {
 
 class _UserYourselfState extends State<UserYourself> {
   int? profileId;
+  ContractorCustomInformation? customData;
+  List<dynamic>? customDataSpecialties = [];
+  List<dynamic>? customDataActivity = [];
+  Future<Yourself?>? userData;
+
+  Future<Yourself?> fetchUserById() async {
+    profileId = await autentication.getProfileId();
+    final userData = await getUserById();
+
+    if (userData != null && profileId == 1) {
+      customData = await fetchCustomContractorProfile(userData.id);
+    } else if (userData != null && profileId == 2) {
+      customDataSpecialties = await fetchDataDiaristSpecialties(userData.id);
+      customDataActivity = await fetchDataDiaristZones(userData.id);
+    }
+
+    return userData;
+  }
+
+  @override
+  void initState() {
+    userData = fetchUserById();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +52,6 @@ class _UserYourselfState extends State<UserYourself> {
           userAddress.city == '') return '';
 
       return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
-    }
-
-    Future<Yourself?> fetchUserById() async {
-      profileId = await autentication.getProfileId();
-
-      return await getUserById();
     }
 
     return Scaffold(
@@ -55,7 +73,7 @@ class _UserYourselfState extends State<UserYourself> {
         ),
       ),
       body: FutureBuilder(
-        future: fetchUserById(),
+        future: userData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -143,67 +161,161 @@ class _UserYourselfState extends State<UserYourself> {
                         height: 10,
                       ),
                       if (profileId == 1) ...[
-                        Text('Contratante'),
-                      ] else ...[
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.build,
+                                color: Color(0xFF2ECC8F), size: 20),
+                            SizedBox(width: 10),
+                            Text(
+                              'Procurando serviço:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
                         Text(
-                          'Atendo nas seguintes regiões:',
+                          customData?.serviceType != null &&
+                                  customData?.serviceType != ""
+                              ? '${customData?.serviceType}'
+                              : 'Não especificado',
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 15),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Icon(Icons.access_time,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
-                            RegionTag(text: 'Campo Grande'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'Toda região da cidade'),
+                            Text(
+                              'Horário de preferência:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 8),
                         Text(
-                          'Especialidades:',
+                          customData?.favoriteDaytime != null &&
+                                  customData?.favoriteDaytime != ""
+                              ? '${customData?.favoriteDaytime}'
+                              : 'Não especificado',
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 15),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Icon(Icons.attach_money,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
-                            RegionTag(text: 'Faxinar'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'Lavar'),
-                            SizedBox(width: 10),
-                            RegionTag(text: 'Limpeza pós-obra'),
-                            SizedBox(width: 8),
+                            Text(
+                              'Valor que estou disposto a pagar:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 8),
+                        Text(
+                          customData?.valueWillingToPay != null &&
+                                  customData?.valueWillingToPay != 0
+                              ? 'R\$${customData?.valueWillingToPay}'
+                              : 'Não especificado',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 15),
+                      ] else if (profileId == 2) ...[
+                        SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            RegionTag(text: 'Limpeza residencial'),
+                            Icon(Icons.pin_drop,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
-                            RegionTag(text: 'organizar'),
-                            SizedBox(width: 8),
-                            RegionTag(text: 'passar'),
+                            Text(
+                              'Atendo nas seguintes regiões:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
                           ],
                         ),
-                        SizedBox(height: 10),
+                        SizedBox(height: 8),
+                        Text(
+                          (customDataActivity != null &&
+                                  customDataActivity!.isNotEmpty)
+                              ? customDataActivity!
+                                  .map((actv) => (actv['state'] ??
+                                          actv['zone_id'].toString())
+                                      .replaceAll('_', ' '))
+                                  .join(', ')
+                              : 'Não especificado',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 15),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Icon(Icons.cleaning_services,
+                                color: Color(0xFF2ECC8F), size: 20),
                             SizedBox(width: 10),
-                            RegionTag(text: 'vidros e fachadas'),
+                            Text(
+                              'Especialidades:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
                           ],
-                        )
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          (customDataSpecialties != null &&
+                                  customDataSpecialties!.isNotEmpty)
+                              ? customDataSpecialties!
+                                  .map((spec) => spec['speciality']
+                                      .toString()
+                                      .replaceAll('_', ' '))
+                                  .join(', ')
+                              : 'Não especificado',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
                       ],
                       SizedBox(height: 150),
                       Row(
@@ -232,21 +344,35 @@ class _UserYourselfState extends State<UserYourself> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => EditUserForm(
-                                            usersEdit: EditUser(
-                                                name: snapshot.data?.name,
-                                                lastName:
-                                                    snapshot.data?.lastName,
-                                                email: snapshot.data?.email,
-                                                cellphoneNumber: snapshot
-                                                    .data?.cellphoneNumber,
-                                                description:
-                                                    snapshot.data?.description,
-                                                wantService:
-                                                    snapshot.data?.wantService,
-                                                userActualImage:
-                                                    snapshot.data?.userImage),
-                                          )));
+                                    builder: (context) => EditUserForm(
+                                      usersEdit: EditUser(
+                                        name: snapshot.data?.name,
+                                        lastName: snapshot.data?.lastName,
+                                        email: snapshot.data?.email,
+                                        cellphoneNumber:
+                                            snapshot.data?.cellphoneNumber,
+                                        description: snapshot.data?.description,
+                                        wantService: snapshot.data?.wantService,
+                                        userActualImage:
+                                            snapshot.data?.userImage,
+                                        favoriteDaytime:
+                                            customData?.favoriteDaytime,
+                                        serviceType: customData?.serviceType,
+                                        valueWillingToPay:
+                                            customData?.valueWillingToPay,
+                                        specialties: customDataSpecialties
+                                            ?.map(
+                                              (e) => e['speciality'].toString(),
+                                            )
+                                            .toList(),
+                                        regionAtendiment: customDataActivity
+                                            ?.map(
+                                              (e) => e['zone_id'].toString(),
+                                            )
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ));
                             },
                             icon: Icon(Icons.edit, color: Colors.white),
                             label: Text(

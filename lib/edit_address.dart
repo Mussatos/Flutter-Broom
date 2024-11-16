@@ -65,26 +65,37 @@ class _EditAddressFormState extends State<EditAddressForm> {
     super.dispose();
   }
 
-  void saveAddress() {
-    if (_formKey.currentState!.validate()) {
-      Address updatedAddress = Address(
-        city: cityController.text,
-        state: stateController.text,
-        street: streetController.text,
-        addressType: addressTypeSelected,
-        neighborhood: neighController.text,
-        addressCode: addressCodeController.text.replaceAll(RegExp(r'-'), ''),
-        complement: complementController.text,
-        number: int.parse(numberController.text),
-        userId: widget.address.userId,
-        id: null,
-      );
+  void saveAddress() async {
+  if (_formKey.currentState!.validate()) {
+    Address updatedAddress = Address(
+      city: cityController.text,
+      state: stateController.text,
+      street: streetController.text,
+      addressType: addressTypeSelected,
+      neighborhood: neighController.text,
+      addressCode: addressCodeController.text.replaceAll(RegExp(r'-'), ''),
+      complement: complementController.text,
+      number: int.parse(numberController.text),
+      userId: widget.address.userId,
+      id: id,  
+    );
 
-      updateAddress(id, updatedAddress.toJson());
+    await updateAddress(id, updatedAddress.toJson());
 
-      GoRouter.of(context).push('/address/list');
-    }
+    setState(() {
+      widget.address.street = updatedAddress.street;
+      widget.address.city = updatedAddress.city;
+      widget.address.state = updatedAddress.state;
+      widget.address.neighborhood = updatedAddress.neighborhood;
+      widget.address.number = updatedAddress.number;
+      widget.address.complement = updatedAddress.complement;
+      widget.address.addressCode = updatedAddress.addressCode;
+      widget.address.addressType = updatedAddress.addressType;
+    });
+
+    GoRouter.of(context).pop(updatedAddress);
   }
+}
 
   @override
   Widget build(BuildContext context) {

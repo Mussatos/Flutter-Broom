@@ -19,6 +19,14 @@ class UserList extends StatefulWidget {
 }
 
 class _UserListState extends State<UserList> {
+  Future<List<ListUsers>>? handleUsuarios;
+
+  @override
+  void initState() {
+    handleUsuarios = fetchUsuarios();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = UserProvider.of(context) as UserProvider;
@@ -60,7 +68,7 @@ class _UserListState extends State<UserList> {
 
     Future<void> changeFavorite(ListUsers usuario) async {
       usuario.isFavorite = !usuario.isFavorite;
-      print(usuario.isFavorite);
+
       if (usuario.isFavorite) {
         await setUserFavorite(usuario.id);
         return;
@@ -93,14 +101,12 @@ class _UserListState extends State<UserList> {
         backgroundColor: Color(0xFF2ECC8F),
       ),
       body: FutureBuilder<List<ListUsers>>(
-        future: fetchUsuarios(),
+        future: handleUsuarios,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar usuários'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Nenhum usuário encontrado'));
           } else {
             List<ListUsers> usuarios = snapshot.data!;
             return ListView.builder(

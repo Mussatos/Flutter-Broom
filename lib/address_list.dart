@@ -19,6 +19,14 @@ class AddressList extends StatefulWidget {
 }
 
 class _AddressListState extends State<AddressList> {
+  Future<List<Address>>? addresses;
+
+  @override
+  void initState() {
+    addresses = fetchAddress();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Address> address = [];
@@ -70,8 +78,14 @@ class _AddressListState extends State<AddressList> {
           IconButton(
             icon: Icon(Icons.add),
             color: Colors.white,
-            onPressed: () {
-              GoRouter.of(context).push("/address/form");
+            onPressed: () async {
+              final result = await GoRouter.of(context).push("/address/form");
+
+              if (result != null && result is Address) {
+                setState(() {
+                  address.add(result);
+                });
+              }
             },
           ),
         ],
@@ -89,7 +103,7 @@ class _AddressListState extends State<AddressList> {
         ),
       ),
       body: FutureBuilder<List<Address>>(
-        future: fetchAddress(),
+        future: addresses,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -118,14 +132,21 @@ class _AddressListState extends State<AddressList> {
                   subtitle: Text(getListAddressMore(address[index])),
                   trailing: PopupMenuButton<String>(
                     icon: Icon(Icons.more_vert),
-                    onSelected: (value) {
+                    onSelected: (value) async {
                       if (value == 'edit') {
-                        Navigator.push(
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  EditAddressForm(address: userAddress)),
+                            builder: (context) =>
+                                EditAddressForm(address: userAddress),
+                          ),
                         );
+
+                        if (result != null && result is Address) {
+                          setState(() {
+                            address[index] = result;
+                          });
+                        }
                       } else if (value == 'delete') {
                         _showDeleteConfirmationDialog(context, userAddress.id,
                             () => removeAddressAt(index));
@@ -172,9 +193,9 @@ void _showDeleteConfirmationDialog(
           ),
           TextButton(
             child: Text('Confirmar'),
-            onPressed: () {
+            onPressed: () async {
+              await deleteAddress(id);
               removeAddressAt();
-              deleteAddress(id);
               Navigator.of(context).pop();
             },
           ),

@@ -38,8 +38,8 @@ class _BankInformationEditState extends State<BankInformationEdit> {
     accountNameController.text = widget.diaristInfo.accountName ?? '';
     bankNameController.text = widget.diaristInfo.bankName ?? '';
     accountNumberController.text =
-        widget.diaristInfo.accountNumber?.toString() ?? '';
-    agencyController.text = widget.diaristInfo.agency?.toString() ?? '';
+        widget.diaristInfo.accountNumber?? '';
+    agencyController.text = widget.diaristInfo.agency?? '';
     pixKeyController.text = widget.diaristInfo.pixKey ?? '';
     super.initState();
   }
@@ -69,8 +69,8 @@ class _BankInformationEditState extends State<BankInformationEdit> {
 
     if (agencyController.text.isNotEmpty) {
       body.addAll({
-        'account_number': int.tryParse(accountNumberController.text),
-        'agency': int.tryParse(agencyController.text),
+        'account_number': accountNumberController.text,
+        'agency': agencyController.text,
       });
     }
     await updateDiaistBankInformation(body);

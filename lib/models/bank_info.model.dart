@@ -3,8 +3,8 @@ class BankInfo {
   String? bankName;
   String? accountName;
   String? pixKey;
-  int? agency;
-  int? accountNumber;
+  String? agency;
+  String? accountNumber;
 
   BankInfo(
       {required this.diaristId,

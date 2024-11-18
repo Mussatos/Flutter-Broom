@@ -16,8 +16,7 @@ class BankInformationEdit extends StatefulWidget {
 class _BankInformationEditState extends State<BankInformationEdit> {
   TextEditingController accountNameController = TextEditingController(text: '');
   TextEditingController bankNameController = TextEditingController(text: '');
-  TextEditingController accountNumberController =
-      TextEditingController(text: '');
+  TextEditingController accountNumberController = TextEditingController(text: '');
   TextEditingController agencyController = TextEditingController(text: '');
   TextEditingController pixKeyController = TextEditingController(text: '');
 
@@ -38,8 +37,8 @@ class _BankInformationEditState extends State<BankInformationEdit> {
     accountNameController.text = widget.diaristInfo.accountName ?? '';
     bankNameController.text = widget.diaristInfo.bankName ?? '';
     accountNumberController.text =
-        widget.diaristInfo.accountNumber?.toString() ?? '';
-    agencyController.text = widget.diaristInfo.agency?.toString() ?? '';
+        widget.diaristInfo.accountNumber ?? '';
+    agencyController.text = widget.diaristInfo.agency ?? '';
     pixKeyController.text = widget.diaristInfo.pixKey ?? '';
     super.initState();
   }
@@ -69,8 +68,8 @@ class _BankInformationEditState extends State<BankInformationEdit> {
 
     if (agencyController.text.isNotEmpty) {
       body.addAll({
-        'account_number': int.tryParse(accountNumberController.text),
-        'agency': int.tryParse(agencyController.text),
+        'account_number': accountNumberController.text,
+        'agency': agencyController.text,
       });
     }
     await updateDiaistBankInformation(body);
@@ -101,15 +100,15 @@ class _BankInformationEditState extends State<BankInformationEdit> {
 
   void agencyValidation() {
     setState(() {
-      errors['agency'] = isNotNumber(agencyController.text);
+      errors['agency'] = accountNumberController.text.isNotEmpty &&
+        agencyController.text.isEmpty;
     });
   }
 
   void accountNumberValidation() {
     setState(() {
       errors['account_number'] = agencyController.text.isNotEmpty &&
-              accountNumberController.text.isEmpty ||
-          isNotNumber(accountNumberController.text);
+              accountNumberController.text.isEmpty;
     });
   }
 
@@ -144,7 +143,6 @@ class _BankInformationEditState extends State<BankInformationEdit> {
             children: [
               TextFormField(
                 controller: bankNameController,
-                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Nome do banco',
                   errorText: errors['bank_name']! ? 'Valor inválido' : null,
@@ -156,9 +154,8 @@ class _BankInformationEditState extends State<BankInformationEdit> {
               ),
               TextFormField(
                 controller: accountNameController,
-                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Nome da conta',
+                  labelText: 'Nome do titular da conta',
                   errorText: errors['account_name']! ? 'Valor inválido' : null,
                   border: const OutlineInputBorder(),
                 ),
@@ -168,7 +165,6 @@ class _BankInformationEditState extends State<BankInformationEdit> {
               ),
               TextFormField(
                 controller: pixKeyController,
-                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Chave pix',
                   errorText: errors['pix_key']! ? 'Valor inválido' : null,
@@ -180,7 +176,6 @@ class _BankInformationEditState extends State<BankInformationEdit> {
               ),
               TextFormField(
                 controller: agencyController,
-                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Agência da conta',
                   errorText: errors['agency']! ? 'Valor inválido' : null,
@@ -192,7 +187,6 @@ class _BankInformationEditState extends State<BankInformationEdit> {
               ),
               TextFormField(
                 controller: accountNumberController,
-                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Número da conta',
                   errorText:

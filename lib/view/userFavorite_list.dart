@@ -14,6 +14,13 @@ class UserfavoriteList extends StatefulWidget {
 
 class _UserfavoriteListState extends State<UserfavoriteList> {
   List<Address> address = [];
+  Future<List<ListUsers>>? favorites;
+
+  @override
+  void initState() {
+    favorites = getUserFavorite();
+    super.initState();
+  }
 
   void addAddressForUser(ListUsers user) {
     if (user.address.isNotEmpty) {
@@ -76,7 +83,7 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
         backgroundColor: Color(0xFF2ECC8F),
       ),
       body: FutureBuilder<List<ListUsers>>(
-        future: getUserFavorite(),
+        future: favorites,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

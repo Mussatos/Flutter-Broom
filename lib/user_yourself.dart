@@ -21,6 +21,27 @@ class _UserYourselfState extends State<UserYourself> {
   ContractorCustomInformation? customData;
   List<dynamic>? customDataSpecialties = [];
   List<dynamic>? customDataActivity = [];
+  Future<Yourself?>? userData;
+
+  Future<Yourself?> fetchUserById() async {
+    profileId = await autentication.getProfileId();
+    final userData = await getUserById();
+
+    if (userData != null && profileId == 1) {
+      customData = await fetchCustomContractorProfile(userData.id);
+    } else if (userData != null && profileId == 2) {
+      customDataSpecialties = await fetchDataDiaristSpecialties(userData.id);
+      customDataActivity = await fetchDataDiaristZones(userData.id);
+    }
+
+    return userData;
+  }
+
+  @override
+  void initState() {
+    userData = fetchUserById();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,20 +52,6 @@ class _UserYourselfState extends State<UserYourself> {
           userAddress.city == '') return '';
 
       return '${userAddress.neighborhood} - ${userAddress.city!}, ${userAddress.state!}';
-    }
-
-    Future<Yourself?> fetchUserById() async {
-      profileId = await autentication.getProfileId();
-      final userData = await getUserById();
-
-      if (userData != null && profileId == 1) {
-        customData = await fetchCustomContractorProfile(userData.id);
-      } else if (userData != null && profileId == 2) {
-        customDataSpecialties = await fetchDataDiaristSpecialties(userData.id);
-        customDataActivity = await fetchDataDiaristZones(userData.id);
-      }
-
-      return userData;
     }
 
     return Scaffold(
@@ -66,7 +73,7 @@ class _UserYourselfState extends State<UserYourself> {
         ),
       ),
       body: FutureBuilder(
-        future: fetchUserById(),
+        future: userData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -262,9 +269,12 @@ class _UserYourselfState extends State<UserYourself> {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          (customDataActivity != null && customDataActivity!.isNotEmpty)
+                          (customDataActivity != null &&
+                                  customDataActivity!.isNotEmpty)
                               ? customDataActivity!
-                                  .map((actv) => (actv['state'] ?? actv['zone_id'].toString()).replaceAll('_', ' '))
+                                  .map((actv) => (actv['state'] ??
+                                          actv['zone_id'].toString())
+                                      .replaceAll('_', ' '))
                                   .join(', ')
                               : 'Não especificado',
                           style: TextStyle(
@@ -273,7 +283,6 @@ class _UserYourselfState extends State<UserYourself> {
                             color: Colors.grey.shade700,
                           ),
                         ),
-
                         SizedBox(height: 15),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -292,10 +301,13 @@ class _UserYourselfState extends State<UserYourself> {
                           ],
                         ),
                         SizedBox(height: 8),
-                       Text(
-                          (customDataSpecialties != null && customDataSpecialties!.isNotEmpty)
+                        Text(
+                          (customDataSpecialties != null &&
+                                  customDataSpecialties!.isNotEmpty)
                               ? customDataSpecialties!
-                                  .map((spec) => spec['speciality'].toString().replaceAll('_', ' '))
+                                  .map((spec) => spec['speciality']
+                                      .toString()
+                                      .replaceAll('_', ' '))
                                   .join(', ')
                               : 'Não especificado',
                           style: TextStyle(
@@ -304,8 +316,6 @@ class _UserYourselfState extends State<UserYourself> {
                             color: Colors.grey.shade700,
                           ),
                         ),
-
-
                       ],
                       SizedBox(height: 150),
                       Row(

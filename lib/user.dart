@@ -314,7 +314,7 @@ class EditUser {
   String? serviceType;
   String? favoriteDaytime;
   num? valueWillingToPay;
-  List<String>? regionAtendiment;
+  List<String?>? regionAtendiment;
   List<String>? specialties;
   String? stateAtendiment;
 
@@ -327,6 +327,7 @@ class EditUser {
       required this.email,
       this.specialties,
       this.regionAtendiment,
+      this.stateAtendiment,
       this.userActualImage,
       this.serviceType,
       this.favoriteDaytime,

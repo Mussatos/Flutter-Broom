@@ -151,12 +151,12 @@ class _BankInformationState extends State<BankInformation> {
                                     Row(
                                       children: [
                                         const Text(
-                                          'Nome da conta:',
+                                          'TItular:',
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600),
                                         ),
-                                        Text('${diaristInfo!.accountName}',
+                                        Text(' ${diaristInfo!.accountName}',
                                             style: TextStyle(
                                                 color: Colors.grey[800],
                                                 fontWeight: FontWeight.w400,
@@ -194,9 +194,6 @@ class _BankInformationState extends State<BankInformation> {
                                                   color: Colors.grey[800],
                                                   fontWeight: FontWeight.w400,
                                                   fontSize: 14)),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
                                         ],
                                       ),
                                       const SizedBox(
@@ -220,6 +217,9 @@ class _BankInformationState extends State<BankInformation> {
                                                       fontSize: 14)),
                                             ],
                                           ),
+                                          const SizedBox(
+                                        height: 10,
+                                      ),
                                           Row(
                                             children: [
                                               const Text('Número da conta:',

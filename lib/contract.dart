@@ -15,6 +15,7 @@ class Contract extends StatefulWidget {
 }
 
 class _ContractState extends State<Contract> {
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController bedroomController = TextEditingController();
   final TextEditingController kitchenController = TextEditingController();
   final TextEditingController toiletController = TextEditingController();
@@ -66,6 +67,7 @@ class _ContractState extends State<Contract> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     bedroomController.dispose();
     kitchenController.dispose();
     toiletController.dispose();
@@ -166,6 +168,60 @@ class _ContractState extends State<Contract> {
     }
   }
 
+   void scrollToInvalidField() {
+    if (invalidRooms.containsValue(true)) {
+      if (invalidRooms['bedroom']!) {
+        _scrollController.animateTo(
+          20.0, 
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
+      if (invalidRooms['kitchen']!) {
+        _scrollController.animateTo(
+          20.0, 
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
+      if (invalidRooms['room']!) {
+        _scrollController.animateTo(
+          20.0, 
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
+      if (invalidRooms['toilet']!) {
+        _scrollController.animateTo(
+          20.0, 
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
+    }
+      if (!_isBasketCleanQuantityValid) {
+        _scrollController.animateTo(
+          300.0, 
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
+
+      if (!_isBasketIroningQuantityValid) {
+        _scrollController.animateTo(
+          300.0, 
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+        return;
+      }
+}
+
   Future<void> initCheckout() async {
     Map<String, dynamic> priceData = {
       'currency': 'brl',
@@ -205,6 +261,12 @@ class _ContractState extends State<Contract> {
     });
 
     if (!_isBasketCleanQuantityValid || !_isBasketIroningQuantityValid) {
+      scrollToInvalidField();
+      return;
+    }
+
+     if (invalidRooms.containsValue(true)) {
+      scrollToInvalidField();
       return;
     }
 
@@ -299,6 +361,7 @@ class _ContractState extends State<Contract> {
         ),
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.all(35.0),

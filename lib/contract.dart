@@ -583,9 +583,11 @@ class _ContractState extends State<Contract> {
                 children: [
                   IconButton(
                       onPressed: () {
-                        GoRouter.of(context).push(
-                          '/calendary-page',
-                        );
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TableBasicsExample(
+                                    idDoUser: widget.idDoUser)));
                       },
                       icon: Icon(
                         Icons.calendar_today_rounded,

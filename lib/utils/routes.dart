@@ -86,10 +86,6 @@ GoRouter createRouter(String initialLocation) {
         path: '/meeting-page',
         builder: (context, state) => Usermeeting(),
       ),
-      GoRoute(
-        path: '/calendary-page',
-        builder: (context, state) => TableBasicsExample(),
-      ),
     ],
   );
 }

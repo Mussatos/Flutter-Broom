@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class TableBasicsExample extends StatefulWidget {
+  int idDoUser;
+
+  TableBasicsExample({super.key, required this.idDoUser});
 
   @override
   _TableBasicsExampleState createState() => _TableBasicsExampleState();
@@ -14,27 +17,36 @@ class _TableBasicsExampleState extends State<TableBasicsExample> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   String _selectedOption = 'Diária Completa';
+  int? idDoContract;
 
-  // Simulated function to save data to the backend
+  Future<void> fetchContract() async {
+    idDoContract = await autentication.getUserId();
+  }
+
   Future<void> _saveEventToBackend({
     required DateTime date,
     required String type,
+    required int idDoUser,
   }) async {
     try {
-      // Simulate sending data to backend (replace with your real function)
-      await Future.delayed(const Duration(seconds: 1)); // Simulate API call
+      await fetchContract();
+
+      if (idDoContract == null) {
+        throw Exception("ID do contratante não encontrado.");
+      }
+      await Future.delayed(const Duration(seconds: 1));
       print('Salvando no backend:');
       print('Data: $date');
       print('Tipo: $type');
+      print('Id Diarista: $idDoUser');
+      print('Id Contratante: $idDoContract');
 
-      // Simulate success response
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Evento salvo com sucesso para $date'),
         ),
       );
     } catch (e) {
-      // Handle error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro ao salvar evento: $e'),
@@ -130,9 +142,9 @@ class _TableBasicsExampleState extends State<TableBasicsExample> {
               onPressed: () async {
                 if (_selectedDay != null) {
                   await _saveEventToBackend(
-                    date: _selectedDay!,
-                    type: _selectedOption!,
-                  );
+                      date: _selectedDay!,
+                      type: _selectedOption!,
+                      idDoUser: widget.idDoUser);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

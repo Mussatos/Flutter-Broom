@@ -96,7 +96,7 @@ GoRouter createRouter(String initialLocation) {
       GoRoute(
         path: '/bank/information/edit',
         builder: (context, state) {
-          BankInfo diaristInfo = state.extra as BankInfo;
+          BankInfo? diaristInfo = state.extra as BankInfo?;
           return BankInformationEdit(diaristInfo: diaristInfo);
         },
         redirect: (context, state) async {

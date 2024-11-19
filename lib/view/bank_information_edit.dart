@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BankInformationEdit extends StatefulWidget {
-  final BankInfo diaristInfo;
+  final BankInfo? diaristInfo;
   const BankInformationEdit({super.key, required this.diaristInfo});
 
   @override
@@ -16,7 +16,8 @@ class BankInformationEdit extends StatefulWidget {
 class _BankInformationEditState extends State<BankInformationEdit> {
   TextEditingController accountNameController = TextEditingController(text: '');
   TextEditingController bankNameController = TextEditingController(text: '');
-  TextEditingController accountNumberController = TextEditingController(text: '');
+  TextEditingController accountNumberController =
+      TextEditingController(text: '');
   TextEditingController agencyController = TextEditingController(text: '');
   TextEditingController pixKeyController = TextEditingController(text: '');
 
@@ -34,12 +35,11 @@ class _BankInformationEditState extends State<BankInformationEdit> {
     bankNameController.addListener(bankNameValidation);
     accountNumberController.addListener(accountNumberValidation);
     agencyController.addListener(agencyValidation);
-    accountNameController.text = widget.diaristInfo.accountName ?? '';
-    bankNameController.text = widget.diaristInfo.bankName ?? '';
-    accountNumberController.text =
-        widget.diaristInfo.accountNumber ?? '';
-    agencyController.text = widget.diaristInfo.agency ?? '';
-    pixKeyController.text = widget.diaristInfo.pixKey ?? '';
+    accountNameController.text = widget.diaristInfo?.accountName ?? '';
+    bankNameController.text = widget.diaristInfo?.bankName ?? '';
+    accountNumberController.text = widget.diaristInfo?.accountNumber ?? '';
+    agencyController.text = widget.diaristInfo?.agency ?? '';
+    pixKeyController.text = widget.diaristInfo?.pixKey ?? '';
     super.initState();
   }
 
@@ -101,14 +101,14 @@ class _BankInformationEditState extends State<BankInformationEdit> {
   void agencyValidation() {
     setState(() {
       errors['agency'] = accountNumberController.text.isNotEmpty &&
-        agencyController.text.isEmpty;
+          agencyController.text.isEmpty;
     });
   }
 
   void accountNumberValidation() {
     setState(() {
       errors['account_number'] = agencyController.text.isNotEmpty &&
-              accountNumberController.text.isEmpty;
+          accountNumberController.text.isEmpty;
     });
   }
 

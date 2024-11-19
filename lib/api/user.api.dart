@@ -905,3 +905,42 @@ Future<void> deleteDataDiaristZone(String? zone) async {
     print(err);
   }
 }
+
+Future<void> postAgendamento({
+  required int diaristaId,
+  required DateTime dataAgendamento,
+  required String tipoDiaria,
+}) async {
+  final url = Uri.http(host, 'agendamento');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  // Monta o corpo da requisição.
+  final body = jsonEncode({
+    'contratante_id': userId,
+    'diarist_id': diaristaId,
+    'data': dataAgendamento
+        .toIso8601String(), // Data do agendamento no formato ISO 8601.
+    'tipo_diaria': tipoDiaria, // Tipo de diária ("Diária", "Meia-diária").
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Envia o token de autenticação.
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Agendamento enviado com sucesso');
+    } else {
+      print('Falha ao enviar o agendamento. Status: ${response.statusCode}');
+      print('Resposta: ${response.body}');
+    }
+  } catch (e) {
+    print('Erro ao enviar o agendamento: $e');
+  }
+}

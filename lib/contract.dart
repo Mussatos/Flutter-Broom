@@ -1,7 +1,9 @@
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/calendaryPage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -219,7 +221,7 @@ class _ContractState extends State<Contract> {
     }
 
     if (invalidRooms.containsValue(true)) return;
-    
+
     String? whatsappUrl = await apiService.sendContract(
       tiposDeServico: selectedServices,
       tipoLimpeza: cleanTypeSelected,
@@ -576,6 +578,21 @@ class _ContractState extends State<Contract> {
                     ],
                   );
                 }),
+              ),
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        GoRouter.of(context).push(
+                          '/calendary-page',
+                        );
+                      },
+                      icon: Icon(
+                        Icons.calendar_today_rounded,
+                        color: Colors.black,
+                      )),
+                  Text('Agendamento'),
+                ],
               ),
               SizedBox(height: 20),
               TextFormField(

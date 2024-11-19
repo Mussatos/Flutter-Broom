@@ -526,7 +526,8 @@ Future<String> paymentCheckout(
           'price_data': priceData,
           'quantity': quantity,
           'contractor_id': contractorId,
-          'contractor_email': contratctorEmail
+          'contractor_email': contratctorEmail,
+          'contract_id': 1
         }));
 
     if (response.statusCode == 201) {

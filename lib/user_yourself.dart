@@ -47,17 +47,20 @@ class _UserYourselfState extends State<UserYourself> {
     ).toList();
 
     zoneActivity?.remove(null);
-
-    return zoneActivity ?? [];
+    if(zoneActivity != null && zoneActivity.isNotEmpty) return zoneActivity;
+    
+    return [];
   }
 
   String? getStateActivity() {
     final findState = customDataActivity?.map((e) {
       if (e['state'] != null) return e['state'];
     }).toList();
-    
+
     findState?.remove(null);
-    return findState?[0] ?? '';
+
+    if (findState != null && findState.isNotEmpty) return findState[0];
+    return null;
   }
 
   @override

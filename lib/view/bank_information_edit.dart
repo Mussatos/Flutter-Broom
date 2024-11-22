@@ -115,7 +115,7 @@ class _BankInformationEditState extends State<BankInformationEdit> {
         backgroundColor: const Color(0xFF2ECC8F),
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            GoRouter.of(context).push('/bank/information');
           },
           icon: const Icon(
             Icons.arrow_back_ios,

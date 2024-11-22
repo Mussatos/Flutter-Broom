@@ -188,7 +188,7 @@ class _BankInformationState extends State<BankInformation> {
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      if (diaristInfo!.pixKey != null)
+                                      if (diaristInfo!.pixKey != null && diaristInfo!.pixKey!.isNotEmpty)
                                         Row(
                                           children: [
                                             const Text('Chave Pix:',
@@ -206,7 +206,7 @@ class _BankInformationState extends State<BankInformation> {
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      if (diaristInfo!.agency != null)
+                                      if (diaristInfo!.agency != null && diaristInfo!.agency!.isNotEmpty)
                                         Column(
                                           children: [
                                             Row(

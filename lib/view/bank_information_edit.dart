@@ -60,20 +60,12 @@ class _BankInformationEditState extends State<BankInformationEdit> {
     Map<String, dynamic> body = {
       'account_name': accountNameController.text,
       'bank_name': bankNameController.text,
+      'pix_key': pixKeyController.text,
+      'account_number': accountNumberController.text,
+        'agency': agencyController.text,
     };
 
-    if (pixKeyController.text.isNotEmpty) {
-      body.addAll({'pix_key': pixKeyController.text});
-    }
-
-    if (agencyController.text.isNotEmpty) {
-      body.addAll({
-        'account_number': accountNumberController.text,
-        'agency': agencyController.text,
-      });
-    }
     await updateDiaistBankInformation(body);
-
     GoRouter.of(context).push('/bank/information');
   }
 

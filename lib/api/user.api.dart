@@ -531,6 +531,7 @@ Future<String> paymentCheckout(
     String? contratctorEmail = await autentication.getUserEmail();
     int? contractorId = await autentication.getUserId();
     final token = await autentication.getToken();
+    final agendamentoId = await autentication.getAgendamentoId();
     var response = await http.post(urlPaymentCheckout,
         headers: {
           'Content-Type': 'application/json',
@@ -541,7 +542,7 @@ Future<String> paymentCheckout(
           'quantity': quantity,
           'contractor_id': contractorId,
           'contractor_email': contratctorEmail,
-          'contract_id': 1
+          'contract_id': agendamentoId
         }));
 
     if (response.statusCode == 201) {

@@ -378,8 +378,8 @@ Future<void> updateUser(Map<String, dynamic> usersData) async {
 }
 
 class ApiService {
-  Future<String?> sendContract({
-    required List<String?> tiposDeServico,
+  Future<Map<String, dynamic>?> sendContract({
+    required List<Map<String, String>> tiposDeServico,
     required String? tipoLimpeza,
     required bool? possuiPets,
     required bool? possuiMaterialLimpeza,
@@ -390,36 +390,45 @@ class ApiService {
     required int? quantidadeQuarto,
     required int? quantidadeBanheiro,
     required int? quantidadeSala,
+    required int? quantidadeCozinha,
     required String mensagem,
-    required int id,
+    required int diaristaId,
   }) async {
     final token = await autentication.getToken();
-    final url = Uri.http(host, '/contract/sendContract/$id');
+    final contractorId = await autentication.getUserId();
+    final url = Uri.http(host, '/contract');
 
     Map<String, dynamic> body = {
-      "tiposDeServico": tiposDeServico,
-      "tipoLimpeza": tipoLimpeza,
-      "possuiPets": possuiPets,
-      "possuiMaterialLimpeza": possuiMaterialLimpeza,
-      "tipoCestoLavar": tipoCestoLavar,
-      "tipoCestoPassar": tipoCestoPassar,
-      "qntCestoLavar": qntCestoLavar,
-      "qntCestoPassar": qntCestoPassar,
-      "comodos": [
+      "services": tiposDeServico,
+      "cleaningType": tipoLimpeza,
+      "havePets": possuiPets,
+      "includesCleaningMaterial": possuiMaterialLimpeza,
+      "washingBasketType": tipoCestoLavar,
+      "ironingBasketType": tipoCestoPassar,
+      "washingBasketQnt": qntCestoLavar,
+      "ironingBasketQnt": qntCestoPassar,
+      "rooms": [
         {
-          "tipo": "quarto",
-          "quantidade": quantidadeQuarto,
+          "roomType": "quarto",
+          "roomQnt": quantidadeQuarto,
         },
         {
-          "tipo": "banheiro",
-          "quantidade": quantidadeBanheiro,
+          "roomType": "banheiro",
+          "roomQnt": quantidadeBanheiro,
         },
         {
-          "tipo": "sala",
-          "quantidade": quantidadeSala,
+          "roomType": "sala",
+          "roomQnt": quantidadeSala,
+        },
+        {
+          "roomType": "cozinha",
+          "roomQnt": quantidadeCozinha,
         },
       ],
-      "mensagem": mensagem,
+      "message": mensagem,
+      "diaristId": diaristaId,
+      "contractorId": contractorId,
+      "agendamentoId": 10
     };
 
     try {
@@ -435,12 +444,18 @@ class ApiService {
       if (response.statusCode == 201) {
         print('Contrato enviado com sucesso!');
         var link = jsonDecode(response.body);
-        return link['link'];
+        return {
+          'link': link['whatsappLink']['link'],
+          'value': link['contract']['contractPrice']
+        };
       } else {
         throw Exception('Falha ao enviar contrato');
       }
     } catch (e) {
-      return '';
+      return  {
+          'link': '',
+          'value': 51
+        };
     }
   }
 }

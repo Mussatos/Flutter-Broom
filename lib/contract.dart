@@ -37,12 +37,12 @@ class _ContractState extends State<Contract> {
     'room': false
   };
 
-  List<String> serviceType = [
-    'Limpeza',
-    'Lavar roupa',
-    'Passar roupa',
-    'Lavar louça',
-    'Organizar ambiente'
+  List<Map<String, String>> serviceType = [
+    {'text': 'Limpeza', 'value': 'limpeza'},
+    {'text': 'Lavar roupa', 'value': 'lavar_roupa'},
+    {'text': 'Passar roupa', 'value': 'passar_roupa'},
+    {'text': 'Lavar louça', 'value': 'lavar_roupa'},
+    {'text': 'Organizar ambiente', 'value': 'organizar_ambiente'}
   ];
 
   List<bool> serviceTypeSelected = [false, false, false, false, false];
@@ -50,18 +50,18 @@ class _ContractState extends State<Contract> {
   List<String> cleanType = ['Leve', 'Média', 'Pesada'];
   String cleanTypeSelected = 'Leve';
 
-  String cleanBasketTypeSelected = 'Cesto pequeno'; //Lavar roupa
-  List<String> cleanBasketType = [
-    'Cesto pequeno',
-    'Cesto médio',
-    'Cesto grande'
+  String cleanBasketTypeSelected = 'cesto_pequeno'; //Lavar roupa
+  List<Map<String, String>> cleanBasketType = [
+    {'value': 'cesto_pequeno', 'text': 'Cesto pequeno'},
+    {'value': 'cesto_medio', 'text': 'Cesto médio'},
+    {'value': 'cesto_grande', 'text': 'Cesto grande'}
   ]; //Lavar roupa
 
-  String ironingBasketTypeSelected = 'Cesto pequeno'; //Passar roupa
-  List<String> ironingBasketType = [
-    'Cesto pequeno',
-    'Cesto médio',
-    'Cesto grande'
+  String ironingBasketTypeSelected = 'cesto_pequeno'; //Passar roupa
+  List<Map<String, String>> ironingBasketType = [
+    {'value': 'cesto_pequeno', 'text': 'Cesto pequeno'},
+    {'value': 'cesto_medio', 'text': 'Cesto médio'},
+    {'value': 'cesto_grande', 'text': 'Cesto grande'}
   ]; //Passar roupa
 
   bool _isBasketCleanQuantityValid = true;
@@ -170,11 +170,11 @@ class _ContractState extends State<Contract> {
     }
   }
 
-   void scrollToInvalidField() {
+  void scrollToInvalidField() {
     if (invalidRooms.containsValue(true)) {
       if (invalidRooms['bedroom']!) {
         _scrollController.animateTo(
-          20.0, 
+          20.0,
           duration: Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
@@ -182,7 +182,7 @@ class _ContractState extends State<Contract> {
       }
       if (invalidRooms['kitchen']!) {
         _scrollController.animateTo(
-          20.0, 
+          20.0,
           duration: Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
@@ -190,7 +190,7 @@ class _ContractState extends State<Contract> {
       }
       if (invalidRooms['room']!) {
         _scrollController.animateTo(
-          20.0, 
+          20.0,
           duration: Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
@@ -198,31 +198,31 @@ class _ContractState extends State<Contract> {
       }
       if (invalidRooms['toilet']!) {
         _scrollController.animateTo(
-          20.0, 
+          20.0,
           duration: Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
         return;
       }
     }
-      if (!_isBasketCleanQuantityValid) {
-        _scrollController.animateTo(
-          300.0, 
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-        return;
-      }
+    if (!_isBasketCleanQuantityValid) {
+      _scrollController.animateTo(
+        300.0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      return;
+    }
 
-      if (!_isBasketIroningQuantityValid) {
-        _scrollController.animateTo(
-          300.0, 
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-        return;
-      }
-}
+    if (!_isBasketIroningQuantityValid) {
+      _scrollController.animateTo(
+        300.0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      return;
+    }
+  }
 
   Future<void> initCheckout() async {
     Map<String, dynamic> priceData = {
@@ -240,10 +240,10 @@ class _ContractState extends State<Contract> {
   }
 
   Future<void> sendContract() async {
-    List<String> selectedServices = [];
+    List<Map<String, String>> selectedServices = [];
     for (int i = 0; i < serviceType.length; i++) {
       if (serviceTypeSelected[i]) {
-        selectedServices.add(serviceType[i]);
+        selectedServices.add({'serviceType': serviceType[i]['value']!});
       }
     }
 
@@ -267,7 +267,7 @@ class _ContractState extends State<Contract> {
       return;
     }
 
-     if (invalidRooms.containsValue(true)) {
+    if (invalidRooms.containsValue(true)) {
       scrollToInvalidField();
       return;
     }
@@ -284,7 +284,7 @@ class _ContractState extends State<Contract> {
 
     if (invalidRooms.containsValue(true)) return;
 
-    String? whatsappUrl = await apiService.sendContract(
+    Map<String, dynamic>? whatsappUrl = await apiService.sendContract(
       tiposDeServico: selectedServices,
       tipoLimpeza: cleanTypeSelected,
       possuiPets: petsController ?? false,
@@ -300,12 +300,13 @@ class _ContractState extends State<Contract> {
       quantidadeQuarto: int.tryParse(bedroomController.text) ?? 0,
       quantidadeBanheiro: int.tryParse(toiletController.text) ?? 0,
       quantidadeSala: int.tryParse(roomController.text) ?? 0,
+      quantidadeCozinha: int.tryParse(kitchenController.text) ?? 0,
       mensagem: obsController.text,
-      id: widget.idDoUser,
+      diaristaId: widget.idDoUser,
     );
 
-    if (whatsappUrl!.isNotEmpty) {
-      launchWhatsApp(whatsappUrl!);
+    if (whatsappUrl != null && whatsappUrl['link'] != '') {
+      launchWhatsApp(whatsappUrl['link']);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -478,7 +479,7 @@ class _ContractState extends State<Contract> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: CheckboxListTile(
                           title: Text(
-                            serviceType[index],
+                            serviceType[index]['text']!,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w500,
@@ -493,7 +494,7 @@ class _ContractState extends State<Contract> {
                           },
                         ),
                       ),
-                      if (serviceType[index] == 'Limpeza' &&
+                      if (serviceType[index]['text'] == 'Limpeza' &&
                           serviceTypeSelected[index])
                         Padding(
                           padding: const EdgeInsets.only(top: 8.0),
@@ -532,7 +533,7 @@ class _ContractState extends State<Contract> {
                             ),
                           ),
                         ),
-                      if (serviceType[index] == 'Lavar roupa' &&
+                      if (serviceType[index]['text'] == 'Lavar roupa' &&
                           serviceTypeSelected[index])
                         Column(
                           children: [
@@ -562,10 +563,10 @@ class _ContractState extends State<Contract> {
                                       cleanBasketTypeSelected = newValue!;
                                     });
                                   },
-                                  items: cleanBasketType.map((String value) {
+                                  items: cleanBasketType.map((dynamic value) {
                                     return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
+                                      value: value['value'],
+                                      child: Text(value['text']),
                                     );
                                   }).toList(),
                                 ),
@@ -585,7 +586,7 @@ class _ContractState extends State<Contract> {
                             ),
                           ],
                         ),
-                      if (serviceType[index] == 'Passar roupa' &&
+                      if (serviceType[index]['text'] == 'Passar roupa' &&
                           serviceTypeSelected[index])
                         Column(
                           children: [
@@ -615,10 +616,10 @@ class _ContractState extends State<Contract> {
                                       ironingBasketTypeSelected = newValue!;
                                     });
                                   },
-                                  items: ironingBasketType.map((String value) {
+                                  items: ironingBasketType.map((dynamic value) {
                                     return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
+                                      value: value['value'],
+                                      child: Text(value['text']),
                                     );
                                   }).toList(),
                                 ),

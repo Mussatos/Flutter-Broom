@@ -36,6 +36,7 @@ class _ContractState extends State<Contract> {
     'toilet': false,
     'room': false
   };
+  Map<String, dynamic>? contractInformation;
 
   List<Map<String, String>> serviceType = [
     {'text': 'Limpeza', 'value': 'limpeza'},
@@ -112,7 +113,10 @@ class _ContractState extends State<Contract> {
 
   Future<void> initPaymentSheet() async {
     try {
-      final data = await payment();
+      Map<String, int> price_data = {
+        'amount': contractInformation?['value'] * 100
+      };
+      final data = await payment(price_data);
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
@@ -230,7 +234,7 @@ class _ContractState extends State<Contract> {
       'product_data': {
         'name': 'Contratação de serviço de limpeza doméstica',
       },
-      'unit_amount': 51,
+      'unit_amount': contractInformation?['value'] * 100,
     };
     int quantity = 1;
 
@@ -284,7 +288,7 @@ class _ContractState extends State<Contract> {
 
     if (invalidRooms.containsValue(true)) return;
 
-    Map<String, dynamic>? whatsappUrl = await apiService.sendContract(
+    contractInformation = await apiService.sendContract(
       tiposDeServico: selectedServices,
       tipoLimpeza: cleanTypeSelected,
       possuiPets: petsController ?? false,
@@ -305,8 +309,8 @@ class _ContractState extends State<Contract> {
       diaristaId: widget.idDoUser,
     );
 
-    if (whatsappUrl != null && whatsappUrl['link'] != '') {
-      launchWhatsApp(whatsappUrl['link']);
+    if (contractInformation != null && contractInformation!['link'] != '') {
+      await autentication.setWhatsappLink(contractInformation!['link']);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -650,8 +654,8 @@ class _ContractState extends State<Contract> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => TableBasicsExample(
-                                    idDoUser: widget.idDoUser)));
+                                builder: (context) =>
+                                    Calendarypage(idDoUser: widget.idDoUser)));
                       },
                       icon: Icon(
                         Icons.calendar_today_rounded,
@@ -675,30 +679,17 @@ class _ContractState extends State<Contract> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () async {
+                    await sendContract();
+
                     if (kIsWeb)
                       initCheckout();
                     else
                       await initPaymentSheet();
                   },
-                  child: Text(
-                    'Pagamento',
-                  ),
+                  child: Text('Pagar e enviar contrato'),
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all(Color(0xFF2ECC8F)),
-                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                width: 350,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: sendContract,
-                  child: Text('Enviar contrato'),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.black),
                     foregroundColor: MaterialStateProperty.all(Colors.white),
                   ),
                 ),

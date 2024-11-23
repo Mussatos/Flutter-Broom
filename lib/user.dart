@@ -423,3 +423,4 @@ class DiaristCustomInformationActivity {
     return {'zone_id': regionAtendiment, 'state': stateAtendiment};
   }
 }
+

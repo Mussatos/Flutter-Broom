@@ -6,6 +6,8 @@ class UserAutentication {
   String _userIdKey = 'user_id';
   String _profileIdKey = 'profile_id';
   String _emailKey = 'email';
+  String _agendamentoKey = 'agendamento';
+  String _whatsappLinkKey = 'link';
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
@@ -56,5 +58,25 @@ class UserAutentication {
   Future<String?> getUserEmail() async {
     final prefs = await _prefs;
     return prefs.getString(_emailKey);
+  }
+
+  Future<int?> getAgendamentoId() async {
+    final prefs = await _prefs;
+    return prefs.getInt(_agendamentoKey) ?? -1;
+  }
+
+  Future<void> setAgendamentoId(int agendamentoId) async {
+    final prefs = await _prefs;
+    prefs.setInt(_agendamentoKey, agendamentoId);
+  }
+
+  Future<void> setWhatsappLink(String link) async {
+    final prefs = await _prefs;
+    prefs.setString(_whatsappLinkKey, link);
+  }
+
+  Future<String?> getWhatsappLink() async {
+    final prefs = await _prefs;
+    return prefs.getString(_whatsappLinkKey) ?? '';
   }
 }

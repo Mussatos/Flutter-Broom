@@ -396,6 +396,7 @@ class ApiService {
   }) async {
     final token = await autentication.getToken();
     final contractorId = await autentication.getUserId();
+    final agendamentoId = await autentication.getAgendamentoId();
     final url = Uri.http(host, '/contract');
 
     Map<String, dynamic> body = {
@@ -428,7 +429,7 @@ class ApiService {
       "message": mensagem,
       "diaristId": diaristaId,
       "contractorId": contractorId,
-      "agendamentoId": 10
+      "agendamentoId": agendamentoId
     };
 
     try {
@@ -452,10 +453,7 @@ class ApiService {
         throw Exception('Falha ao enviar contrato');
       }
     } catch (e) {
-      return  {
-          'link': '',
-          'value': 51
-        };
+      return {'link': '', 'value': 51};
     }
   }
 }
@@ -498,7 +496,7 @@ Future<Map<String, dynamic>> fetchCEP(String cep) async {
   }
 }
 
-Future<Map<String, dynamic>> payment() async {
+Future<Map<String, dynamic>> payment(Map<String, int> price_data) async {
   String? contratctorEmail = await autentication.getUserEmail();
   int? contractorId = await autentication.getUserId();
 
@@ -511,7 +509,8 @@ Future<Map<String, dynamic>> payment() async {
         },
         body: jsonEncode({
           'contractor_email': contratctorEmail,
-          'contractor_id': contractorId
+          'contractor_id': contractorId,
+          'price_data': price_data
         }));
 
     if (response.statusCode == 201) {
@@ -1010,13 +1009,11 @@ Future<void> postAgendamento({
   final token = await autentication.getToken();
   int? userId = await autentication.getUserId();
 
-  // Monta o corpo da requisição.
   final body = jsonEncode({
-    'contratante_id': userId,
-    'diarist_id': diaristaId,
-    'data': dataAgendamento
-        .toIso8601String(), // Data do agendamento no formato ISO 8601.
-    'tipo_diaria': tipoDiaria, // Tipo de diária ("Diária", "Meia-diária").
+    'contratanteId': userId,
+    'diaristaId': diaristaId,
+    'data': dataAgendamento.toIso8601String(),
+    'tipoDiaria': tipoDiaria,
   });
 
   try {
@@ -1024,18 +1021,38 @@ Future<void> postAgendamento({
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Envia o token de autenticação.
+        'Authorization': 'Bearer $token',
       },
       body: body,
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       print('Agendamento enviado com sucesso');
+      final agendamento = jsonDecode(response.body);
+      await autentication.setAgendamentoId(agendamento['id']);
     } else {
       print('Falha ao enviar o agendamento. Status: ${response.statusCode}');
       print('Resposta: ${response.body}');
     }
   } catch (e) {
     print('Erro ao enviar o agendamento: $e');
+  }
+}
+
+Future<List<dynamic>> fetchDailyRateType() async {
+  final url = Uri.http(host, '/agendamento/dailyratetype');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
   }
 }

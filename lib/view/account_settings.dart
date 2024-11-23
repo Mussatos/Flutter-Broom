@@ -80,6 +80,41 @@ class _AccountSettingsState extends State<AccountSettings> {
                             btnIcon: Icons.favorite,
                             function: () => goToFavorites(context)),
                         SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      width: 250,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          GoRouter.of(context).push('/meeting-page');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2ECC8F),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              'Meus Agendamentos',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(
+                              color: Colors.white,
+                              Icons.calendar_today_rounded,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
                           height: 10,
                         ),
                         if (snapshot.data == 2)

@@ -1,6 +1,7 @@
 import 'package:broom_main_vscode/address_form.dart';
 import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/calendaryPage.dart';
 import 'package:broom_main_vscode/confirmEmail.dart';
 import 'package:broom_main_vscode/edit_address.dart';
 import 'package:broom_main_vscode/models/bank_info.model.dart';
@@ -10,6 +11,7 @@ import 'package:broom_main_vscode/view/account_settings.dart';
 import 'package:broom_main_vscode/view/bank_information.dart';
 import 'package:broom_main_vscode/view/bank_information_edit.dart';
 import 'package:broom_main_vscode/view/userFavorite_list.dart';
+import 'package:broom_main_vscode/view/userMeeting.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:broom_main_vscode/Login.dart';
@@ -105,7 +107,11 @@ GoRouter createRouter(String initialLocation) {
 
           return '/List';
         },
-      )
+      ),
+      GoRoute(
+        path: '/meeting-page',
+        builder: (context, state) => Usermeeting(),
+      ),
     ],
   );
 }

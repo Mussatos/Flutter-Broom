@@ -168,6 +168,7 @@ class _CalendarypageState extends State<Calendarypage> {
                             ),
                           );
                         }
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2ECC8F),

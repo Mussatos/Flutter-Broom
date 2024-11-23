@@ -47,8 +47,8 @@ class _UserYourselfState extends State<UserYourself> {
     ).toList();
 
     zoneActivity?.remove(null);
-    if(zoneActivity != null && zoneActivity.isNotEmpty) return zoneActivity;
-    
+    if (zoneActivity != null && zoneActivity.isNotEmpty) return zoneActivity;
+
     return [];
   }
 
@@ -166,6 +166,7 @@ class _UserYourselfState extends State<UserYourself> {
                       SizedBox(height: 20),
                       Text(
                         'Descrição:',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -336,11 +337,14 @@ class _UserYourselfState extends State<UserYourself> {
                                       .replaceAll('_', ' '))
                                   .join(', ')
                               : 'Não especificado',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey.shade700,
+                            
                           ),
+                          
                         ),
                       ],
                       SizedBox(height: 150),

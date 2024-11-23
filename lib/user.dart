@@ -424,3 +424,92 @@ class DiaristCustomInformationActivity {
   }
 }
 
+class ListDailys {
+  final int? id;
+  final int? paymentInfoId;
+  final int? contractId;
+  final bool? refund;
+  final bool? finished;
+  final DateTime? finishedAt;
+  final int? agendamentoId;
+  final String? contractorFirstName;
+  final String? contractorLastName;
+  final DateTime? agendamentoDate;
+  final String? diaristFirstName;
+  final String? diaristLastName;
+  final String? diariaType;
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final int? contractIdDetail;
+  final bool? includesCleaningMaterial;
+  final bool? havePets;
+  final String? cleaningType;
+  final String? message;
+  final String? contractStatus;
+  final double? contractPrice;
+  final String? paymentStatus;
+
+  ListDailys({
+    required this.id,
+    required this.paymentInfoId,
+    required this.contractId,
+    required this.refund,
+    required this.finished,
+    this.finishedAt,
+    required this.agendamentoId,
+    required this.contractorFirstName,
+    required this.contractorLastName,
+    required this.agendamentoDate,
+    required this.diaristFirstName,
+    required this.diaristLastName,
+    required this.diariaType,
+    required this.startTime,
+    required this.endTime,
+    required this.contractIdDetail,
+    required this.includesCleaningMaterial,
+    required this.havePets,
+    required this.cleaningType,
+    required this.message,
+    required this.contractStatus,
+    required this.contractPrice,
+    required this.paymentStatus,
+  });
+
+  factory ListDailys.fromJson(Map<String, dynamic> json) {
+    final agendamento = json['agendamento'];
+    final contratante = agendamento['contratante'];
+    final diarista = agendamento['diarista'];
+    final contract = agendamento['contract'] ?? {};
+    final payment = json['Contractor_Payment'];
+
+    print('abacate $json');
+
+    return ListDailys(
+      id: json['id'] ?? 0,
+      paymentInfoId: json['payment_info_id'] ?? 0,
+      contractId: json['contract_id'] ?? 0,
+      refund: json['refund'] ?? false,
+      finished: json['finished'] ?? false,
+      finishedAt: json['finished_at'] != null
+          ? DateTime.parse(json['finished_at'])
+          : null,
+      agendamentoId: agendamento['id'] ?? 0,
+      contractorFirstName: contratante['first_name'] ?? '',
+      contractorLastName: contratante['last_name'] ?? '',
+      agendamentoDate: DateTime.parse(agendamento['data']),
+      diaristFirstName: diarista['first_name'] ?? '',
+      diaristLastName: diarista['last_name'] ?? '',
+      diariaType: agendamento['tipoDiaria'] ?? '',
+      startTime: DateTime.parse(agendamento['horarioInicio']),
+      endTime: DateTime.parse(agendamento['horarioFim']),
+      contractIdDetail: contract['id'] ?? 0,
+      includesCleaningMaterial: contract['includesCleaningMaterial'] ?? false,
+      havePets: contract['havePets'] ?? false,
+      cleaningType: contract['cleaningType'] ?? '',
+      message: contract['message'] ?? '',
+      contractStatus: contract['contractStatus'],
+      contractPrice: (contract['contractPrice'] as num).toDouble(),
+      paymentStatus: payment['status'],
+    );
+  }
+}

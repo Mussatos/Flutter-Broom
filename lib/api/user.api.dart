@@ -1056,3 +1056,34 @@ Future<List<dynamic>> fetchDailyRateType() async {
     return [{}];
   }
 }
+
+Future<List<ListDailys>> fetchMeetings() async {
+  final token = await autentication.getToken();
+  final userProfileId = await autentication.getProfileId();
+  final userId = await autentication.getUserId();
+  try {
+    final response = await http.get(
+      getListMeetings(userProfileId, userId),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => ListDailys.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return [];
+  }
+}
+
+Uri getListMeetings(int? userProfileId, int? userId) {
+  return userProfileId == 1
+      ? Uri.http(host, '/confirm-payment/contractor/services/$userId')
+      : Uri.http(host, '/confirm-payment/diarist/services/$userId');
+}

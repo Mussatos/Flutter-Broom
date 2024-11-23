@@ -11,7 +11,7 @@ import 'package:broom_main_vscode/view/account_settings.dart';
 import 'package:broom_main_vscode/view/bank_information.dart';
 import 'package:broom_main_vscode/view/bank_information_edit.dart';
 import 'package:broom_main_vscode/view/userFavorite_list.dart';
-import 'package:broom_main_vscode/view/userMeeting.dart';
+import 'package:broom_main_vscode/view/listMeeting.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:broom_main_vscode/Login.dart';

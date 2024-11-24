@@ -1088,3 +1088,72 @@ Uri getListMeetings(int? userProfileId, int? userId) {
       ? Uri.http(host, '/confirm-payment/contractor/services/$userId')
       : Uri.http(host, '/confirm-payment/diarist/services/$userId');
 }
+
+Future<PaymentDetails?> fetchUnicContract(int agendamentoId) async {
+  final token = await autentication.getToken();
+  final url = Uri.http(host, '/confirm-payment/informations/$agendamentoId');
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return PaymentDetails.fromJson(data);
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return null;
+  }
+}
+
+Future<void> requestRefund(int agendamentoId) async {
+  final url = Uri.http(host, '/payment/refund/$agendamentoId');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 201) {
+      print('Reembolso solicitado com sucesso!');
+      print('Resposta: ${response.body}');
+    } else {
+      print('Falha ao solicitar reembolso. Status: ${response.statusCode}');
+      print('Erro: ${response.body}');
+    }
+  } catch (e) {
+    print('Erro na requisição: $e');
+  }
+}
+
+Future<void> finishContract(int agendamentoId) async {
+  final token = await autentication.getToken();
+  try {
+    final response = await http.patch(
+      Uri.http(host, '/confirm-payment/$agendamentoId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+  }
+}

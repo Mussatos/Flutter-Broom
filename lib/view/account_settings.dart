@@ -114,6 +114,9 @@ class _AccountSettingsState extends State<AccountSettings> {
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: 10,
+                        ),
                         if (snapshot.data == 2)
                           ButtonIcon(
                             btnIcon: Icons.monetization_on_outlined,

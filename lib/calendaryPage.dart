@@ -158,9 +158,10 @@ class _CalendarypageState extends State<Calendarypage> {
                       onPressed: () async {
                         if (_selectedDay != null) {
                           await _saveEventToBackend(
-                              date: _selectedDay!,
-                              type: _selectedOption!,
-                              idDoUser: widget.idDoUser);
+                            date: _selectedDay!,
+                            type: _selectedOption!,
+                            idDoUser: widget.idDoUser,
+                          );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -172,10 +173,16 @@ class _CalendarypageState extends State<Calendarypage> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2ECC8F),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 32),
                       ),
                       child: Text(
                         'Salvar',
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),

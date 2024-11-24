@@ -19,6 +19,8 @@ class _CalendarypageState extends State<Calendarypage> {
   String _selectedOption = 'diaria_completa';
   int? idDoContract;
   Future<List<dynamic>>? listTypeDailyRate;
+  List<dynamic>? ListDailyType;
+  bool hasAgended = false;
 
   Future<void> fetchContract() async {
     idDoContract = await autentication.getUserId();
@@ -41,27 +43,37 @@ class _CalendarypageState extends State<Calendarypage> {
       if (idDoContract == null) {
         throw Exception("ID do contratante não encontrado.");
       }
-      await Future.delayed(const Duration(seconds: 1));
-      print('Salvando no backend:');
-      print('Data: $date');
-      print('Tipo: $type');
-      print('Id Diarista: $idDoUser');
-      print('Id Contratante: $idDoContract');
+      setState(() async {
+        hasAgended = await postAgendamento(
+            dataAgendamento: date, diaristaId: idDoUser, tipoDiaria: type);
+      });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Evento salvo com sucesso para $date'),
-        ),
-      );
+      if (hasAgended) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Agendamento salvo com sucesso para $date'),
+          ),
+        );
+      }
     } catch (e) {
+      var dailyTypeSelect = getDailyTypeSelected(type);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Erro ao salvar evento: $e'),
+          content: Text(
+              'Diarista já possui um servico agendado do tipo ${dailyTypeSelect[0]} para este dia'),
         ),
       );
     }
-    postAgendamento(
-        dataAgendamento: date, diaristaId: idDoUser, tipoDiaria: type);
+  }
+
+  List<dynamic> getDailyTypeSelected(type) {
+    var dailyTypeSelect = ListDailyType!.map((dailyType) {
+      if (dailyType['value'] == type) return dailyType['text'];
+    }).toList();
+
+    dailyTypeSelect.remove(null);
+    dailyTypeSelect.remove(null);
+    return dailyTypeSelect;
   }
 
   @override
@@ -93,7 +105,7 @@ class _CalendarypageState extends State<Calendarypage> {
               return const Center(
                   child: Text('Erro ao carregar o agendamento'));
             } else {
-              List<dynamic>? ListDailyType = snapshot.data;
+              ListDailyType = snapshot.data;
               return Column(
                 children: [
                   TableCalendar(
@@ -162,14 +174,15 @@ class _CalendarypageState extends State<Calendarypage> {
                             type: _selectedOption!,
                             idDoUser: widget.idDoUser,
                           );
+
+                          hasAgended ? Navigator.pop(context) : null;
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text('Por favor, selecione uma data.'),
                             ),
                           );
                         }
-                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2ECC8F),

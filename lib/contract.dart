@@ -1,5 +1,6 @@
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/calendaryPage.dart';
+import 'package:broom_main_vscode/ui-components/modal.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -30,6 +31,8 @@ class _ContractState extends State<Contract> {
   bool? petsController = false;
   bool? materialController = false;
   bool _ready = false;
+  bool hasClickedToPay = false;
+  bool isLoading = false;
   Map<String, bool> invalidRooms = {
     'bedroom': false,
     'kitchen': false,
@@ -92,6 +95,7 @@ class _ContractState extends State<Contract> {
     roomController.addListener(roomsValidation);
     kitchenController.addListener(roomsValidation);
     toiletController.addListener(roomsValidation);
+    autentication.setWhatsappLink('');
   }
 
   void _validateBasketQuantities() {
@@ -240,7 +244,21 @@ class _ContractState extends State<Contract> {
 
     final data = await paymentCheckout(priceData, quantity);
 
-    if (data.isNotEmpty) await launchUrlString(data);
+    if (data.isNotEmpty) {
+      try {
+        setState(() {
+          isLoading = true;
+        });
+        await launchUrlString(data);
+      } catch (e) {
+        print(e.toString());
+      } finally {
+        setState(() {
+          hasClickedToPay = true;
+          isLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> sendContract() async {
@@ -339,12 +357,34 @@ class _ContractState extends State<Contract> {
         toiletController.text.isEmpty;
   }
 
-  void launchWhatsApp(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+  Future<void> launchWhatsApp(String url) async {
+    if (url.isNotEmpty) {
+      await launchUrlString(url);
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Future<void> sendContractToWhatsapp(context) async {
+    String link = contractInformation!['link'];
+    await launchWhatsApp(link);
+    GoRouter.of(context).push('/List');
+  }
+
+  Future<void> showFinishedContractModal(context) async {
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Modal(
+            title: 'Agendamento de serviço finalizado!!',
+            message:
+                'Você será redirecionado para a tela de listagem de diarista',
+            click: () async  => await sendContractToWhatsapp(context),
+            showOneButton: true,
+            mainButtonTitle: 'Enviar contrato e voltar',
+          );
+        });
   }
 
   @override
@@ -357,7 +397,8 @@ class _ContractState extends State<Contract> {
         ),
         backgroundColor: Color(0xFF2ECC8F),
         leading: IconButton(
-          onPressed: () {
+          onPressed: () async {
+            handleDeleteAgendamento();
             Navigator.pop(context);
           },
           icon: Icon(
@@ -369,334 +410,350 @@ class _ContractState extends State<Contract> {
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
-        child: Container(
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(35.0),
-          color: Colors.white,
-          child: Column(
-            children: [
-              Text(
-                "Quantos cômodos?",
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: bedroomController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          labelText: 'Quarto',
-                          border: OutlineInputBorder(),
-                          errorText: invalidRooms['bedroom']!
-                              ? 'Valor inválido'
-                              : null),
+        child: isLoading
+            ? CircularProgressIndicator()
+            : Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(35.0),
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Text(
+                      "Quantos cômodos?",
+                      style: TextStyle(fontSize: 16),
                     ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: kitchenController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          labelText: 'Cozinha',
-                          border: OutlineInputBorder(),
-                          errorText: invalidRooms['kitchen']!
-                              ? 'Valor inválido'
-                              : null),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: toiletController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          labelText: 'Banheiro',
-                          border: OutlineInputBorder(),
-                          errorText: invalidRooms['toilet']!
-                              ? 'Valor inválido'
-                              : null),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: roomController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          labelText: 'Sala',
-                          border: OutlineInputBorder(),
-                          errorText:
-                              invalidRooms['room']! ? 'Valor inválido' : null),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: petsController,
-                        activeColor: Colors.greenAccent,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            petsController = value!;
-                          });
-                        },
-                      ),
-                      Text('Possui pets'),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: materialController,
-                        activeColor: Colors.greenAccent,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            materialController = value!;
-                          });
-                        },
-                      ),
-                      Text('Possui material de limpeza'),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate(serviceType.length, (index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: CheckboxListTile(
-                          title: Text(
-                            serviceType[index]['text']!,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: bedroomController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                labelText: 'Quarto',
+                                border: OutlineInputBorder(),
+                                errorText: invalidRooms['bedroom']!
+                                    ? 'Valor inválido'
+                                    : null),
                           ),
-                          value: serviceTypeSelected[index],
-                          activeColor: Colors.greenAccent,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              serviceTypeSelected[index] = value!;
-                            });
-                          },
                         ),
-                      ),
-                      if (serviceType[index]['text'] == 'Limpeza' &&
-                          serviceTypeSelected[index])
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(4),
-                              color: Colors.white,
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: TextFormField(
+                            controller: kitchenController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                labelText: 'Cozinha',
+                                border: OutlineInputBorder(),
+                                errorText: invalidRooms['kitchen']!
+                                    ? 'Valor inválido'
+                                    : null),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: toiletController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                labelText: 'Banheiro',
+                                border: OutlineInputBorder(),
+                                errorText: invalidRooms['toilet']!
+                                    ? 'Valor inválido'
+                                    : null),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: TextFormField(
+                            controller: roomController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                labelText: 'Sala',
+                                border: OutlineInputBorder(),
+                                errorText: invalidRooms['room']!
+                                    ? 'Valor inválido'
+                                    : null),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: petsController,
+                              activeColor: Colors.greenAccent,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  petsController = value!;
+                                });
+                              },
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                value: cleanTypeSelected,
-                                isExpanded: true,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
+                            Text('Possui pets'),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: materialController,
+                              activeColor: Colors.greenAccent,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  materialController = value!;
+                                });
+                              },
+                            ),
+                            Text('Possui material de limpeza'),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: List.generate(serviceType.length, (index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: CheckboxListTile(
+                                title: Text(
+                                  serviceType[index]['text']!,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black,
-                                ),
-                                dropdownColor: Colors.white,
-                                onChanged: (String? newValue) {
+                                value: serviceTypeSelected[index],
+                                activeColor: Colors.greenAccent,
+                                onChanged: (bool? value) {
                                   setState(() {
-                                    cleanTypeSelected = newValue!;
+                                    serviceTypeSelected[index] = value!;
                                   });
                                 },
-                                items: cleanType.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
                               ),
                             ),
-                          ),
-                        ),
-                      if (serviceType[index]['text'] == 'Lavar roupa' &&
-                          serviceTypeSelected[index])
-                        Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4),
-                                color: Colors.white,
-                              ),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  value: cleanBasketTypeSelected,
-                                  isExpanded: true,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
+                            if (serviceType[index]['text'] == 'Limpeza' &&
+                                serviceTypeSelected[index])
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(4),
+                                    color: Colors.white,
                                   ),
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      value: cleanTypeSelected,
+                                      isExpanded: true,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                      ),
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.black,
+                                      ),
+                                      dropdownColor: Colors.white,
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          cleanTypeSelected = newValue!;
+                                        });
+                                      },
+                                      items: cleanType.map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
                                   ),
-                                  dropdownColor: Colors.white,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      cleanBasketTypeSelected = newValue!;
-                                    });
-                                  },
-                                  items: cleanBasketType.map((dynamic value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value['value'],
-                                      child: Text(value['text']),
-                                    );
-                                  }).toList(),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 10),
-                            TextFormField(
-                              controller: basketCleanQuantityController,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: 'Quantidade de cestos para lavar',
-                                border: OutlineInputBorder(),
-                                errorText: !_isBasketCleanQuantityValid
-                                    ? 'Valor inválido'
-                                    : null,
-                              ),
-                            ),
-                          ],
-                        ),
-                      if (serviceType[index]['text'] == 'Passar roupa' &&
-                          serviceTypeSelected[index])
-                        Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(4),
-                                color: Colors.white,
-                              ),
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  value: ironingBasketTypeSelected,
-                                  isExpanded: true,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
+                            if (serviceType[index]['text'] == 'Lavar roupa' &&
+                                serviceTypeSelected[index])
+                              Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: Colors.white,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        value: cleanBasketTypeSelected,
+                                        isExpanded: true,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                        ),
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.black,
+                                        ),
+                                        dropdownColor: Colors.white,
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            cleanBasketTypeSelected = newValue!;
+                                          });
+                                        },
+                                        items: cleanBasketType
+                                            .map((dynamic value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value['value'],
+                                            child: Text(value['text']),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
                                   ),
-                                  icon: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: Colors.black,
+                                  SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: basketCleanQuantityController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      labelText:
+                                          'Quantidade de cestos para lavar',
+                                      border: OutlineInputBorder(),
+                                      errorText: !_isBasketCleanQuantityValid
+                                          ? 'Valor inválido'
+                                          : null,
+                                    ),
                                   ),
-                                  dropdownColor: Colors.white,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      ironingBasketTypeSelected = newValue!;
-                                    });
-                                  },
-                                  items: ironingBasketType.map((dynamic value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value['value'],
-                                      child: Text(value['text']),
-                                    );
-                                  }).toList(),
-                                ),
+                                ],
                               ),
-                            ),
-                            SizedBox(height: 10),
-                            TextFormField(
-                              controller: basketIroningQuantityController,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                labelText: 'Quantidade de cestos para passar',
-                                errorText: !_isBasketIroningQuantityValid
-                                    ? 'Valor inválido'
-                                    : null,
-                                border: OutlineInputBorder(),
+                            if (serviceType[index]['text'] == 'Passar roupa' &&
+                                serviceTypeSelected[index])
+                              Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.circular(4),
+                                      color: Colors.white,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<String>(
+                                        value: ironingBasketTypeSelected,
+                                        isExpanded: true,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                        ),
+                                        icon: Icon(
+                                          Icons.arrow_drop_down,
+                                          color: Colors.black,
+                                        ),
+                                        dropdownColor: Colors.white,
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            ironingBasketTypeSelected =
+                                                newValue!;
+                                          });
+                                        },
+                                        items: ironingBasketType
+                                            .map((dynamic value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value['value'],
+                                            child: Text(value['text']),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10),
+                                  TextFormField(
+                                    controller: basketIroningQuantityController,
+                                    keyboardType: TextInputType.number,
+                                    decoration: InputDecoration(
+                                      labelText:
+                                          'Quantidade de cestos para passar',
+                                      errorText: !_isBasketIroningQuantityValid
+                                          ? 'Valor inválido'
+                                          : null,
+                                      border: OutlineInputBorder(),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
                           ],
-                        ),
-                    ],
-                  );
-                }),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    Calendarypage(idDoUser: widget.idDoUser)));
-                      },
-                      icon: Icon(
-                        Icons.calendar_today_rounded,
-                        color: Colors.black,
-                      )),
-                  Text('Agendamento'),
-                ],
-              ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: obsController,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: 'Observação',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 20),
-              SizedBox(
-                width: 350,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await sendContract();
+                        );
+                      }),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Calendarypage(
+                                          idDoUser: widget.idDoUser)));
+                            },
+                            icon: Icon(
+                              Icons.calendar_today_rounded,
+                              color: Colors.black,
+                            )),
+                        Text('Agendamento'),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: obsController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        labelText: 'Observação',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: 350,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          await sendContract();
 
-                    if (kIsWeb)
-                      initCheckout();
-                    else
-                      await initPaymentSheet();
-                  },
-                  child: Text('Pagar e enviar contrato'),
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Color(0xFF2ECC8F)),
-                    foregroundColor: MaterialStateProperty.all(Colors.white),
-                  ),
+                          if (kIsWeb) {
+                            await initCheckout();
+                          } else {
+                            await initPaymentSheet();
+                          }
+                          print(hasClickedToPay);
+                          if (hasClickedToPay) {
+                            showFinishedContractModal(context);
+                          }
+                        },
+                        child: Text('Pagar e enviar contrato'),
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Color(0xFF2ECC8F)),
+                          foregroundColor:
+                              MaterialStateProperty.all(Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
       ),
     );
   }

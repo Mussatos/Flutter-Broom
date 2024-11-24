@@ -1001,7 +1001,7 @@ Future<BankInfo?> fetcheDiaistBankInformation() async {
   }
 }
 
-Future<void> postAgendamento({
+Future<bool> postAgendamento({
   required int diaristaId,
   required DateTime dataAgendamento,
   required String tipoDiaria,
@@ -1031,12 +1031,15 @@ Future<void> postAgendamento({
       print('Agendamento enviado com sucesso');
       final agendamento = jsonDecode(response.body);
       await autentication.setAgendamentoId(agendamento['id']);
+      return true;
     } else {
       print('Falha ao enviar o agendamento. Status: ${response.statusCode}');
       print('Resposta: ${response.body}');
+      throw Exception();
     }
   } catch (e) {
     print('Erro ao enviar o agendamento: $e');
+    return false;
   }
 }
 
@@ -1127,12 +1130,7 @@ Future<void> requestRefund(int agendamentoId) async {
     );
 
     if (response.statusCode == 201) {
-      print('Reembolso solicitado com sucesso!');
-      print('Resposta: ${response.body}');
-    } else {
-      print('Falha ao solicitar reembolso. Status: ${response.statusCode}');
-      print('Erro: ${response.body}');
-    }
+    } else {}
   } catch (e) {
     print('Erro na requisição: $e');
   }
@@ -1155,5 +1153,30 @@ Future<void> finishContract(int agendamentoId) async {
     }
   } catch (err) {
     print(err);
+  }
+}
+
+Future<void> handleDeleteAgendamento() async {
+  final token = await autentication.getToken();
+  final int? agendamentoId = await autentication.getAgendamentoId();
+  try {
+    final response = await http.delete(
+      Uri.http(host, '/agendamento/confirm/delete/$agendamentoId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('deletado com sucesso');
+      await autentication.setAgendamentoId(-1);
+
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    await autentication.setAgendamentoId(-1);
   }
 }

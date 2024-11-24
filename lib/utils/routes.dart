@@ -10,6 +10,7 @@ import 'package:broom_main_vscode/user_yourself.dart';
 import 'package:broom_main_vscode/view/account_settings.dart';
 import 'package:broom_main_vscode/view/bank_information.dart';
 import 'package:broom_main_vscode/view/bank_information_edit.dart';
+import 'package:broom_main_vscode/view/payment_success_view.dart';
 import 'package:broom_main_vscode/view/userFavorite_list.dart';
 import 'package:broom_main_vscode/view/listMeeting.dart';
 import 'package:flutter/material.dart';
@@ -112,6 +113,9 @@ GoRouter createRouter(String initialLocation) {
         path: '/meeting-page',
         builder: (context, state) => Usermeeting(),
       ),
+      GoRoute(
+          path: '/payment/success',
+          builder: (context, state) => PaymentSuccessView())
     ],
   );
 }

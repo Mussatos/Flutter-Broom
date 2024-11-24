@@ -306,7 +306,8 @@ class UserView extends StatelessWidget {
                           ElevatedButton.icon(
                             onPressed: () async {
                               final phoneNumber = userData.cellphoneNumber;
-                              if (phoneNumber != null) {
+                              if (phoneNumber != null &&
+                                  phoneNumber.isNotEmpty) {
                                 final whatsappUrl =
                                     'https://wa.me/$phoneNumber';
                                 if (await canLaunch(whatsappUrl)) {
@@ -345,23 +346,34 @@ class UserView extends StatelessWidget {
                         ] else if (profileId == 2) ...[
                           ElevatedButton.icon(
                             onPressed: () async {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Contract(
-                                    idDoUser: usuario.id,
+                              final phoneNumber = userData.cellphoneNumber;
+                              if (phoneNumber.isNotEmpty) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Contract(
+                                      idDoUser: usuario.id,
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Número de telefone não cadastrado.'),
+                                  ),
+                                );
+                              }
                             },
-                            icon: Icon(Icons.message, color: Colors.white),
-                            label: Text(
+                            icon:
+                                const Icon(Icons.message, color: Colors.white),
+                            label: const Text(
                               'Criar contrato',
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF2ECC8F),
-                              padding: EdgeInsets.symmetric(
+                              backgroundColor: const Color(0xFF2ECC8F),
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),

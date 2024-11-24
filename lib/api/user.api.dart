@@ -1027,7 +1027,7 @@ Future<bool> postAgendamento({
       body: body,
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == 201) {
       print('Agendamento enviado com sucesso');
       final agendamento = jsonDecode(response.body);
       await autentication.setAgendamentoId(agendamento['id']);

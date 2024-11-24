@@ -97,6 +97,7 @@ class _ContractState extends State<Contract> {
     kitchenController.addListener(roomsValidation);
     toiletController.addListener(roomsValidation);
     autentication.setWhatsappLink('');
+    autentication.setAgendamentoId(-1);
   }
 
   void _validateBasketQuantities() {
@@ -382,7 +383,7 @@ class _ContractState extends State<Contract> {
             title: 'Agendamento de serviço finalizado!!',
             message:
                 'Você será redirecionado para a tela de listagem de diarista',
-            click: () async  => await sendContractToWhatsapp(context),
+            click: () async => await sendContractToWhatsapp(context),
             showOneButton: true,
             mainButtonTitle: 'Enviar contrato e voltar',
           );
@@ -703,12 +704,23 @@ class _ContractState extends State<Contract> {
                     Row(
                       children: [
                         IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Calendarypage(
-                                          idDoUser: widget.idDoUser)));
+                            onPressed: () async {
+                              final agendamentoId =
+                                  await autentication.getAgendamentoId();
+                              print(agendamentoId);
+                              if (agendamentoId == -1) {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Calendarypage(
+                                            idDoUser: widget.idDoUser)));
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Você já marcou un agendamento com a diarista')),
+                                );
+                              }
                             },
                             icon: Icon(
                               Icons.calendar_today_rounded,

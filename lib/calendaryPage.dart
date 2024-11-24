@@ -43,10 +43,9 @@ class _CalendarypageState extends State<Calendarypage> {
       if (idDoContract == null) {
         throw Exception("ID do contratante não encontrado.");
       }
-      setState(() async {
-        hasAgended = await postAgendamento(
-            dataAgendamento: date, diaristaId: idDoUser, tipoDiaria: type);
-      });
+
+      hasAgended = await postAgendamento(
+          dataAgendamento: date, diaristaId: idDoUser, tipoDiaria: type);
 
       if (hasAgended) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -109,7 +108,7 @@ class _CalendarypageState extends State<Calendarypage> {
               return Column(
                 children: [
                   TableCalendar(
-                    firstDay: DateTime.utc(2010, 10, 16),
+                    firstDay: DateTime.now(),
                     lastDay: DateTime.utc(2030, 3, 14),
                     focusedDay: _focusedDay,
                     calendarFormat: _calendarFormat,

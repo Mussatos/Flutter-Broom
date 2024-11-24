@@ -3,6 +3,7 @@ import 'package:broom_main_vscode/ui-components/icon_button.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -56,7 +57,8 @@ class _MeetingviewState extends State<Meetingview> {
   }
 
   bool isPendingPayment(int profileId) {
-    return dailyList!.contractorPayment!.status == 'processando' && profileId == 1;
+    return dailyList!.contractorPayment!.status == 'processando' &&
+        profileId == 1;
   }
 
   Future<void> retrieveCheckout() async {
@@ -65,6 +67,14 @@ class _MeetingviewState extends State<Meetingview> {
     if (sessionUrl.isNotEmpty) {
       await launchUrlString(sessionUrl);
     }
+  }
+
+  String getDailyType(String type) {
+    return type.replaceAll('_', ' ');
+  }
+
+  String getFullName(String firstName, String lastName) {
+    return '$firstName $lastName';
   }
 
   @override
@@ -136,74 +146,148 @@ class _MeetingviewState extends State<Meetingview> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                            Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(''),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(''),
-                                    ],
-                                  ),
-                                  Text('Tipo de diaria: ${dailyList!.tipoDiaria}'),
-                                  Text(''),
                                   if (snapshot.data![1] == 1) ...[
-                                    ElevatedButton(
-                                      onPressed: dailyList!.finished! ||
-                                              dailyList!.refund!
-                                          ? null
-                                          : _handleFinalize,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: dailyList!.finished! ||
-                                                dailyList!.refund!
-                                            ? Colors.grey
-                                            : Colors.green,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 24,
-                                          vertical: 12,
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        "Finalizar",
-                                        style: TextStyle(
-                                            fontSize: 18, color: Colors.white),
-                                      ),
+                                    const Text(
+                                      'Ações',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600),
                                     ),
-                                    ElevatedButton(
-                                      onPressed: dailyList!.finished! ||
-                                              dailyList!.refund!
-                                          ? null
-                                          : _handleRefund,
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: dailyList!.finished! ||
-                                                dailyList!.refund!
-                                            ? Colors.grey
-                                            : Colors.red,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 24,
-                                          vertical: 12,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: dailyList!.finished! ||
+                                                  dailyList!.refund!
+                                              ? null
+                                              : _handleFinalize,
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                dailyList!.finished! ||
+                                                        dailyList!.refund!
+                                                    ? Colors.grey
+                                                    : Colors.green,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            "Finalizar",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                        const SizedBox(
+                                          width: 10,
                                         ),
-                                      ),
-                                      child: const Text(
-                                        "Reembolso",
-                                        style: TextStyle(
-                                            fontSize: 18, color: Colors.white),
-                                      ),
+                                        ElevatedButton(
+                                          onPressed: dailyList!.finished! ||
+                                                  dailyList!.refund!
+                                              ? null
+                                              : _handleRefund,
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                dailyList!.finished! ||
+                                                        dailyList!.refund!
+                                                    ? Colors.grey
+                                                    : Colors.red,
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            "Reembolso",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
+                                  Row(
+                                    children: [
+                                      Text(''),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(''),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Tipo de diaria: ',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      Text(getDailyType(dailyList!.tipoDiaria!),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600)),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('Data da diaria: ',
+                                          style: TextStyle(fontSize: 16)),
+                                      Text(
+                                        DateFormat('dd/MM/yyyy').format(
+                                            dailyList!.agendamentoDate!),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('Diarista: ',
+                                          style: TextStyle(fontSize: 16)),
+                                      Text(
+                                        getFullName(
+                                            dailyList!.diaristFirstName!,
+                                            dailyList!.diaristLastName!),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('Contratante: ',
+                                          style: TextStyle(fontSize: 16)),
+                                      Text(
+                                        getFullName(
+                                            dailyList!.contractorFirstName!,
+                                            dailyList!.contractorLastName!),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  ),
                                 ]),
                           ],
                         ),

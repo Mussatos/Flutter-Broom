@@ -46,13 +46,15 @@ class _CalendarypageState extends State<Calendarypage> {
 
       hasAgended = await postAgendamento(
           dataAgendamento: date, diaristaId: idDoUser, tipoDiaria: type);
-
+      
       if (hasAgended) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Agendamento salvo com sucesso para $date'),
           ),
         );
+      }else {
+        throw Exception();
       }
     } catch (e) {
       var dailyTypeSelect = getDailyTypeSelected(type);

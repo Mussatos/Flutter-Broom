@@ -547,6 +547,7 @@ Future<String> paymentCheckout(
 
     if (response.statusCode == 201) {
       var resp = jsonDecode(response.body);
+      await autentication.setCheckout(resp['checkout']);
       return resp['checkoutUrl'];
     } else {
       throw Exception();
@@ -1158,6 +1159,30 @@ Future<String> requestCheckout(String checkoutSession) async {
   } catch (e) {
     print('Erro na requisição: $e');
     return '';
+  }
+}
+
+Future<bool> expireCheckout(String checkoutSession) async {
+  final url = Uri.http(host, '/expire/$checkoutSession');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    print('Erro na requisição: $e');
+    return false;
   }
 }
 

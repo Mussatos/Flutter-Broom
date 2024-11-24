@@ -114,7 +114,9 @@ class _MeetingviewState extends State<Meetingview> {
                 return const Center(
                     child: Text('Nenhum agendamentos encontrado'));
               } else {
-                dailyList = snapshot.data![0] as PaymentDetails;
+                if (snapshot.data?[0] != null) {
+                  dailyList = snapshot.data![0] as PaymentDetails;
+                }
                 return isPendingPayment(snapshot.data![1] as int)
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -149,7 +151,8 @@ class _MeetingviewState extends State<Meetingview> {
                             Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  if (snapshot.data![1] == 1) ...[
+                                  if (snapshot.data?[1] != null &&
+                                      snapshot.data![1] == 1) ...[
                                     const Text(
                                       'Ações',
                                       textAlign: TextAlign.center,

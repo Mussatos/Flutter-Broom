@@ -448,6 +448,7 @@ class ListDailys {
   final String? contractStatus;
   final double? contractPrice;
   final String? paymentStatus;
+  final String? stripe_id;
 
   ListDailys({
     required this.id,
@@ -455,6 +456,7 @@ class ListDailys {
     required this.contractId,
     required this.refund,
     required this.finished,
+    required this.stripe_id,
     this.finishedAt,
     required this.agendamentoId,
     required this.contractorFirstName,
@@ -505,9 +507,10 @@ class ListDailys {
       havePets: contract['havePets'] ?? false,
       cleaningType: contract['cleaningType'] ?? '',
       message: contract['message'] ?? '',
-      contractStatus: contract['contractStatus'],
-      contractPrice: (contract['contractPrice'] as num).toDouble(),
+      contractStatus: contract['contractStatus'] ?? '',
+      contractPrice: (contract['contractPrice'] ?? 0).toDouble(),
       paymentStatus: payment['status'],
+      stripe_id: payment['stripe_id'] ?? ''
     );
   }
 }
@@ -591,7 +594,7 @@ class PaymentDetails {
       cleaningType: contract['cleaningType'] ?? '',
       message: contract['message'] ?? '',
       contractStatus: contract['contractStatus'] ?? '',
-      contractPrice: (contract['contractPrice'] as num).toDouble(),
+      contractPrice: (contract['contractPrice'] ?? 0).toDouble(),
       paymentStatus: payment['status'] ?? '',
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
@@ -657,8 +660,8 @@ class PaymentAuditorship {
     return PaymentAuditorship(
       id: json['id'],
       paymentInfoId: json['payment_info_id'],
-      paymentStatus: json['payment_status'],
-      paymentStatusBefore: json['payment_status_before'],
+      paymentStatus: json['payment_status']?? '',
+      paymentStatusBefore: json['payment_status_before'] ?? '',
       auditorshipDate: DateTime.parse(json['auditorship_date']),
       auditorshioResponsable: json['auditorshio_responsable'],
       observation: json['observation'],

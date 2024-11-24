@@ -98,6 +98,7 @@ class _ContractState extends State<Contract> {
     toiletController.addListener(roomsValidation);
     autentication.setWhatsappLink('');
     autentication.setAgendamentoId(-1);
+    autentication.setCheckout('');
   }
 
   void _validateBasketQuantities() {
@@ -718,7 +719,7 @@ class _ContractState extends State<Contract> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                       content: Text(
-                                          'Você já marcou un agendamento com a diarista')),
+                                          'Você já marcou um agendamento com a diarista')),
                                 );
                               }
                             },

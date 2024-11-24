@@ -523,6 +523,9 @@ class PaymentDetails {
   final String? contractorFirstName;
   final String? contractorLastName;
   final DateTime? agendamentoDate;
+  final String? tipoDiaria;
+  final DateTime? startTime;
+  final DateTime? endTime;
   final String? diaristFirstName;
   final String? diaristLastName;
   final String? cleaningType;
@@ -540,6 +543,9 @@ class PaymentDetails {
     required this.contractId,
     required this.refund,
     required this.finished,
+    required this.tipoDiaria,
+    required this.startTime,
+    required this.endTime,
     this.finishedAt,
     required this.agendamentoId,
     required this.contractorFirstName,
@@ -577,6 +583,9 @@ class PaymentDetails {
       contractorFirstName: contratante['first_name'] ?? '',
       contractorLastName: contratante['last_name'] ?? '',
       agendamentoDate: DateTime.parse(agendamento['data']),
+      tipoDiaria: agendamento['tipoDiaria'] ?? '',
+      startTime: DateTime.parse(agendamento['horarioInicio']),
+      endTime: DateTime.parse(agendamento['horarioFim']),
       diaristFirstName: diarista['first_name'] ?? '',
       diaristLastName: diarista['last_name'] ?? '',
       cleaningType: contract['cleaningType'] ?? '',

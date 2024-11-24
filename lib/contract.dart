@@ -81,6 +81,7 @@ class _ContractState extends State<Contract> {
     basketCleanQuantityController.dispose();
     basketIroningQuantityController.dispose();
     obsController.dispose();
+    autentication.setWhatsappLink('');
     super.dispose();
   }
 
@@ -368,6 +369,7 @@ class _ContractState extends State<Contract> {
   Future<void> sendContractToWhatsapp(context) async {
     String link = contractInformation!['link'];
     await launchWhatsApp(link);
+    await autentication.setWhatsappLink('');
     GoRouter.of(context).push('/List');
   }
 

@@ -2,6 +2,7 @@ import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:broom_main_vscode/view/meetingView.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class Usermeeting extends StatefulWidget {
@@ -100,7 +101,7 @@ class _UsermeetingState extends State<Usermeeting> {
             backgroundColor: const Color(0xFF2ECC8F),
             leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                GoRouter.of(context).push('/account/settings');
               },
               icon: const Icon(
                 Icons.arrow_back_ios,

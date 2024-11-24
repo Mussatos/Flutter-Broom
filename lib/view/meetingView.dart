@@ -1,6 +1,10 @@
 import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/ui-components/icon_button.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Meetingview extends StatefulWidget {
   int agendamentoId;
@@ -12,7 +16,7 @@ class Meetingview extends StatefulWidget {
 }
 
 class _MeetingviewState extends State<Meetingview> {
-  Future<PaymentDetails?>? dailyList;
+  PaymentDetails? dailyList;
 
   void _handleFinalize() async {
     await finishContract(widget.agendamentoId);
@@ -23,7 +27,10 @@ class _MeetingviewState extends State<Meetingview> {
         content: const Text("O agendamento foi finalizado com sucesso."),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {});
+            },
             child: const Text("Fechar"),
           ),
         ],
@@ -40,12 +47,24 @@ class _MeetingviewState extends State<Meetingview> {
         content: const Text("A solicitação de reembolso foi enviada."),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => GoRouter.of(context).push('/meeting-page'),
             child: const Text("Fechar"),
           ),
         ],
       ),
     );
+  }
+
+  bool isPendingPayment(int profileId) {
+    return dailyList!.contractorPayment!.status == 'processando' && profileId == 1;
+  }
+
+  Future<void> retrieveCheckout() async {
+    final String sessionUrl =
+        await requestCheckout(dailyList!.contractorPayment!.stripeCs);
+    if (sessionUrl.isNotEmpty) {
+      await launchUrlString(sessionUrl);
+    }
   }
 
   @override
@@ -61,7 +80,7 @@ class _MeetingviewState extends State<Meetingview> {
           backgroundColor: const Color(0xFF2ECC8F),
           leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              GoRouter.of(context).push('/meeting-page');
             },
             icon: const Icon(
               Icons.arrow_back_ios,
@@ -85,56 +104,110 @@ class _MeetingviewState extends State<Meetingview> {
                 return const Center(
                     child: Text('Nenhum agendamentos encontrado'));
               } else {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                dailyList = snapshot.data![0] as PaymentDetails;
+                return isPendingPayment(snapshot.data![1] as int)
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Você ainda não pagou este agendamento',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16),
+                            softWrap: true,
+                            textWidthBasis: TextWidthBasis.parent,
+                            overflow: TextOverflow.clip,
+                          ),
+                          const Text(
+                            'Caso não pague em até 24 horas o agendamento será cancelado automaticamente.',
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          ButtonIcon(
+                              btnText: 'Pagar',
+                              btnIcon: Icons.payment,
+                              width: 150,
+                              function: () => retrieveCheckout())
+                        ],
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            if (snapshot.data![1] == 1) ...[
-                              ElevatedButton(
-                                onPressed: _handleFinalize,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(''),
+                                    ],
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                  Row(
+                                    children: [
+                                      Text(''),
+                                    ],
                                   ),
-                                ),
-                                child: const Text(
-                                  "Finalizar",
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white),
-                                ),
-                              ),
-                              ElevatedButton(
-                                onPressed: _handleRefund,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                                child: const Text(
-                                  "Reembolso",
-                                  style: TextStyle(
-                                      fontSize: 18, color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          ]),
-                    ],
-                  ),
-                );
+                                  Text('Tipo de diaria: ${dailyList!.tipoDiaria}'),
+                                  Text(''),
+                                  if (snapshot.data![1] == 1) ...[
+                                    ElevatedButton(
+                                      onPressed: dailyList!.finished! ||
+                                              dailyList!.refund!
+                                          ? null
+                                          : _handleFinalize,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: dailyList!.finished! ||
+                                                dailyList!.refund!
+                                            ? Colors.grey
+                                            : Colors.green,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 24,
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        "Finalizar",
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.white),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: dailyList!.finished! ||
+                                              dailyList!.refund!
+                                          ? null
+                                          : _handleRefund,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: dailyList!.finished! ||
+                                                dailyList!.refund!
+                                            ? Colors.grey
+                                            : Colors.red,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 24,
+                                          vertical: 12,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        "Reembolso",
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.white),
+                                      ),
+                                    ),
+                                  ],
+                                ]),
+                          ],
+                        ),
+                      );
               }
             }),
       ),

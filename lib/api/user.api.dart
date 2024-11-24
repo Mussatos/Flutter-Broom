@@ -1136,6 +1136,31 @@ Future<void> requestRefund(int agendamentoId) async {
   }
 }
 
+Future<String> requestCheckout(String checkoutSession) async {
+  final url = Uri.http(host, '/retrieve/$checkoutSession');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final link = jsonDecode(response.body);
+      return link['checkoutUrl'];
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    print('Erro na requisição: $e');
+    return '';
+  }
+}
+
 Future<void> finishContract(int agendamentoId) async {
   final token = await autentication.getToken();
   try {

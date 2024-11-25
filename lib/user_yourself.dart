@@ -342,12 +342,10 @@ class _UserYourselfState extends State<UserYourself> {
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey.shade700,
-                            
                           ),
-                          
                         ),
                       ],
-                      SizedBox(height: 150),
+                      SizedBox(height: 50),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [

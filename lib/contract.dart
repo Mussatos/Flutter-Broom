@@ -412,11 +412,25 @@ class _ContractState extends State<Contract> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: isLoading
-            ? CircularProgressIndicator()
-            : Container(
+      body: isLoading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Color(0xFF2ECC8F),
+                  ),
+                  Text('Redirecionando para pagamento',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2ECC8F)))
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              controller: _scrollController,
+              child: Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(35.0),
                 color: Colors.white,
@@ -745,16 +759,31 @@ class _ContractState extends State<Contract> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () async {
-                          await sendContract();
+                          setState(() {
+                            isLoading = true;
+                          });
 
-                          if (kIsWeb) {
-                            await initCheckout();
-                          } else {
-                            await initPaymentSheet();
-                          }
-                          print(hasClickedToPay);
-                          if (hasClickedToPay) {
-                            showFinishedContractModal(context);
+                          try {
+                            await sendContract();
+
+                            if (kIsWeb) {
+                              await initCheckout();
+                            } else {
+                              await initPaymentSheet();
+                            }
+
+                            if (hasClickedToPay) {
+                              showFinishedContractModal(context);
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Erro ao enviar contrato: $e')),
+                            );
+                          } finally {
+                            setState(() {
+                              isLoading = false;
+                            });
                           }
                         },
                         child: Text('Pagar e enviar contrato'),
@@ -769,7 +798,7 @@ class _ContractState extends State<Contract> {
                   ],
                 ),
               ),
-      ),
+            ),
     );
   }
 }

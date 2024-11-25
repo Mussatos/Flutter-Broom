@@ -1,6 +1,7 @@
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class Calendarypage extends StatefulWidget {
@@ -46,14 +47,15 @@ class _CalendarypageState extends State<Calendarypage> {
 
       hasAgended = await postAgendamento(
           dataAgendamento: date, diaristaId: idDoUser, tipoDiaria: type);
-      
+
       if (hasAgended) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Agendamento salvo com sucesso para $date'),
+            content: Text(
+                'Agendamento salvo com sucesso para ${DateFormat('dd/MM/yyyy').format(date)}'),
           ),
         );
-      }else {
+      } else {
         throw Exception();
       }
     } catch (e) {

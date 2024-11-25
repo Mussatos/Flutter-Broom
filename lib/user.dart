@@ -314,7 +314,7 @@ class EditUser {
   String? serviceType;
   String? favoriteDaytime;
   num? valueWillingToPay;
-  List<String>? regionAtendiment;
+  List<String?>? regionAtendiment;
   List<String>? specialties;
   String? stateAtendiment;
 
@@ -327,6 +327,7 @@ class EditUser {
       required this.email,
       this.specialties,
       this.regionAtendiment,
+      this.stateAtendiment,
       this.userActualImage,
       this.serviceType,
       this.favoriteDaytime,
@@ -422,3 +423,251 @@ class DiaristCustomInformationActivity {
     return {'zone_id': regionAtendiment, 'state': stateAtendiment};
   }
 }
+
+class ListDailys {
+  final int? id;
+  final int? paymentInfoId;
+  final int? contractId;
+  final bool? refund;
+  final bool? finished;
+  final DateTime? finishedAt;
+  final int? agendamentoId;
+  final String? contractorFirstName;
+  final String? contractorLastName;
+  final DateTime? agendamentoDate;
+  final String? diaristFirstName;
+  final String? diaristLastName;
+  final String? diariaType;
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final int? contractIdDetail;
+  final bool? includesCleaningMaterial;
+  final bool? havePets;
+  final String? cleaningType;
+  final String? message;
+  final String? contractStatus;
+  final double? contractPrice;
+  final String? paymentStatus;
+  final String? stripe_id;
+
+  ListDailys({
+    required this.id,
+    required this.paymentInfoId,
+    required this.contractId,
+    required this.refund,
+    required this.finished,
+    required this.stripe_id,
+    this.finishedAt,
+    required this.agendamentoId,
+    required this.contractorFirstName,
+    required this.contractorLastName,
+    required this.agendamentoDate,
+    required this.diaristFirstName,
+    required this.diaristLastName,
+    required this.diariaType,
+    required this.startTime,
+    required this.endTime,
+    required this.contractIdDetail,
+    required this.includesCleaningMaterial,
+    required this.havePets,
+    required this.cleaningType,
+    required this.message,
+    required this.contractStatus,
+    required this.contractPrice,
+    required this.paymentStatus,
+  });
+
+  factory ListDailys.fromJson(Map<String, dynamic> json) {
+    final agendamento = json['agendamento'];
+    final contratante = agendamento['contratante'];
+    final diarista = agendamento['diarista'];
+    final contract = agendamento['contract'] ?? {};
+    final payment = json['Contractor_Payment'];
+
+    return ListDailys(
+      id: json['id'] ?? 0,
+      paymentInfoId: json['payment_info_id'] ?? 0,
+      contractId: json['contract_id'] ?? 0,
+      refund: json['refund'] ?? false,
+      finished: json['finished'] ?? false,
+      finishedAt: json['finished_at'] != null
+          ? DateTime.parse(json['finished_at'])
+          : null,
+      agendamentoId: agendamento['id'] ?? 0,
+      contractorFirstName: contratante['first_name'] ?? '',
+      contractorLastName: contratante['last_name'] ?? '',
+      agendamentoDate: DateTime.parse(agendamento['data']),
+      diaristFirstName: diarista['first_name'] ?? '',
+      diaristLastName: diarista['last_name'] ?? '',
+      diariaType: agendamento['tipoDiaria'] ?? '',
+      startTime: DateTime.parse(agendamento['horarioInicio']),
+      endTime: DateTime.parse(agendamento['horarioFim']),
+      contractIdDetail: contract['id'] ?? 0,
+      includesCleaningMaterial: contract['includesCleaningMaterial'] ?? false,
+      havePets: contract['havePets'] ?? false,
+      cleaningType: contract['cleaningType'] ?? '',
+      message: contract['message'] ?? '',
+      contractStatus: contract['contractStatus'] ?? '',
+      contractPrice: (contract['contractPrice'] ?? 0).toDouble(),
+      paymentStatus: payment['status'],
+      stripe_id: payment['stripe_id'] ?? ''
+    );
+  }
+}
+
+class PaymentDetails {
+  final int? id;
+  final int? paymentInfoId;
+  final int? contractId;
+  final bool? refund;
+  final bool? finished;
+  final DateTime? finishedAt;
+  final int? agendamentoId;
+  final String? contractorFirstName;
+  final String? contractorLastName;
+  final DateTime? agendamentoDate;
+  final String? tipoDiaria;
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final String? diaristFirstName;
+  final String? diaristLastName;
+  final String? cleaningType;
+  final String? message;
+  final String? contractStatus;
+  final double? contractPrice;
+  final String? paymentStatus;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final ContractorPayment? contractorPayment;
+
+  PaymentDetails({
+    required this.id,
+    required this.paymentInfoId,
+    required this.contractId,
+    required this.refund,
+    required this.finished,
+    required this.tipoDiaria,
+    required this.startTime,
+    required this.endTime,
+    this.finishedAt,
+    required this.agendamentoId,
+    required this.contractorFirstName,
+    required this.contractorLastName,
+    required this.agendamentoDate,
+    required this.diaristFirstName,
+    required this.diaristLastName,
+    required this.cleaningType,
+    required this.message,
+    required this.contractStatus,
+    required this.contractPrice,
+    required this.paymentStatus,
+    this.createdAt,
+    this.updatedAt,
+    this.contractorPayment,
+  });
+
+  factory PaymentDetails.fromJson(Map<String, dynamic> json) {
+    final agendamento = json['agendamento'];
+    final contratante = agendamento['contratante'];
+    final diarista = agendamento['diarista'];
+    final contract = agendamento['contract'] ?? {};
+    final payment = json['Contractor_Payment'];
+
+    return PaymentDetails(
+      id: json['id'] ?? 0,
+      paymentInfoId: json['payment_info_id'] ?? 0,
+      contractId: json['contract_id'] ?? 0,
+      refund: json['refund'] ?? false,
+      finished: json['finished'] ?? false,
+      finishedAt: json['finished_at'] != null
+          ? DateTime.parse(json['finished_at'])
+          : null,
+      agendamentoId: agendamento['id'] ?? 0,
+      contractorFirstName: contratante['first_name'] ?? '',
+      contractorLastName: contratante['last_name'] ?? '',
+      agendamentoDate: DateTime.parse(agendamento['data']),
+      tipoDiaria: agendamento['tipoDiaria'] ?? '',
+      startTime: DateTime.parse(agendamento['horarioInicio']),
+      endTime: DateTime.parse(agendamento['horarioFim']),
+      diaristFirstName: diarista['first_name'] ?? '',
+      diaristLastName: diarista['last_name'] ?? '',
+      cleaningType: contract['cleaningType'] ?? '',
+      message: contract['message'] ?? '',
+      contractStatus: contract['contractStatus'] ?? '',
+      contractPrice: (contract['contractPrice'] ?? 0).toDouble(),
+      paymentStatus: payment['status'] ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : null,
+      contractorPayment: payment != null
+          ? ContractorPayment.fromJson(payment)
+          : null,
+    );
+  }
+}
+
+class ContractorPayment {
+  final int contractorId;
+  final String status;
+  final String stripeId;
+  final String stripeCs;
+  final List<PaymentAuditorship> paymentAuditorship;
+
+  ContractorPayment({
+    required this.contractorId,
+    required this.status,
+    required this.stripeId,
+    required this.stripeCs,
+    required this.paymentAuditorship,
+  });
+
+  factory ContractorPayment.fromJson(Map<String, dynamic> json) {
+    return ContractorPayment(
+      contractorId: json['contractor_id'],
+      status: json['status'],
+      stripeId: json['stripe_id'],
+      stripeCs: json['stripe_cs'],
+      paymentAuditorship: (json['Payment_Auditorship'] as List)
+          .map((e) => PaymentAuditorship.fromJson(e))
+          .toList(),
+    );
+  }
+}
+
+class PaymentAuditorship {
+  final int id;
+  final int paymentInfoId;
+  final String paymentStatus;
+  final String paymentStatusBefore;
+  final DateTime auditorshipDate;
+  final String auditorshioResponsable;
+  final String observation;
+
+  PaymentAuditorship({
+    required this.id,
+    required this.paymentInfoId,
+    required this.paymentStatus,
+    required this.paymentStatusBefore,
+    required this.auditorshipDate,
+    required this.auditorshioResponsable,
+    required this.observation,
+  });
+
+  factory PaymentAuditorship.fromJson(Map<String, dynamic> json) {
+    return PaymentAuditorship(
+      id: json['id'],
+      paymentInfoId: json['payment_info_id'],
+      paymentStatus: json['payment_status']?? '',
+      paymentStatusBefore: json['payment_status_before'] ?? '',
+      auditorshipDate: DateTime.parse(json['auditorship_date']),
+      auditorshioResponsable: json['auditorshio_responsable'],
+      observation: json['observation'],
+    );
+  }
+}
+
+
+

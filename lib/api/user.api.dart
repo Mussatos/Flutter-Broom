@@ -1,13 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
+import 'package:broom_main_vscode/models/bank_info.model.dart';
 import 'package:broom_main_vscode/user.dart';
-import 'package:broom_main_vscode/user_provider.dart';
-import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:broom_main_vscode/utils/user_autentication.dart';
 
@@ -35,6 +31,7 @@ Future<bool> register(Map<String, dynamic> user) async {
       await autentication.setToken(response['access_token']);
       await autentication.setProfileId(response['user']['profile_id']);
       await autentication.setUserId(response['user']['id']);
+      await autentication.setUserEmail(response['user']['email']);
       return true;
     } else {
       throw Exception('Falha ao cadastrar usuário');
@@ -59,6 +56,7 @@ Future<bool> login(String email, String password) async {
       await autentication.setToken(response['access_token']);
       await autentication.setProfileId(response['data']['profile_id']);
       await autentication.setUserId(response['data']['id']);
+      await autentication.setUserEmail(response['data']['email']);
 
       return isLogged;
     } else {
@@ -380,8 +378,8 @@ Future<void> updateUser(Map<String, dynamic> usersData) async {
 }
 
 class ApiService {
-  Future<String?> sendContract({
-    required List<String?> tiposDeServico,
+  Future<Map<String, dynamic>?> sendContract({
+    required List<Map<String, String>> tiposDeServico,
     required String? tipoLimpeza,
     required bool? possuiPets,
     required bool? possuiMaterialLimpeza,
@@ -392,36 +390,46 @@ class ApiService {
     required int? quantidadeQuarto,
     required int? quantidadeBanheiro,
     required int? quantidadeSala,
+    required int? quantidadeCozinha,
     required String mensagem,
-    required int id,
+    required int diaristaId,
   }) async {
     final token = await autentication.getToken();
-    final url = Uri.https(host, '/contract/sendContract/$id');
+    final contractorId = await autentication.getUserId();
+    final agendamentoId = await autentication.getAgendamentoId();
+    final url = Uri.https(host, '/contract');
 
     Map<String, dynamic> body = {
-      "tiposDeServico": tiposDeServico,
-      "tipoLimpeza": tipoLimpeza,
-      "possuiPets": possuiPets,
-      "possuiMaterialLimpeza": possuiMaterialLimpeza,
-      "tipoCestoLavar": tipoCestoLavar,
-      "tipoCestoPassar": tipoCestoPassar,
-      "qntCestoLavar": qntCestoLavar,
-      "qntCestoPassar": qntCestoPassar,
-      "comodos": [
+      "services": tiposDeServico,
+      "cleaningType": tipoLimpeza,
+      "havePets": possuiPets,
+      "includesCleaningMaterial": possuiMaterialLimpeza,
+      "washingBasketType": tipoCestoLavar,
+      "ironingBasketType": tipoCestoPassar,
+      "washingBasketQnt": qntCestoLavar,
+      "ironingBasketQnt": qntCestoPassar,
+      "rooms": [
         {
-          "tipo": "quarto",
-          "quantidade": quantidadeQuarto,
+          "roomType": "quarto",
+          "roomQnt": quantidadeQuarto,
         },
         {
-          "tipo": "banheiro",
-          "quantidade": quantidadeBanheiro,
+          "roomType": "banheiro",
+          "roomQnt": quantidadeBanheiro,
         },
         {
-          "tipo": "sala",
-          "quantidade": quantidadeSala,
+          "roomType": "sala",
+          "roomQnt": quantidadeSala,
+        },
+        {
+          "roomType": "cozinha",
+          "roomQnt": quantidadeCozinha,
         },
       ],
-      "mensagem": mensagem,
+      "message": mensagem,
+      "diaristId": diaristaId,
+      "contractorId": contractorId,
+      "agendamentoId": agendamentoId
     };
 
     try {
@@ -437,12 +445,15 @@ class ApiService {
       if (response.statusCode == 201) {
         print('Contrato enviado com sucesso!');
         var link = jsonDecode(response.body);
-        return link['link'];
+        return {
+          'link': link['whatsappLink']['link'],
+          'value': link['contract']['contractPrice']
+        };
       } else {
         throw Exception('Falha ao enviar contrato');
       }
     } catch (e) {
-      return '';
+      return {'link': '', 'value': 51};
     }
   }
 }
@@ -485,16 +496,22 @@ Future<Map<String, dynamic>> fetchCEP(String cep) async {
   }
 }
 
-Future<Map<String, dynamic>> payment() async {
+Future<Map<String, dynamic>> payment(Map<String, int> price_data) async {
+  String? contratctorEmail = await autentication.getUserEmail();
+  int? contractorId = await autentication.getUserId();
+
   try {
     final token = await autentication.getToken();
-    var response = await http.post(
-      urlPaymentIntent,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+    var response = await http.post(urlPaymentIntent,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'contractor_email': contratctorEmail,
+          'contractor_id': contractorId,
+          'price_data': price_data
+        }));
 
     if (response.statusCode == 201) {
       Map<String, dynamic> data = json.decode(response.body);
@@ -511,16 +528,26 @@ Future<Map<String, dynamic>> payment() async {
 Future<String> paymentCheckout(
     Map<String, dynamic> priceData, int quantity) async {
   try {
+    String? contratctorEmail = await autentication.getUserEmail();
+    int? contractorId = await autentication.getUserId();
     final token = await autentication.getToken();
+    final agendamentoId = await autentication.getAgendamentoId();
     var response = await http.post(urlPaymentCheckout,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({'price_data': priceData, 'quantity': quantity}));
+        body: jsonEncode({
+          'price_data': priceData,
+          'quantity': quantity,
+          'contractor_id': contractorId,
+          'contractor_email': contratctorEmail,
+          'contract_id': agendamentoId
+        }));
 
     if (response.statusCode == 201) {
       var resp = jsonDecode(response.body);
+      await autentication.setCheckout(resp['checkout']);
       return resp['checkoutUrl'];
     } else {
       throw Exception();
@@ -904,5 +931,303 @@ Future<void> deleteDataDiaristZone(String? zone) async {
     }
   } catch (err) {
     print(err);
+  }
+}
+
+Future<bool> createDiaistBankInformationRelation() async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  try {
+    final response = await http.post(
+        Uri.https(host, '/bank-information/diarist'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(
+            {'diarist_id': userId, 'bank_name': '', 'account_name': ''}));
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return false;
+  }
+}
+
+Future<void> updateDiaistBankInformation(Map<String, dynamic> body) async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  try {
+    final response =
+        await http.patch(Uri.https(host, '/bank-information/diarist/$userId'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+            body: jsonEncode(body));
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+  }
+}
+
+Future<BankInfo?> fetcheDiaistBankInformation() async {
+  final token = await autentication.getToken();
+  final userId = await autentication.getUserId();
+  try {
+    final response = await http.get(
+      Uri.https(host, '/bank-information/diarist/$userId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final bankInfo = jsonDecode(response.body);
+      return BankInfo.fromJson(bankInfo['data']);
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    return null;
+  }
+}
+
+Future<bool> postAgendamento({
+  required int diaristaId,
+  required DateTime dataAgendamento,
+  required String tipoDiaria,
+}) async {
+  final url = Uri.https(host, 'agendamento');
+  final token = await autentication.getToken();
+  int? userId = await autentication.getUserId();
+
+  final body = jsonEncode({
+    'contratanteId': userId,
+    'diaristaId': diaristaId,
+    'data': dataAgendamento.toIso8601String(),
+    'tipoDiaria': tipoDiaria,
+  });
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 201) {
+      print('Agendamento enviado com sucesso');
+      final agendamento = jsonDecode(response.body);
+      await autentication.setAgendamentoId(agendamento['id']);
+      return true;
+    } else {
+      print('Falha ao enviar o agendamento. Status: ${response.statusCode}');
+      print('Resposta: ${response.body}');
+      throw Exception();
+    }
+  } catch (e) {
+    print('Erro ao enviar o agendamento: $e');
+    return false;
+  }
+}
+
+Future<List<dynamic>> fetchDailyRateType() async {
+  final url = Uri.https(host, '/agendamento/dailyratetype');
+  final token = await autentication.getToken();
+
+  final response = await http.get(url, headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  });
+
+  if (response.statusCode == 200) {
+    final decode = await jsonDecode(response.body);
+    return decode;
+  } else {
+    print('Failed to fetch custom contractor profile');
+    return [{}];
+  }
+}
+
+Future<List<ListDailys>> fetchMeetings() async {
+  final token = await autentication.getToken();
+  final userProfileId = await autentication.getProfileId();
+  final userId = await autentication.getUserId();
+  try {
+    final response = await http.get(
+      getListMeetings(userProfileId, userId),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => ListDailys.fromJson(json)).toList();
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return [];
+  }
+}
+
+Uri getListMeetings(int? userProfileId, int? userId) {
+  return userProfileId == 1
+      ? Uri.https(host, '/confirm-payment/contractor/services/$userId')
+      : Uri.https(host, '/confirm-payment/diarist/services/$userId');
+}
+
+Future<PaymentDetails?> fetchUnicContract(int agendamentoId) async {
+  final token = await autentication.getToken();
+  final url = Uri.https(host, '/confirm-payment/informations/$agendamentoId');
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return PaymentDetails.fromJson(data);
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    return null;
+  }
+}
+
+Future<void> requestRefund(int agendamentoId) async {
+  final url = Uri.https(host, '/payment/refund/$agendamentoId');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 201) {
+    } else {}
+  } catch (e) {
+    print('Erro na requisição: $e');
+  }
+}
+
+Future<String> requestCheckout(String checkoutSession) async {
+  final url = Uri.https(host, '/retrieve/$checkoutSession');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final link = jsonDecode(response.body);
+      return link['checkoutUrl'];
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    print('Erro na requisição: $e');
+    return '';
+  }
+}
+
+Future<bool> expireCheckout(String checkoutSession) async {
+  final url = Uri.https(host, '/expire/$checkoutSession');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    print('Erro na requisição: $e');
+    return false;
+  }
+}
+
+Future<bool> finishContract(int agendamentoId) async {
+  final token = await autentication.getToken();
+  try {
+    final response = await http.patch(
+      Uri.https(host, '/confirm-payment/$agendamentoId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    return false;
+  }
+}
+
+Future<void> handleDeleteAgendamento() async {
+  final token = await autentication.getToken();
+  final int? agendamentoId = await autentication.getAgendamentoId();
+  try {
+    final response = await http.delete(
+      Uri.https(host, '/agendamento/confirm/delete/$agendamentoId'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('deletado com sucesso');
+      await autentication.setAgendamentoId(-1);
+
+    } else {
+      throw Exception('Falha ao carregar dados');
+    }
+  } catch (err) {
+    print(err);
+    await autentication.setAgendamentoId(-1);
   }
 }

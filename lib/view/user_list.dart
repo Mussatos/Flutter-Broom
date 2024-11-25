@@ -29,10 +29,6 @@ class _UserListState extends State<UserList> {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = UserProvider.of(context) as UserProvider;
-    List<User> users = userProvider.users;
-    int usersLength = users.length;
-
     List<Address> address = [];
 
     void addAddressForUser(ListUsers user) {
@@ -68,7 +64,7 @@ class _UserListState extends State<UserList> {
 
     Future<void> changeFavorite(ListUsers usuario) async {
       usuario.isFavorite = !usuario.isFavorite;
-      print(usuario.isFavorite);
+
       if (usuario.isFavorite) {
         await setUserFavorite(usuario.id);
         return;

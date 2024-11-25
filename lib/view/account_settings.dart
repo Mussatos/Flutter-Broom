@@ -1,9 +1,32 @@
+import 'package:broom_main_vscode/api/user.api.dart';
+import 'package:broom_main_vscode/ui-components/icon_button.dart';
 import 'package:broom_main_vscode/ui-components/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class AccountSettings extends StatelessWidget {
+class AccountSettings extends StatefulWidget {
   const AccountSettings({super.key});
+
+  @override
+  State<AccountSettings> createState() => _AccountSettingsState();
+}
+
+class _AccountSettingsState extends State<AccountSettings> {
+  Future<int?>? profileId;
+
+  @override
+  void initState() {
+    profileId = autentication.getProfileId();
+    super.initState();
+  }
+
+  void goToBankInfo(context) {
+    GoRouter.of(context).push('/bank/information');
+  }
+
+  void goToFavorites(context) {
+    GoRouter.of(context).push('/favorite-page');
+  }
 
   void confirmLogout(context) {
     showDialog(
@@ -32,7 +55,7 @@ class AccountSettings extends StatelessWidget {
             backgroundColor: const Color(0xFF2ECC8F),
             leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                GoRouter.of(context).push('/List');
               },
               icon: const Icon(
                 Icons.arrow_back_ios,
@@ -41,75 +64,78 @@ class AccountSettings extends StatelessWidget {
               ),
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+          body: FutureBuilder(
+            future: profileId,
+            builder: (context, snapshot) {
+              return Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      width: 250,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          GoRouter.of(context).push('/favorite-page');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2ECC8F),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ButtonIcon(
+                            btnText: 'Meus Favoritos',
+                            btnIcon: Icons.favorite,
+                            function: () => goToFavorites(context)),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        SizedBox(
+                          width: 250,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              GoRouter.of(context).push('/meeting-page');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF2ECC8F),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  'Meus Agendamentos',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(
+                                  color: Colors.white,
+                                  Icons.calendar_today_rounded,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'Meus Favoritos',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Icon(
-                              color: Colors.red,
-                              Icons.favorite,
-                            ),
-                          ],
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: 250,
-                      child: ElevatedButton.icon(
-                        onPressed: () => confirmLogout(context),
-                        label: const Text(
-                          'Sair',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        icon: const Icon(
-                          Icons.logout,
-                          color: Colors.white,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF2ECC8F),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                        if (snapshot.data == 2)
+                          ButtonIcon(
+                            btnIcon: Icons.monetization_on_outlined,
+                            btnText: 'Informações bancárias',
+                            function: () => goToBankInfo(context),
                           ),
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                    )
+                        ButtonIcon(
+                            btnText: 'Sair',
+                            btnIcon: Icons.logout,
+                            function: () => confirmLogout(context)),
+                      ],
+                    ),
                   ],
                 ),
-              ],
-            ),
+              );
+            },
           )),
     );
   }

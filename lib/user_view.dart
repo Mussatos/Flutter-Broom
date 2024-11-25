@@ -111,6 +111,7 @@ class UserView extends StatelessWidget {
                     SizedBox(height: 20),
                     Text(
                       'Descrição:',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -239,9 +240,12 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            customDataZones != null && customDataZones.isNotEmpty
+                            customDataZones != null &&
+                                    customDataZones.isNotEmpty
                                 ? customDataZones
-                                    .map((actv) => (actv['state'] ?? actv['zone_id'].toString()).replaceAll('_', ' '))
+                                    .map((actv) => (actv['state'] ??
+                                            actv['zone_id'].toString())
+                                        .replaceAll('_', ' '))
                                     .join(', ')
                                 : 'Não especificado',
                             style: TextStyle(
@@ -261,6 +265,7 @@ class UserView extends StatelessWidget {
                           SizedBox(width: 10),
                           Text(
                             'Especialidades:',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -270,26 +275,24 @@ class UserView extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                         Text(
-                            customDataSpeciality != null && customDataSpeciality.isNotEmpty
-                                ? customDataSpeciality
-                                    .map((spec) => spec['speciality'].toString().replaceAll('_', ' '))
-                                    .join(', ')
-                                : 'Não especificado',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade700,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                      Text(
+                        customDataSpeciality != null &&
+                                customDataSpeciality.isNotEmpty
+                            ? customDataSpeciality
+                                .map((spec) => spec['speciality']
+                                    .toString()
+                                    .replaceAll('_', ' '))
+                                .join(', ')
+                            : 'Não especificado',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey.shade700,
+                        ),
                       ),
-                      SizedBox(height: 15),
                     ],
+                    SizedBox(height: 15),
                     SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -303,7 +306,8 @@ class UserView extends StatelessWidget {
                           ElevatedButton.icon(
                             onPressed: () async {
                               final phoneNumber = userData.cellphoneNumber;
-                              if (phoneNumber != null) {
+                              if (phoneNumber != null &&
+                                  phoneNumber.isNotEmpty) {
                                 final whatsappUrl =
                                     'https://wa.me/$phoneNumber';
                                 if (await canLaunch(whatsappUrl)) {
@@ -342,23 +346,34 @@ class UserView extends StatelessWidget {
                         ] else if (profileId == 2) ...[
                           ElevatedButton.icon(
                             onPressed: () async {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => Contract(
-                                    idDoUser: usuario.id,
+                              final phoneNumber = userData.cellphoneNumber;
+                              if (phoneNumber.isNotEmpty) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Contract(
+                                      idDoUser: usuario.id,
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Número de telefone não cadastrado.'),
+                                  ),
+                                );
+                              }
                             },
-                            icon: Icon(Icons.message, color: Colors.white),
-                            label: Text(
+                            icon:
+                                const Icon(Icons.message, color: Colors.white),
+                            label: const Text(
                               'Criar contrato',
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF2ECC8F),
-                              padding: EdgeInsets.symmetric(
+                              backgroundColor: const Color(0xFF2ECC8F),
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),

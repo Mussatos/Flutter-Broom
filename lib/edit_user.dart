@@ -28,7 +28,7 @@ class _EditUserFormState extends State<EditUserForm> {
   late TextEditingController valueWillingToPayController;
   String? serviceTypeSelected;
   String? favoriteDaytimeSelected;
-  List<String>? zoneAtendimentSelected = [];
+  List<String?>? zoneAtendimentSelected = [];
   String? stateAtendimentSelected;
   List<String>? specialtiesSelected = [];
   List<dynamic>? listSpecialties = [];

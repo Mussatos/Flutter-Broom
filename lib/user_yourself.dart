@@ -37,6 +37,32 @@ class _UserYourselfState extends State<UserYourself> {
     return userData;
   }
 
+  List<String?> getZoneActivity() {
+    final zoneActivity = customDataActivity?.map(
+      (e) {
+        if (e['zone_id'] != null) {
+          return e['zone_id'].toString();
+        }
+      },
+    ).toList();
+
+    zoneActivity?.remove(null);
+    if (zoneActivity != null && zoneActivity.isNotEmpty) return zoneActivity;
+
+    return [];
+  }
+
+  String? getStateActivity() {
+    final findState = customDataActivity?.map((e) {
+      if (e['state'] != null) return e['state'];
+    }).toList();
+
+    findState?.remove(null);
+
+    if (findState != null && findState.isNotEmpty) return findState[0];
+    return null;
+  }
+
   @override
   void initState() {
     userData = fetchUserById();
@@ -140,6 +166,7 @@ class _UserYourselfState extends State<UserYourself> {
                       SizedBox(height: 20),
                       Text(
                         'Descrição:',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
@@ -310,11 +337,14 @@ class _UserYourselfState extends State<UserYourself> {
                                       .replaceAll('_', ' '))
                                   .join(', ')
                               : 'Não especificado',
+                          textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             color: Colors.grey.shade700,
+                            
                           ),
+                          
                         ),
                       ],
                       SizedBox(height: 150),
@@ -345,33 +375,33 @@ class _UserYourselfState extends State<UserYourself> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => EditUserForm(
-                                      usersEdit: EditUser(
-                                        name: snapshot.data?.name,
-                                        lastName: snapshot.data?.lastName,
-                                        email: snapshot.data?.email,
-                                        cellphoneNumber:
-                                            snapshot.data?.cellphoneNumber,
-                                        description: snapshot.data?.description,
-                                        wantService: snapshot.data?.wantService,
-                                        userActualImage:
-                                            snapshot.data?.userImage,
-                                        favoriteDaytime:
-                                            customData?.favoriteDaytime,
-                                        serviceType: customData?.serviceType,
-                                        valueWillingToPay:
-                                            customData?.valueWillingToPay,
-                                        specialties: customDataSpecialties
-                                            ?.map(
-                                              (e) => e['speciality'].toString(),
-                                            )
-                                            .toList(),
-                                        regionAtendiment: customDataActivity
-                                            ?.map(
-                                              (e) => e['zone_id'].toString(),
-                                            )
-                                            .toList(),
-                                      ),
-                                    ),
+                                        usersEdit: EditUser(
+                                            name: snapshot.data?.name,
+                                            lastName: snapshot.data?.lastName,
+                                            email: snapshot.data?.email,
+                                            cellphoneNumber:
+                                                snapshot.data?.cellphoneNumber,
+                                            description:
+                                                snapshot.data?.description,
+                                            wantService:
+                                                snapshot.data?.wantService,
+                                            userActualImage:
+                                                snapshot.data?.userImage,
+                                            favoriteDaytime:
+                                                customData?.favoriteDaytime,
+                                            serviceType:
+                                                customData?.serviceType,
+                                            valueWillingToPay:
+                                                customData?.valueWillingToPay,
+                                            specialties: customDataSpecialties
+                                                ?.map(
+                                                  (e) => e['speciality']
+                                                      .toString(),
+                                                )
+                                                .toList(),
+                                            regionAtendiment: getZoneActivity(),
+                                            stateAtendiment:
+                                                getStateActivity())),
                                   ));
                             },
                             icon: Icon(Icons.edit, color: Colors.white),

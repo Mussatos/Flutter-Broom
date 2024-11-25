@@ -1,5 +1,6 @@
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/ui-components/icon_button.dart';
+import 'package:broom_main_vscode/ui-components/modal.dart';
 import 'package:broom_main_vscode/user.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,41 +20,51 @@ class Meetingview extends StatefulWidget {
 class _MeetingviewState extends State<Meetingview> {
   PaymentDetails? dailyList;
 
-  void _handleFinalize() async {
-    await finishContract(widget.agendamentoId);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Agendamento Finalizado"),
-        content: const Text("O agendamento foi finalizado com sucesso."),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              setState(() {});
-            },
-            child: const Text("Fechar"),
-          ),
-        ],
-      ),
-    );
+  Future<void> _handleFinalize(context) async {
+    final isFinished = await finishContract(widget.agendamentoId);
+
+    if (isFinished) {
+      showDialog(
+          context: context,
+          builder: (context) => Modal(
+                title: "Agendamento Finalizado",
+                message: "O agendamento foi finalizado com sucesso.",
+                mainButtonTitle: "Fechar",
+                showOneButton: true,
+                click: () {
+                  Navigator.pop(context);
+                  setState(() {});
+                },
+              ));
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) => Modal(
+                title: "Erro ao finalizar agendamento",
+                message:
+                    "O agendamento só pode ser finalizado a partir da data prevista para o serviço.",
+                mainButtonTitle: "Fechar",
+                showOneButton: true,
+                click: () {
+                  Navigator.pop(context);
+                },
+              ));
+    }
   }
 
-  void _handleRefund() async {
+  Future<void> _handleRefund(context) async {
     await requestRefund(widget.agendamentoId);
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Solicitação de Reembolso"),
-        content: const Text("A solicitação de reembolso foi enviada."),
-        actions: [
-          TextButton(
-            onPressed: () => GoRouter.of(context).push('/meeting-page'),
-            child: const Text("Fechar"),
-          ),
-        ],
-      ),
-    );
+        context: context,
+        builder: (context) => Modal(
+              title: "Solicitação de Reembolso",
+              message: "A solicitação de reembolso foi enviada.",
+              mainButtonTitle: "Fechar",
+              showOneButton: true,
+              click: () {
+                GoRouter.of(context).push('/meeting-page');
+              },
+            ));
   }
 
   bool isPendingPayment(int profileId) {
@@ -165,10 +176,12 @@ class _MeetingviewState extends State<Meetingview> {
                                           MainAxisAlignment.center,
                                       children: [
                                         ElevatedButton(
-                                          onPressed: dailyList!.finished! ||
-                                                  dailyList!.refund!
-                                              ? null
-                                              : _handleFinalize,
+                                          onPressed: () async {
+                                            dailyList!.finished! ||
+                                                    dailyList!.refund!
+                                                ? null
+                                                : _handleFinalize(context);
+                                          },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
                                                 dailyList!.finished! ||
@@ -195,10 +208,12 @@ class _MeetingviewState extends State<Meetingview> {
                                           width: 10,
                                         ),
                                         ElevatedButton(
-                                          onPressed: dailyList!.finished! ||
-                                                  dailyList!.refund!
-                                              ? null
-                                              : _handleRefund,
+                                          onPressed: () async {
+                                            dailyList!.finished! ||
+                                                    dailyList!.refund!
+                                                ? null
+                                                : await _handleRefund(context);
+                                          },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
                                                 dailyList!.finished! ||

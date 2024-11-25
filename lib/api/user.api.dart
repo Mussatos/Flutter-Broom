@@ -1186,7 +1186,7 @@ Future<bool> expireCheckout(String checkoutSession) async {
   }
 }
 
-Future<void> finishContract(int agendamentoId) async {
+Future<bool> finishContract(int agendamentoId) async {
   final token = await autentication.getToken();
   try {
     final response = await http.patch(
@@ -1198,11 +1198,12 @@ Future<void> finishContract(int agendamentoId) async {
     );
 
     if (response.statusCode == 200) {
+      return true;
     } else {
       throw Exception('Falha ao carregar dados');
     }
   } catch (err) {
-    print(err);
+    return false;
   }
 }
 

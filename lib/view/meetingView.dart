@@ -10,7 +10,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class Meetingview extends StatefulWidget {
   int agendamentoId;
-
   Meetingview({super.key, required this.agendamentoId});
 
   @override
@@ -19,6 +18,7 @@ class Meetingview extends StatefulWidget {
 
 class _MeetingviewState extends State<Meetingview> {
   PaymentDetails? dailyList;
+
 
   Future<void> _handleFinalize(context) async {
     final isFinished = await finishContract(widget.agendamentoId);
@@ -119,8 +119,23 @@ class _MeetingviewState extends State<Meetingview> {
     }
   }
 
+  String getFormattedBasket(String? basket) {
+    switch (basket) {
+      case 'cesto_pequeno':
+        return 'Cesto pequeno';
+      case 'cesto_medio':
+        return 'Cesto Médio';
+      case 'cesto_grande':
+        return 'Cesto Grande';
+      default:
+        return 'Desconhecido';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+     print('Rooms: ${dailyList?.rooms}');
+     print('Services: ${dailyList?.services}');
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -319,10 +334,85 @@ class _MeetingviewState extends State<Meetingview> {
                                               ? DateFormat('dd/MM/yyy').format(
                                                   dailyList!.agendamentoDate!)
                                               : 'Data não disponível',
-                                        ),
+                                        ), 
                                       ],
                                     ),
-                                  ]),
+                                    Divider(thickness: 1, color: Colors.grey.shade300),
+                                    const SizedBox(height: 10),
+                                    const Text(
+                                      'Detalhes do Serviço',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Column(
+                                        children: [
+                                          _buildDetailRow(
+                                            'Tipo de limpeza:',
+                                            dailyList?.cleaningType ?? 'Não especificado',
+                                          ),
+                                          _buildDetailRow(
+                                            'Possui Animais de Estimação:',
+                                            dailyList?.havePets == true ? 'Sim' : 'Não',
+                                          ),
+                                          _buildDetailRow(
+                                            'Possui Materiais de Limpeza:',
+                                            dailyList?.includesCleaningMaterial == true ? 'Sim' : 'Não',
+                                          ),
+                                          _buildDetailRow(
+                                            'Tipo de cesto (Lavar):',
+                                           getFormattedBasket( dailyList?.washingBasketType ?? 'Não especificado',)
+                                          ),
+                                          _buildDetailRow(
+                                            'Quantidade:',
+                                            dailyList?.washingBasketQnt?.toString() ?? 'Não especificado',
+                                          ),
+                                         _buildDetailRow(
+                                            'Tipo de cesto (Passar):',
+                                           getFormattedBasket( dailyList?.ironingBasketType ?? 'Não especificado',)
+                                          ),
+                                          _buildDetailRow(
+                                            'Quantidade:',
+                                            dailyList?.ironingBasketQnt.toString() ?? 'Não especificado',
+                                          ),
+                                            if (dailyList?.rooms != null && dailyList!.rooms!.isNotEmpty) ...[
+                                              const SizedBox(height: 10),
+                                              const Text(
+                                                'Detalhes dos Quartos',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                                              ),
+                                              const SizedBox(height: 5),
+                                              ...dailyList!.rooms!.map((room) {
+                                                return _buildDetailRow(
+                                                  'Comodos:',
+                                                  room.roomType ?? 'Nome não disponível', // Supondo que RoomsDto tenha uma propriedade 'name'
+                                                );
+                                              }).toList(),
+                                            ],
+
+                                            if (dailyList?.services != null && dailyList!.services!.isNotEmpty) ...[
+                                              const SizedBox(height: 10),
+                                              const Text(
+                                                'Detalhes dos Serviços',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                                              ),
+                                              const SizedBox(height: 5),
+                                              ...dailyList!.services!.map((service) {
+                                                return _buildDetailRow(
+                                                  'Serviço:',
+                                                  service.serviceType ?? 'Nome não disponível', // Supondo que ServiceDto tenha uma propriedade 'name'
+                                                );
+                                              }).toList(),
+                                            ],
+                                        ],
+                                      )
+
+
+                              ]),
                             ],
                           ),
                         );

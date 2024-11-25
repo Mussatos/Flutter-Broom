@@ -161,31 +161,33 @@ class _MeetingviewState extends State<Meetingview> {
                     dailyList = snapshot.data![0] as PaymentDetails;
                   }
                   return isPendingPayment(snapshot.data![1] as int)
-                      ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Você ainda não pagou este agendamento',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 16),
-                              softWrap: true,
-                              textWidthBasis: TextWidthBasis.parent,
-                              overflow: TextOverflow.clip,
-                            ),
-                            const Text(
-                              'Caso não pague em até 24 horas o agendamento será cancelado automaticamente.',
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            ButtonIcon(
-                                btnText: 'Pagar',
-                                btnIcon: Icons.payment,
-                                width: 150,
-                                function: () => retrieveCheckout())
-                          ],
-                        )
+                      ? Center(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Você ainda não pagou este agendamento',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 16),
+                                softWrap: true,
+                                textWidthBasis: TextWidthBasis.parent,
+                                overflow: TextOverflow.clip,
+                              ),
+                              const Text(
+                                'Caso não pague em até 24 horas o agendamento será cancelado automaticamente.',
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              ButtonIcon(
+                                  btnText: 'Pagar',
+                                  btnIcon: Icons.payment,
+                                  width: 150,
+                                  function: () => retrieveCheckout())
+                            ],
+                          ),
+                      )
                       : Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(

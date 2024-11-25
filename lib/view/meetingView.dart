@@ -141,185 +141,187 @@ class _MeetingviewState extends State<Meetingview> {
             ),
           ),
         ),
-        body: FutureBuilder(
-            future: Future.wait({
-              fetchUnicContract(widget.agendamentoId),
-              autentication.getProfileId(),
-            }),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return const Center(
-                    child: Text('Erro ao carregar agendamentos'));
-              } else if (!snapshot.hasData) {
-                return const Center(
-                    child: Text('Nenhum agendamentos encontrado'));
-              } else {
-                if (snapshot.data?[0] != null) {
-                  dailyList = snapshot.data![0] as PaymentDetails;
-                }
-                return isPendingPayment(snapshot.data![1] as int)
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Você ainda não pagou este agendamento',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 16),
-                            softWrap: true,
-                            textWidthBasis: TextWidthBasis.parent,
-                            overflow: TextOverflow.clip,
-                          ),
-                          const Text(
-                            'Caso não pague em até 24 horas o agendamento será cancelado automaticamente.',
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          ButtonIcon(
-                              btnText: 'Pagar',
-                              btnIcon: Icons.payment,
-                              width: 150,
-                              function: () => retrieveCheckout())
-                        ],
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: SingleChildScrollView(
+          child: FutureBuilder(
+              future: Future.wait({
+                fetchUnicContract(widget.agendamentoId),
+                autentication.getProfileId(),
+              }),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return const Center(
+                      child: Text('Erro ao carregar agendamentos'));
+                } else if (!snapshot.hasData) {
+                  return const Center(
+                      child: Text('Nenhum agendamentos encontrado'));
+                } else {
+                  if (snapshot.data?[0] != null) {
+                    dailyList = snapshot.data![0] as PaymentDetails;
+                  }
+                  return isPendingPayment(snapshot.data![1] as int)
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  if (snapshot.data?[1] != null &&
-                                      snapshot.data![1] == 1) ...[
+                            const Text(
+                              'Você ainda não pagou este agendamento',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 16),
+                              softWrap: true,
+                              textWidthBasis: TextWidthBasis.parent,
+                              overflow: TextOverflow.clip,
+                            ),
+                            const Text(
+                              'Caso não pague em até 24 horas o agendamento será cancelado automaticamente.',
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            ButtonIcon(
+                                btnText: 'Pagar',
+                                btnIcon: Icons.payment,
+                                width: 150,
+                                function: () => retrieveCheckout())
+                          ],
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (snapshot.data?[1] != null &&
+                                        snapshot.data![1] == 1) ...[
+                                      const Text(
+                                        'Ações',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              dailyList!.finished! ||
+                                                      dailyList!.refund!
+                                                  ? null
+                                                  : _handleFinalize(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  dailyList!.finished! ||
+                                                          dailyList!.refund!
+                                                      ? Colors.grey
+                                                      : Colors.green,
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 24,
+                                                vertical: 12,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              "Finalizar",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              dailyList!.finished! ||
+                                                      dailyList!.refund!
+                                                  ? null
+                                                  : await _handleRefund(context);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  dailyList!.finished! ||
+                                                          dailyList!.refund!
+                                                      ? Colors.grey
+                                                      : Colors.red,
+                                              padding: const EdgeInsets.symmetric(
+                                                horizontal: 24,
+                                                vertical: 12,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            child: const Text(
+                                              "Reembolso",
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Divider(
+                                          thickness: 1,
+                                          color: Colors.grey.shade300),
+                                    ],
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
                                     const Text(
-                                      'Ações',
+                                      'Detalhes do Agendamento',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w600),
+                                    ),const SizedBox(
+                                      height: 5,
                                     ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            dailyList!.finished! ||
-                                                    dailyList!.refund!
-                                                ? null
-                                                : _handleFinalize(context);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                dailyList!.finished! ||
-                                                        dailyList!.refund!
-                                                    ? Colors.grey
-                                                    : Colors.green,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 24,
-                                              vertical: 12,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            "Finalizar",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            dailyList!.finished! ||
-                                                    dailyList!.refund!
-                                                ? null
-                                                : await _handleRefund(context);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                dailyList!.finished! ||
-                                                        dailyList!.refund!
-                                                    ? Colors.grey
-                                                    : Colors.red,
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 24,
-                                              vertical: 12,
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          child: const Text(
-                                            "Reembolso",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white),
-                                          ),
+                                        _buildDetailRow('Contratante:',
+                                            '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
+                                        _buildDetailRow('Diarista:',
+                                            '${dailyList?.diaristFirstName} ${dailyList?.diaristLastName}'),
+                                        _buildDetailRow('Tipo de Limpeza:',
+                                            dailyList?.cleaningType ?? ''),
+                                        _buildDetailRow(
+                                            'Status do Contrato:',
+                                            getFormattedStatus(
+                                                    dailyList?.contractStatus) ??
+                                                ''),
+                                        _buildDetailRow('Valor:',
+                                            'R\$ ${dailyList?.contractPrice?.toStringAsFixed(2)}'),
+                                        _buildDetailRow('Status do Pagamento:',
+                                            dailyList?.paymentStatus ?? ''),
+                                        _buildDetailRow('Mensagem:',
+                                            dailyList?.message ?? ''),
+                                        _buildDetailRow(
+                                          'Data:',
+                                          dailyList?.agendamentoDate != null
+                                              ? DateFormat('dd/MM/yyy').format(
+                                                  dailyList!.agendamentoDate!)
+                                              : 'Data não disponível',
                                         ),
                                       ],
                                     ),
-                                    Divider(
-                                        thickness: 1,
-                                        color: Colors.grey.shade300),
-                                  ],
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  const Text(
-                                    'Detalhes do Agendamento',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600),
-                                  ),const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      _buildDetailRow('Contratante:',
-                                          '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
-                                      _buildDetailRow('Diarista:',
-                                          '${dailyList?.diaristFirstName} ${dailyList?.diaristLastName}'),
-                                      _buildDetailRow('Tipo de Limpeza:',
-                                          dailyList?.cleaningType ?? ''),
-                                      _buildDetailRow(
-                                          'Status do Contrato:',
-                                          getFormattedStatus(
-                                                  dailyList?.contractStatus) ??
-                                              ''),
-                                      _buildDetailRow('Valor:',
-                                          'R\$ ${dailyList?.contractPrice?.toStringAsFixed(2)}'),
-                                      _buildDetailRow('Status do Pagamento:',
-                                          dailyList?.paymentStatus ?? ''),
-                                      _buildDetailRow('Mensagem:',
-                                          dailyList?.message ?? ''),
-                                      _buildDetailRow(
-                                        'Data:',
-                                        dailyList?.agendamentoDate != null
-                                            ? DateFormat('dd/MM/yyy').format(
-                                                dailyList!.agendamentoDate!)
-                                            : 'Data não disponível',
-                                      ),
-                                    ],
-                                  ),
-                                ]),
-                          ],
-                        ),
-                      );
-              }
-            }),
+                                  ]),
+                            ],
+                          ),
+                        );
+                }
+              }),
+        ),
       ),
     );
   }

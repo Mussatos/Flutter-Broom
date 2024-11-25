@@ -413,8 +413,20 @@ class _ContractState extends State<Contract> {
         ),
       ),
       body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Color(0xFF2ECC8F),
+                  ),
+                  Text('Redirecionando para pagamento',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF2ECC8F)))
+                ],
+              ),
             )
           : SingleChildScrollView(
               controller: _scrollController,
@@ -746,22 +758,9 @@ class _ContractState extends State<Contract> {
                       width: 350,
                       height: 50,
                       child: ElevatedButton(
-                        // onPressed: () async {
-                        //   await sendContract();
-
-                        //   if (kIsWeb) {
-                        //     await initCheckout();
-                        //   } else {
-                        //     await initPaymentSheet();
-                        //   }
-                        //   print(hasClickedToPay);
-                        //   if (hasClickedToPay) {
-                        //     showFinishedContractModal(context);
-                        //   }
-                        // },
                         onPressed: () async {
                           setState(() {
-                            isLoading = true; // Ativa o loading
+                            isLoading = true;
                           });
 
                           try {
@@ -783,8 +782,7 @@ class _ContractState extends State<Contract> {
                             );
                           } finally {
                             setState(() {
-                              isLoading =
-                                  false; // Desativa o loading após a execução
+                              isLoading = false;
                             });
                           }
                         },

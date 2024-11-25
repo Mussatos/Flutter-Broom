@@ -218,9 +218,10 @@ class _MeetingviewState extends State<Meetingview> {
                                               backgroundColor:
                                                   dailyList!.finished! ||
                                                           dailyList!.refund!
-                                                      ? Colors.grey
-                                                      : Colors.green,
-                                              padding: const EdgeInsets.symmetric(
+                                                      ? const Color(0xFFBDC3C7)
+                                                      : const Color(0xFF1E8449),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: 24,
                                                 vertical: 12,
                                               ),
@@ -244,15 +245,17 @@ class _MeetingviewState extends State<Meetingview> {
                                               dailyList!.finished! ||
                                                       dailyList!.refund!
                                                   ? null
-                                                  : await _handleRefund(context);
+                                                  : await _handleRefund(
+                                                      context);
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:
                                                   dailyList!.finished! ||
                                                           dailyList!.refund!
-                                                      ? Colors.grey
-                                                      : Colors.red,
-                                              padding: const EdgeInsets.symmetric(
+                                                      ? const Color(0xFFBDC3C7 )
+                                                      : const Color(0xFFE74C3C),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: 24,
                                                 vertical: 12,
                                               ),
@@ -283,11 +286,13 @@ class _MeetingviewState extends State<Meetingview> {
                                       style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w600),
-                                    ),const SizedBox(
+                                    ),
+                                    const SizedBox(
                                       height: 5,
                                     ),
                                     Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         _buildDetailRow('Contratante:',
                                             '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
@@ -297,8 +302,8 @@ class _MeetingviewState extends State<Meetingview> {
                                             dailyList?.cleaningType ?? ''),
                                         _buildDetailRow(
                                             'Status do Contrato:',
-                                            getFormattedStatus(
-                                                    dailyList?.contractStatus) ??
+                                            getFormattedStatus(dailyList
+                                                    ?.contractStatus) ??
                                                 ''),
                                         _buildDetailRow('Valor:',
                                             'R\$ ${dailyList?.contractPrice?.toStringAsFixed(2)}'),

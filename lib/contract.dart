@@ -33,6 +33,7 @@ class _ContractState extends State<Contract> {
   bool _ready = false;
   bool hasClickedToPay = false;
   bool isLoading = false;
+  int? agendamentoId;
   Map<String, bool> invalidRooms = {
     'bedroom': false,
     'kitchen': false,
@@ -42,7 +43,7 @@ class _ContractState extends State<Contract> {
   Map<String, dynamic>? contractInformation;
 
   List<Map<String, String>> serviceType = [
-    {'text': 'Limpeza', 'value': 'limpeza'},
+    {'text': 'Limpeza*', 'value': 'limpeza'},
     {'text': 'Lavar roupa', 'value': 'lavar_roupa'},
     {'text': 'Passar roupa', 'value': 'passar_roupa'},
     {'text': 'Lavar louça', 'value': 'lavar_roupa'},
@@ -233,6 +234,14 @@ class _ContractState extends State<Contract> {
       );
       return;
     }
+    if (!serviceTypeSelected[0]) {
+      _scrollController.animateTo(
+        80.0,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+      return;
+    }
   }
 
   Future<void> initCheckout() async {
@@ -272,6 +281,16 @@ class _ContractState extends State<Contract> {
       }
     }
 
+    if (!serviceTypeSelected[0]) {
+      scrollToInvalidField();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por Favor, selecione ao menos um tipo de limpeza.'),
+        ),
+      );
+      return;
+    }
+
     String? basketCleanQuantity = basketCleanQuantityController.text;
     String? basketIroningQuantity = basketIroningQuantityController.text;
 
@@ -309,6 +328,15 @@ class _ContractState extends State<Contract> {
 
     if (invalidRooms.containsValue(true)) return;
 
+    if (!hasAgended()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Você deve realizar um agendamento para prosseguir.'),
+        ),
+      );
+      return;
+    }
+
     contractInformation = await apiService.sendContract(
       tiposDeServico: selectedServices,
       tipoLimpeza: cleanTypeSelected,
@@ -332,6 +360,7 @@ class _ContractState extends State<Contract> {
 
     if (contractInformation != null && contractInformation!['link'] != '') {
       await autentication.setWhatsappLink(contractInformation!['link']);
+      return;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -339,6 +368,7 @@ class _ContractState extends State<Contract> {
               'Falha ao enviar contrato!!\nUsuário não cadastrou telefone para contato.'),
         ),
       );
+      return;
     }
   }
 
@@ -389,6 +419,18 @@ class _ContractState extends State<Contract> {
             mainButtonTitle: 'Enviar contrato e voltar',
           );
         });
+  }
+
+  Future<void> handlePaymentByEnviroment() async {
+    if (kIsWeb) {
+      await initCheckout();
+    } else {
+      await initPaymentSheet();
+    }
+  }
+
+  bool hasAgended() {
+    return agendamentoId != null && agendamentoId != -1;
   }
 
   @override
@@ -561,7 +603,7 @@ class _ContractState extends State<Contract> {
                                 },
                               ),
                             ),
-                            if (serviceType[index]['text'] == 'Limpeza' &&
+                            if (serviceType[index]['text'] == 'Limpeza*' &&
                                 serviceTypeSelected[index])
                               Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
@@ -720,7 +762,7 @@ class _ContractState extends State<Contract> {
                       children: [
                         IconButton(
                             onPressed: () async {
-                              final agendamentoId =
+                              agendamentoId =
                                   await autentication.getAgendamentoId();
                               print(agendamentoId);
                               if (agendamentoId == -1) {
@@ -764,21 +806,22 @@ class _ContractState extends State<Contract> {
                           });
 
                           try {
+                            agendamentoId =
+                                await autentication.getAgendamentoId();
+
                             await sendContract();
-
-                            if (kIsWeb) {
-                              await initCheckout();
-                            } else {
-                              await initPaymentSheet();
+                            if (hasAgended()) {
+                              await handlePaymentByEnviroment();
                             }
-
                             if (hasClickedToPay) {
                               showFinishedContractModal(context);
                             }
                           } catch (e) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  content: Text('Erro ao enviar contrato: $e')),
+                                  content: Text(!serviceTypeSelected[0]
+                                      ? 'Seleciona pelo menos um tipo de limpeza no campo Limpeza*'
+                                      : 'Erro ao enviar contrato: Um ou mais campos inválidos')),
                             );
                           } finally {
                             setState(() {

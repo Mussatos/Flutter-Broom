@@ -88,6 +88,37 @@ class _MeetingviewState extends State<Meetingview> {
     return '$firstName $lastName';
   }
 
+  Widget _buildDetailRow(String title, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontSize: 16),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          value,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+
+  String getFormattedStatus(String? status) {
+    switch (status) {
+      case 'in_progress':
+        return 'Em andamento';
+      case 'completed':
+        return 'Concluído';
+      case 'cancelled':
+        return 'Cancelado';
+      default:
+        return 'Desconhecido';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -238,71 +269,48 @@ class _MeetingviewState extends State<Meetingview> {
                                         ),
                                       ],
                                     ),
+                                    Divider(
+                                        thickness: 1,
+                                        color: Colors.grey.shade300),
                                   ],
-                                  Row(
-                                    children: [
-                                      Text(''),
-                                    ],
+                                  const SizedBox(
+                                    height: 10,
                                   ),
-                                  Row(
-                                    children: [
-                                      Text(''),
-                                    ],
+                                  const Text(
+                                    'Detalhes do Agendamento',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600),
+                                  ),const SizedBox(
+                                    height: 5,
                                   ),
-                                  Row(
+                                  Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        'Tipo de diaria: ',
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      Text(getDailyType(dailyList!.tipoDiaria!),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600)),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text('Data da diaria: ',
-                                          style: TextStyle(fontSize: 16)),
-                                      Text(
-                                        DateFormat('dd/MM/yyyy').format(
-                                            dailyList!.agendamentoDate!),
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text('Diarista: ',
-                                          style: TextStyle(fontSize: 16)),
-                                      Text(
-                                        getFullName(
-                                            dailyList!.diaristFirstName!,
-                                            dailyList!.diaristLastName!),
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text('Contratante: ',
-                                          style: TextStyle(fontSize: 16)),
-                                      Text(
-                                        getFullName(
-                                            dailyList!.contractorFirstName!,
-                                            dailyList!.contractorLastName!),
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
+                                      _buildDetailRow('Contratante:',
+                                          '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
+                                      _buildDetailRow('Diarista:',
+                                          '${dailyList?.diaristFirstName} ${dailyList?.diaristLastName}'),
+                                      _buildDetailRow('Tipo de Limpeza:',
+                                          dailyList?.cleaningType ?? ''),
+                                      _buildDetailRow(
+                                          'Status do Contrato:',
+                                          getFormattedStatus(
+                                                  dailyList?.contractStatus) ??
+                                              ''),
+                                      _buildDetailRow('Valor:',
+                                          'R\$ ${dailyList?.contractPrice?.toStringAsFixed(2)}'),
+                                      _buildDetailRow('Status do Pagamento:',
+                                          dailyList?.paymentStatus ?? ''),
+                                      _buildDetailRow('Mensagem:',
+                                          dailyList?.message ?? ''),
+                                      _buildDetailRow(
+                                        'Data:',
+                                        dailyList?.agendamentoDate != null
+                                            ? DateFormat('dd/MM/yyy').format(
+                                                dailyList!.agendamentoDate!)
+                                            : 'Data não disponível',
                                       ),
                                     ],
                                   ),

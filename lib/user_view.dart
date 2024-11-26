@@ -49,7 +49,8 @@ class UserView extends StatelessWidget {
         ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
+            return const Center(
+                child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar usuários'));
           } else if (!snapshot.hasData) {
@@ -64,6 +65,7 @@ class UserView extends StatelessWidget {
             if (userData == null) {
               return const Center(child: Text('Erro ao carregar dados'));
             }
+            bool isAvailable = userData.wantService;
 
             return SingleChildScrollView(
               child: Padding(
@@ -90,6 +92,17 @@ class UserView extends StatelessWidget {
                     if (profileId == 1) ...[
                       Text(
                         'Serviço: ${userData.wantService ? "Está à procura." : "Não está necessitando."}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 10),
+                    ] else if (profileId == 2) ...[
+                      Text(
+                        'Disponível: ${userData.wantService ? "Sim." : "Não."}',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
@@ -306,31 +319,36 @@ class UserView extends StatelessWidget {
                     */
                         if (profileId == 1) ...[
                           ElevatedButton.icon(
-                            onPressed: () async {
-                              final phoneNumber = userData.cellphoneNumber;
-                              if (phoneNumber != null &&
-                                  phoneNumber.isNotEmpty) {
-                                final whatsappUrl =
-                                    'https://wa.me/$phoneNumber';
-                                if (await canLaunch(whatsappUrl)) {
-                                  await launch(whatsappUrl);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Não foi possível abrir o WhatsApp.'),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Número de telefone não cadastrado.'),
-                                  ),
-                                );
-                              }
-                            },
+                            onPressed: isAvailable
+                                ? () async {
+                                    final phoneNumber =
+                                        userData.cellphoneNumber;
+                                    if (phoneNumber != null &&
+                                        phoneNumber.isNotEmpty) {
+                                      final whatsappUrl =
+                                          'https://wa.me/$phoneNumber';
+                                      if (await canLaunch(whatsappUrl)) {
+                                        await launch(whatsappUrl);
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                'Não foi possível abrir o WhatsApp.'),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Número de telefone não cadastrado.'),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                : () {},
                             icon: Icon(Icons.message, color: Colors.white),
                             label: Text(
                               'Contatar pelo WhatsApp',
@@ -347,26 +365,30 @@ class UserView extends StatelessWidget {
                           )
                         ] else if (profileId == 2) ...[
                           ElevatedButton.icon(
-                            onPressed: () async {
-                              final phoneNumber = userData.cellphoneNumber;
-                              if (phoneNumber.isNotEmpty) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Contract(
-                                      idDoUser: usuario.id,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Número de telefone não cadastrado.'),
-                                  ),
-                                );
-                              }
-                            },
+                            onPressed: isAvailable
+                                ? () async {
+                                    final phoneNumber =
+                                        userData.cellphoneNumber;
+                                    if (phoneNumber.isNotEmpty) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Contract(
+                                            idDoUser: usuario.id,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Número de telefone não cadastrado.'),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                : () {},
                             icon:
                                 const Icon(Icons.message, color: Colors.white),
                             label: const Text(

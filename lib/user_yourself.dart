@@ -102,7 +102,8 @@ class _UserYourselfState extends State<UserYourself> {
         future: userData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
+            return const Center(
+                child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar usuários'));
           } else if (!snapshot.hasData) {
@@ -139,15 +140,27 @@ class _UserYourselfState extends State<UserYourself> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 10),
-                      Text(
-                        'Serviço: ${snapshot.data!.wantService ? "Está à procura." : "Não está necessitando."}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade700,
+                      if (profileId == 1) ...[
+                        Text(
+                          'Serviço: ${snapshot.data!.wantService ? "Está à procura." : "Não está necessitando."}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade700,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                      ] else if (profileId == 2) ...[
+                        Text(
+                          'Disponível: ${snapshot.data!.wantService ? "Sim." : "Não."}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey.shade700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                       SizedBox(height: 10),
                       Text(
                         snapshot.data!.address.length > 0

@@ -430,27 +430,51 @@ class _EditUserFormState extends State<EditUserForm> {
                     },
                   ),
                   SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text(
-                        'Quer serviço?',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Switch(
-                        activeColor: Color(0xFF2ECC8F),
-                        value: wantService!,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            wantService = value ?? false;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+                  if (profileId == 1) ...[
+                    Row(
+                      children: [
+                        Text(
+                          'Quer serviço?',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Switch(
+                          activeColor: Color(0xFF2ECC8F),
+                          value: wantService!,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              wantService = value ?? false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ]  else if(profileId == 2) ...[
+                    Row(
+                      children: [
+                        Text(
+                          'Deseja prestar serviços?',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700),
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Switch(
+                          activeColor: Color(0xFF2ECC8F),
+                          value: wantService!,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              wantService = value ?? false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
                   SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,

@@ -1058,16 +1058,13 @@ Future<List<dynamic>> fetchAgendamentoByDiarist(int diaristaId) async {
     );
 
     if (response.statusCode == 200) {
-      print('Agendamento enviado com sucesso');
       final agendamento = jsonDecode(response.body);
       return agendamento.map((agend) => agend['data']).toList();
     } else {
-      print('Falha ao enviar o agendamento. Status: ${response.statusCode}');
-      print('Resposta: ${response.body}');
+
       throw Exception();
     }
   } catch (e) {
-    print('Erro ao enviar o agendamento: $e');
     return [];
   }
 }
@@ -1086,12 +1083,9 @@ Future<List<dynamic>> fetchAgendamentoServiceByDiarist(int diaristaId) async {
     );
 
     if (response.statusCode == 200) {
-      print('Agendamento enviado com sucesso');
       final agendamento = jsonDecode(response.body);
       return agendamento;
     } else {
-      print('Falha ao enviar o agendamento. Status: ${response.statusCode}');
-      print('Resposta: ${response.body}');
       throw Exception();
     }
   } catch (e) {

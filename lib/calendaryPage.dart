@@ -22,6 +22,7 @@ class _CalendarypageState extends State<Calendarypage> {
   Future<List<dynamic>>? listTypeDailyRate;
   List<dynamic>? ListDailyType;
   late List<dynamic> diaristDatesAlreadyAgended = [];
+  late List<dynamic> contractorDatesAlreadyAgended = [];
   late List<dynamic> serviceByDiaristDate = [];
 
   bool hasAgended = false;
@@ -31,11 +32,13 @@ class _CalendarypageState extends State<Calendarypage> {
   }
 
   Future<void> _loadDisabledDates() async {
+    List<dynamic> fetchedContractorDates = await fetchAgendamentoByContractor();
     List<dynamic> fetchedDates =
         await fetchAgendamentoByDiarist(widget.idDoUser);
     List<dynamic> fetchedServicesByDate =
         await fetchAgendamentoServiceByDiarist(widget.idDoUser);
     setState(() {
+      contractorDatesAlreadyAgended = fetchedContractorDates;
       diaristDatesAlreadyAgended = fetchedDates;
       serviceByDiaristDate = fetchedServicesByDate;
     });
@@ -90,9 +93,16 @@ class _CalendarypageState extends State<Calendarypage> {
     return service.isEmpty ? '' : service[0];
   }
 
+  bool getEnabledDay(DateTime day) {
+    return diaristDatesAlreadyAgended.contains(
+            DateTime.utc(day.year, day.month, day.day).toIso8601String()) ||
+        contractorDatesAlreadyAgended.contains(
+            DateTime.utc(day.year, day.month, day.day).toIso8601String());
+  }
+
   bool isDisabledItem(String item) {
     String typeDay = getTypeServiceByDay();
-    bool val = true;
+    bool val = false;
 
     if (typeDay.isNotEmpty) {
       val = item == typeDay || item == 'diaria_completa';
@@ -209,10 +219,7 @@ class _CalendarypageState extends State<Calendarypage> {
                           lastDay: DateTime.utc(2030, 3, 14),
                           focusedDay: _focusedDay,
                           calendarFormat: _calendarFormat,
-                          enabledDayPredicate: (day) =>
-                              !diaristDatesAlreadyAgended.contains(
-                                  DateTime.utc(day.year, day.month, day.day)
-                                      .toIso8601String()),
+                          enabledDayPredicate: (day) => !getEnabledDay(day),
                           selectedDayPredicate: (day) {
                             return isSameDay(_selectedDay, day);
                           },
@@ -256,8 +263,8 @@ class _CalendarypageState extends State<Calendarypage> {
                                 setState(() {
                                   _selectedOption = ListDailyType!
                                       .where((type) =>
-                                          type != service &&
-                                          type != 'diaria_completa')
+                                          type['value'] != service &&
+                                          type['value'] != 'diaria_completa')
                                       .toList()[0]['value'];
                                 });
                                 return;
@@ -287,7 +294,6 @@ class _CalendarypageState extends State<Calendarypage> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () async {
-                        getDropDownItens();
                         if (_selectedDay != null) {
                           await _saveEventToBackend(
                             date: _selectedDay!,

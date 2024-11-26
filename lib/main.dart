@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),
                       child: Text(
-                        "Login",
+                        "Entrar",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),
                       child: Text(
-                        "Sign up",
+                        "Cadastrar",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,

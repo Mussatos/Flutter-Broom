@@ -91,11 +91,14 @@ class _BankInformationState extends State<BankInformation> {
           future: bankInformation,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+              return const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
             } else {
               diaristInfo = snapshot.data;
               return isLoading
-                  ? const CircularProgressIndicator()
+                  ? const Center(
+                      child:
+                          CircularProgressIndicator(color: Color(0xFF2ECC8F)))
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -188,7 +191,8 @@ class _BankInformationState extends State<BankInformation> {
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      if (diaristInfo!.pixKey != null && diaristInfo!.pixKey!.isNotEmpty)
+                                      if (diaristInfo!.pixKey != null &&
+                                          diaristInfo!.pixKey!.isNotEmpty)
                                         Row(
                                           children: [
                                             const Text('Chave Pix:',
@@ -206,7 +210,8 @@ class _BankInformationState extends State<BankInformation> {
                                       const SizedBox(
                                         height: 10,
                                       ),
-                                      if (diaristInfo!.agency != null && diaristInfo!.agency!.isNotEmpty)
+                                      if (diaristInfo!.agency != null &&
+                                          diaristInfo!.agency!.isNotEmpty)
                                         Column(
                                           children: [
                                             Row(

@@ -49,7 +49,7 @@ class UserView extends StatelessWidget {
         ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar usuários'));
           } else if (!snapshot.hasData) {
@@ -87,16 +87,18 @@ class UserView extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 10),
-                    Text(
-                      'Serviço: ${userData.wantService ? "Está à procura." : "Não está necessitando."}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade700,
+                    if (profileId == 1) ...[
+                      Text(
+                        'Serviço: ${userData.wantService ? "Está à procura." : "Não está necessitando."}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 10),
+                      SizedBox(height: 10),
+                    ],
                     Text(
                       formatAddress,
                       style: TextStyle(

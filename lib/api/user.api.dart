@@ -1044,6 +1044,56 @@ Future<bool> postAgendamento({
   }
 }
 
+Future<List<dynamic>> fetchAgendamentoByDiarist(int diaristaId) async {
+  final url = Uri.https(host, '/agendamento/diarist/$diaristaId');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final agendamento = jsonDecode(response.body);
+      return agendamento.map((agend) => agend['data']).toList();
+    } else {
+
+      throw Exception();
+    }
+  } catch (e) {
+    return [];
+  }
+}
+
+Future<List<dynamic>> fetchAgendamentoServiceByDiarist(int diaristaId) async {
+  final url = Uri.https(host, '/agendamento/diarist/services/$diaristaId');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final agendamento = jsonDecode(response.body);
+      return agendamento;
+    } else {
+      throw Exception();
+    }
+  } catch (e) {
+    print('Erro ao enviar o agendamento: $e');
+    return [];
+  }
+}
+
 Future<List<dynamic>> fetchDailyRateType() async {
   final url = Uri.https(host, '/agendamento/dailyratetype');
   final token = await autentication.getToken();

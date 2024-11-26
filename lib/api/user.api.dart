@@ -1044,6 +1044,32 @@ Future<bool> postAgendamento({
   }
 }
 
+Future<List<dynamic>> fetchAgendamentoByContractor() async {
+  final contractorId = await autentication.getUserId();
+  final url = Uri.https(host, '/agendamento/contractor/$contractorId');
+  final token = await autentication.getToken();
+
+  try {
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final agendamento = jsonDecode(response.body);
+      return agendamento.map((agend) => agend['data']).toList();
+    } else {
+
+      throw Exception();
+    }
+  } catch (e) {
+    return [];
+  }
+}
+
 Future<List<dynamic>> fetchAgendamentoByDiarist(int diaristaId) async {
   final url = Uri.https(host, '/agendamento/diarist/$diaristaId');
   final token = await autentication.getToken();

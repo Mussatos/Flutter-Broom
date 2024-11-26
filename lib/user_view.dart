@@ -87,15 +87,17 @@ class UserView extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 10),
-                    Text(
-                      'Serviço: ${userData.wantService ? "Está à procura." : "Não está necessitando."}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade700,
+                    if (usuario.profileId == 1) ...[
+                      Text(
+                        'Serviço: ${userData.wantService ? "Está à procura." : "Não está necessitando."}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
+                    ],
                     SizedBox(height: 10),
                     Text(
                       formatAddress,

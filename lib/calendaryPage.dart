@@ -30,16 +30,16 @@ class _CalendarypageState extends State<Calendarypage> {
     idDoContract = await autentication.getUserId();
   }
 
-  Future<void> _loadDisabledDates() async {
-    List<dynamic> fetchedDates =
-        await fetchAgendamentoByDiarist(widget.idDoUser);
-    List<dynamic> fetchedServicesByDate =
-        await fetchAgendamentoServiceByDiarist(widget.idDoUser);
-    setState(() {
-      diaristDatesAlreadyAgended = fetchedDates;
-      serviceByDiaristDate = fetchedServicesByDate;
-    });
-  }
+  // Future<void> _loadDisabledDates() async {
+  //   List<dynamic> fetchedDates =
+  //       await fetchAgendamentoByDiarist(widget.idDoUser);
+  //   List<dynamic> fetchedServicesByDate =
+  //       await fetchAgendamentoServiceByDiarist(widget.idDoUser);
+  //   setState(() {
+  //     diaristDatesAlreadyAgended = fetchedDates;
+  //     serviceByDiaristDate = fetchedServicesByDate;
+  //   });
+  // }
 
   List<DropdownMenuItem<String>>? getDropDownItens() {
     List<dynamic> service = serviceByDiaristDate.map((dateService) {
@@ -104,7 +104,7 @@ class _CalendarypageState extends State<Calendarypage> {
   void initState() {
     super.initState();
     listTypeDailyRate = fetchDailyRateType();
-    _loadDisabledDates();
+    // _loadDisabledDates();
   }
 
   Future<void> _saveEventToBackend({

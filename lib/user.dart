@@ -583,7 +583,6 @@ class PaymentDetails {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final ContractorPayment? contractorPayment;
-
   final bool? includesCleaningMaterial;
   final bool? havePets;
   final List<RoomsDto>? rooms;
@@ -592,6 +591,7 @@ class PaymentDetails {
   final String? ironingBasketType;
   final int? ironingBasketQnt;
   final int? washingBasketQnt;
+  final List<Address>? addressContractor;
 
   PaymentDetails({
     required this.id,
@@ -617,7 +617,6 @@ class PaymentDetails {
     this.createdAt,
     this.updatedAt,
     this.contractorPayment,
-
     this.includesCleaningMaterial,
     this.havePets,
     this.rooms,
@@ -626,6 +625,7 @@ class PaymentDetails {
     this.ironingBasketType,
     this.ironingBasketQnt,
     this.washingBasketQnt,
+    this.addressContractor
   });
 
   factory PaymentDetails.fromJson(Map<String, dynamic> json) {
@@ -634,11 +634,6 @@ class PaymentDetails {
     final diarista = agendamento['diarista'];
     final contract = agendamento['contract'] ?? {};
     final payment = json['Contractor_Payment'];
-
-    print('agendamento? $agendamento');
-    print('Contract: $contract');
-    print('Rooms: ${contract['rooms']}'); 
-    print('Services: ${contract['services']}'); 
 
     return PaymentDetails(
       id: json['id'] ?? 0,
@@ -672,21 +667,21 @@ class PaymentDetails {
       contractorPayment: payment != null
           ? ContractorPayment.fromJson(payment)
           : null,
-
       includesCleaningMaterial: contract['includesCleaningMaterial'] ?? false,
       havePets: contract['havePets'] ?? false,
-
      rooms: (contract['rooms'] as List<dynamic>?)
           ?.map((room) => RoomsDto.fromJson(room as Map<String, dynamic>))
           .toList(),
       services: (contract['services'] as List<dynamic>?)
           ?.map((service) => ServiceDto.fromJson(service as Map<String, dynamic>))
           .toList(),
-
       washingBasketType: contract['washingBasketType'],
       ironingBasketType: contract['ironingBasketType'],
       ironingBasketQnt: contract['ironingBasketQnt'],
       washingBasketQnt: contract['washingBasketQnt'],
+      addressContractor: (contratante['address'] as List<dynamic>?)
+        ?.map((address) => Address.fromJson(address as Map<String, dynamic>))
+        .toList(),
     );
   }
 }
@@ -750,6 +745,3 @@ class PaymentAuditorship {
     );
   }
 }
-
-
-

@@ -197,7 +197,7 @@ class _MeetingviewState extends State<Meetingview> {
                   if (snapshot.data?[0] != null) {
                     dailyList = snapshot.data![0] as PaymentDetails;
                   }
-                  final address = dailyList!.addressContractor![0];
+                  final address = dailyList!.addressContractor;
                   return isPendingPayment(snapshot.data![1] as int)
                       ? Center(
                           child: Column(
@@ -368,21 +368,21 @@ class _MeetingviewState extends State<Meetingview> {
                                             ),
                                             const SizedBox(height: 8),
                                             Text(
-                                              'Rua: ${address.street}, ${address.number}',
+                                              'Rua: ${address![0].street}, ${address[0].number}',
                                               style: const TextStyle(
                                                 fontSize: 16,
                                               ),
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              'Bairro: ${address.neighborhood}',
+                                              'Bairro: ${address[0].neighborhood}',
                                               style: const TextStyle(
                                                 fontSize: 16,
                                               ),
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              'Cidade: ${address.city}, Estado: ${address.state}',
+                                              'Cidade: ${address[0].city}, Estado: ${address[0].state}',
                                               style: const TextStyle(
                                                 fontSize: 16,
                                               ),

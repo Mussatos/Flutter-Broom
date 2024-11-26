@@ -113,7 +113,7 @@ class LoginPage extends StatelessWidget {
                       children: <Widget>[
                         inputFile(label: "Email", controller: emailController),
                         inputFile(
-                            label: "Password",
+                            label: "Senha",
                             controller: passwordController,
                             obscureText: true)
                       ],
@@ -126,7 +126,7 @@ class LoginPage extends StatelessWidget {
                       children: [
                         GestureDetector(
                           child: Text(
-                            " Forget Password?",
+                            " Esqueçeu a senha?",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
@@ -183,7 +183,7 @@ class LoginPage extends StatelessWidget {
                             borderRadius: BorderRadius.circular(50),
                           ),
                           child: Text(
-                            "Login",
+                            "Entrar",
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 18,
@@ -201,7 +201,7 @@ class LoginPage extends StatelessWidget {
                       Text("Ainda não possui uma conta?"),
                       GestureDetector(
                         child: Text(
-                          " Sign up",
+                          " Cadastre-se",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,

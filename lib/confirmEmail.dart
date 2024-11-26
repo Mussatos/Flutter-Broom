@@ -185,7 +185,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                       Text("Ainda não possui uma conta?"),
                       GestureDetector(
                         child: Text(
-                          " Sign up",
+                          " Cadastre-se",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,

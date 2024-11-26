@@ -67,9 +67,8 @@ class _MeetingviewState extends State<Meetingview> {
             ));
   }
 
-  bool isPendingPayment(int profileId) {
-    return dailyList!.contractorPayment!.status == 'processando' &&
-        profileId == 1;
+  bool isPendingPayment() {
+    return dailyList!.contractorPayment!.status == 'processando';
   }
 
   Future<void> retrieveCheckout() async {
@@ -186,7 +185,9 @@ class _MeetingviewState extends State<Meetingview> {
               }),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
+                  return const Center(
+                      child:
+                          CircularProgressIndicator(color: Color(0xFF2ECC8F)));
                 } else if (snapshot.hasError) {
                   return const Center(
                       child: Text('Erro ao carregar agendamentos'));
@@ -198,7 +199,8 @@ class _MeetingviewState extends State<Meetingview> {
                     dailyList = snapshot.data![0] as PaymentDetails;
                   }
                   final address = dailyList!.addressContractor;
-                  return isPendingPayment(snapshot.data![1] as int)
+                  final userProfileId = snapshot.data![1];
+                  return isPendingPayment() && userProfileId == 1
                       ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -240,7 +242,7 @@ class _MeetingviewState extends State<Meetingview> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       if (snapshot.data?[1] != null &&
-                                          snapshot.data![1] == 1) ...[
+                                          userProfileId == 1) ...[
                                         const Text(
                                           'Ações',
                                           style: TextStyle(
@@ -314,6 +316,41 @@ class _MeetingviewState extends State<Meetingview> {
                                               ),
                                             ),
                                           ],
+                                        ),
+                                        const Divider(
+                                            thickness: 1, color: Colors.grey),
+                                      ],
+                                      if (snapshot.data?[1] != null &&
+                                          userProfileId == 2 &&
+                                          !isPendingPayment()) ...[
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            dailyList!.finished! ||
+                                                    dailyList!.refund!
+                                                ? null
+                                                : await _handleRefund(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                dailyList!.finished! ||
+                                                        dailyList!.refund!
+                                                    ? const Color(0xFFBDC3C7)
+                                                    : const Color(0xFFE74C3C),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            "Cancelar",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                          ),
                                         ),
                                         const Divider(
                                             thickness: 1, color: Colors.grey),

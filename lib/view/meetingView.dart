@@ -197,6 +197,7 @@ class _MeetingviewState extends State<Meetingview> {
                   if (snapshot.data?[0] != null) {
                     dailyList = snapshot.data![0] as PaymentDetails;
                   }
+                  final address = dailyList!.addressContractor![0]; 
                   return isPendingPayment(snapshot.data![1] as int)
                       ? Center(
                         child: Column(
@@ -348,16 +349,10 @@ class _MeetingviewState extends State<Meetingview> {
                                                   dailyList!.agendamentoDate!)
                                               : 'Data não disponível',
                                         ), 
-                                        if (dailyList?.addressContractor !=
-                                                null &&
-                                            dailyList!.addressContractor!
-                                                .isNotEmpty) ...[
-                                          const SizedBox(height: 10),
-                                          ...dailyList!.addressContractor!
-                                              .map((address) {
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                   if (dailyList?.addressContractor != null && dailyList!.addressContractor!.isNotEmpty) ...[
+                                        const SizedBox(height: 10),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   'Endereço:',
@@ -388,11 +383,10 @@ class _MeetingviewState extends State<Meetingview> {
                                                   ),
                                                 ),
                                               ],
-                                            );
-                                          }).toList(),
-                                        ],
+                                            ),
                                       ],
                                     ],
+                                  ],
                                   ),
                                 ),
                               ),

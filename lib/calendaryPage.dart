@@ -187,7 +187,7 @@ class _CalendarypageState extends State<Calendarypage> {
           future: listTypeDailyRate,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
             } else if (snapshot.hasError) {
               return const Center(
                   child: Text('Erro ao carregar o agendamento'));

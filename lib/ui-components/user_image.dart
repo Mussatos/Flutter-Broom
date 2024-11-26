@@ -28,7 +28,7 @@ class _UserImageState extends State<UserImage> {
       future: userImage,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator(color: Color(0xFF2ECC8F));
         } else if (snapshot.hasError) {
           return const UserIcon();
         } else if (snapshot.hasData) {

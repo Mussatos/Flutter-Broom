@@ -21,6 +21,7 @@ class _CalendarypageState extends State<Calendarypage> {
   int? idDoContract;
   Future<List<dynamic>>? listTypeDailyRate;
   List<dynamic>? ListDailyType;
+  bool loading = false;
   late List<dynamic> diaristDatesAlreadyAgended = [];
   late List<dynamic> contractorDatesAlreadyAgended = [];
   late List<dynamic> serviceByDiaristDate = [];
@@ -32,6 +33,9 @@ class _CalendarypageState extends State<Calendarypage> {
   }
 
   Future<void> _loadDisabledDates() async {
+    setState(() {
+      loading = true;
+    });
     List<dynamic> fetchedContractorDates = await fetchAgendamentoByContractor();
     List<dynamic> fetchedDates =
         await fetchAgendamentoByDiarist(widget.idDoUser);
@@ -41,6 +45,7 @@ class _CalendarypageState extends State<Calendarypage> {
       contractorDatesAlreadyAgended = fetchedContractorDates;
       diaristDatesAlreadyAgended = fetchedDates;
       serviceByDiaristDate = fetchedServicesByDate;
+      loading = false;
     });
   }
 
@@ -195,7 +200,7 @@ class _CalendarypageState extends State<Calendarypage> {
               ListDailyType = snapshot.data;
               return Column(
                 children: [
-                  diaristDatesAlreadyAgended.isEmpty
+                  loading
                       ? const Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,

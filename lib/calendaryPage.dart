@@ -21,8 +21,8 @@ class _CalendarypageState extends State<Calendarypage> {
   int? idDoContract;
   Future<List<dynamic>>? listTypeDailyRate;
   List<dynamic>? ListDailyType;
-  late List<dynamic> diaristDatesAlreadyAgended;
-  late List<dynamic> serviceByDiaristDate;
+  late List<dynamic> diaristDatesAlreadyAgended = [];
+  late List<dynamic> serviceByDiaristDate = [];
 
   bool hasAgended = false;
 
@@ -30,16 +30,16 @@ class _CalendarypageState extends State<Calendarypage> {
     idDoContract = await autentication.getUserId();
   }
 
-  // Future<void> _loadDisabledDates() async {
-  //   List<dynamic> fetchedDates =
-  //       await fetchAgendamentoByDiarist(widget.idDoUser);
-  //   List<dynamic> fetchedServicesByDate =
-  //       await fetchAgendamentoServiceByDiarist(widget.idDoUser);
-  //   setState(() {
-  //     diaristDatesAlreadyAgended = fetchedDates;
-  //     serviceByDiaristDate = fetchedServicesByDate;
-  //   });
-  // }
+  Future<void> _loadDisabledDates() async {
+    List<dynamic> fetchedDates =
+        await fetchAgendamentoByDiarist(widget.idDoUser);
+    List<dynamic> fetchedServicesByDate =
+        await fetchAgendamentoServiceByDiarist(widget.idDoUser);
+    setState(() {
+      diaristDatesAlreadyAgended = fetchedDates;
+      serviceByDiaristDate = fetchedServicesByDate;
+    });
+  }
 
   List<DropdownMenuItem<String>>? getDropDownItens() {
     List<dynamic> service = serviceByDiaristDate.map((dateService) {
@@ -93,7 +93,7 @@ class _CalendarypageState extends State<Calendarypage> {
   bool isDisabledItem(String item) {
     String typeDay = getTypeServiceByDay();
     bool val = true;
-    
+
     if (typeDay.isNotEmpty) {
       val = item == typeDay || item == 'diaria_completa';
     }
@@ -104,7 +104,7 @@ class _CalendarypageState extends State<Calendarypage> {
   void initState() {
     super.initState();
     listTypeDailyRate = fetchDailyRateType();
-    // _loadDisabledDates();
+    _loadDisabledDates();
   }
 
   Future<void> _saveEventToBackend({
@@ -185,36 +185,56 @@ class _CalendarypageState extends State<Calendarypage> {
               ListDailyType = snapshot.data;
               return Column(
                 children: [
-                  TableCalendar(
-                    firstDay: DateTime.now(),
-                    lastDay: DateTime.utc(2030, 3, 14),
-                    focusedDay: _focusedDay,
-                    calendarFormat: _calendarFormat,
-                    enabledDayPredicate: (day) => !diaristDatesAlreadyAgended
-                        .contains(DateTime.utc(day.year, day.month, day.day)
-                            .toIso8601String()),
-                    selectedDayPredicate: (day) {
-                      return isSameDay(_selectedDay, day);
-                    },
-                    onDaySelected: (selectedDay, focusedDay) {
-                      if (!isSameDay(_selectedDay, selectedDay)) {
-                        setState(() {
-                          _selectedDay = selectedDay;
-                          _focusedDay = focusedDay;
-                        });
-                      }
-                    },
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
-                    },
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                    },
-                  ),
+                  diaristDatesAlreadyAgended.isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                color: Color(0xFF2ECC8F),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text('Carregando datas...',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2ECC8F)))
+                            ],
+                          ),
+                        )
+                      : TableCalendar(
+                          firstDay: DateTime.now(),
+                          lastDay: DateTime.utc(2030, 3, 14),
+                          focusedDay: _focusedDay,
+                          calendarFormat: _calendarFormat,
+                          enabledDayPredicate: (day) =>
+                              !diaristDatesAlreadyAgended.contains(
+                                  DateTime.utc(day.year, day.month, day.day)
+                                      .toIso8601String()),
+                          selectedDayPredicate: (day) {
+                            return isSameDay(_selectedDay, day);
+                          },
+                          onDaySelected: (selectedDay, focusedDay) {
+                            if (!isSameDay(_selectedDay, selectedDay)) {
+                              setState(() {
+                                _selectedDay = selectedDay;
+                                _focusedDay = focusedDay;
+                              });
+                            }
+                          },
+                          onFormatChanged: (format) {
+                            if (_calendarFormat != format) {
+                              setState(() {
+                                _calendarFormat = format;
+                              });
+                            }
+                          },
+                          onPageChanged: (focusedDay) {
+                            _focusedDay = focusedDay;
+                          },
+                        ),
                   const SizedBox(height: 16),
                   if (_selectedDay != null) ...[
                     Padding(

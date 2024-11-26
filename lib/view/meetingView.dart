@@ -10,7 +10,6 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 class Meetingview extends StatefulWidget {
   int agendamentoId;
-
   Meetingview({super.key, required this.agendamentoId});
 
   @override
@@ -19,6 +18,7 @@ class Meetingview extends StatefulWidget {
 
 class _MeetingviewState extends State<Meetingview> {
   PaymentDetails? dailyList;
+  ListUsers? user;
 
   Future<void> _handleFinalize(context) async {
     final isFinished = await finishContract(widget.agendamentoId);
@@ -80,17 +80,9 @@ class _MeetingviewState extends State<Meetingview> {
     }
   }
 
-  String getDailyType(String type) {
-    return type.replaceAll('_', ' ');
-  }
-
-  String getFullName(String firstName, String lastName) {
-    return '$firstName $lastName';
-  }
-
   Widget _buildDetailRow(String title, String value) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
           title,
@@ -99,7 +91,7 @@ class _MeetingviewState extends State<Meetingview> {
         const SizedBox(width: 8),
         Text(
           value,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          style: const TextStyle(fontSize: 16),
           overflow: TextOverflow.ellipsis,
         ),
       ],
@@ -119,6 +111,51 @@ class _MeetingviewState extends State<Meetingview> {
     }
   }
 
+  String getFormattedBasket(String? basket) {
+    switch (basket) {
+      case 'cesto_pequeno':
+        return 'Cesto pequeno';
+      case 'cesto_medio':
+        return 'Cesto Médio';
+      case 'cesto_grande':
+        return 'Cesto Grande';
+      default:
+        return 'Desconhecido';
+    }
+  }
+
+  String getFormattedRooms(String? basket) {
+    switch (basket) {
+      case 'quarto':
+        return 'Quarto';
+      case 'sala':
+        return 'Sala';
+      case 'cozinha':
+        return 'Cozinha';
+      case 'banheiro':
+        return 'Banheiro';
+      default:
+        return 'Desconhecido';
+    }
+  }
+
+  String getFormattedServices(String? basket) {
+    switch (basket) {
+      case 'limpeza':
+        return 'Limpeza';
+      case 'lavar_louca':
+        return 'Lavar Louça';
+      case 'lavar_roupa':
+        return 'Lavar Roupa';
+      case 'passar_roupa':
+        return 'Passar Roupa';
+      case 'organizar_ambiente':
+        return 'Organizar Ambientes';
+      default:
+        return 'Desconhecido';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -126,7 +163,7 @@ class _MeetingviewState extends State<Meetingview> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Informações sobre o agendamento',
+            'Informações do contrato',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
           ),
           backgroundColor: const Color(0xFF2ECC8F),
@@ -160,6 +197,7 @@ class _MeetingviewState extends State<Meetingview> {
                   if (snapshot.data?[0] != null) {
                     dailyList = snapshot.data![0] as PaymentDetails;
                   }
+                  final address = dailyList!.addressContractor![0]; 
                   return isPendingPayment(snapshot.data![1] as int)
                       ? Center(
                         child: Column(
@@ -187,115 +225,106 @@ class _MeetingviewState extends State<Meetingview> {
                                   function: () => retrieveCheckout())
                             ],
                           ),
-                      )
+                        )
                       : Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    if (snapshot.data?[1] != null &&
-                                        snapshot.data![1] == 1) ...[
-                                      const Text(
-                                        'Ações',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          ElevatedButton(
-                                            onPressed: () async {
-                                              dailyList!.finished! ||
-                                                      dailyList!.refund!
-                                                  ? null
-                                                  : _handleFinalize(context);
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  dailyList!.finished! ||
-                                                          dailyList!.refund!
-                                                      ? const Color(0xFFBDC3C7)
-                                                      : const Color(0xFF1E8449),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 24,
-                                                vertical: 12,
+                              Card(
+                                elevation: 4,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (snapshot.data?[1] != null &&
+                                          snapshot.data![1] == 1) ...[
+                                        const Text(
+                                          'Ações',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () async {
+                                                dailyList!.finished! ||
+                                                        dailyList!.refund!
+                                                    ? null
+                                                    : _handleFinalize(context);
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: dailyList!
+                                                            .finished! ||
+                                                        dailyList!.refund!
+                                                    ? const Color(0xFFBDC3C7)
+                                                    : const Color(0xFF1E8449),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 24,
+                                                  vertical: 12,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
                                               ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              "Finalizar",
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          ElevatedButton(
-                                            onPressed: () async {
-                                              dailyList!.finished! ||
-                                                      dailyList!.refund!
-                                                  ? null
-                                                  : await _handleRefund(
-                                                      context);
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  dailyList!.finished! ||
-                                                          dailyList!.refund!
-                                                      ? const Color(0xFFBDC3C7 )
-                                                      : const Color(0xFFE74C3C),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 24,
-                                                vertical: 12,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                                              child: const Text(
+                                                "Finalizar",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white),
                                               ),
                                             ),
-                                            child: const Text(
-                                              "Reembolso",
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  color: Colors.white),
+                                            ElevatedButton(
+                                              onPressed: () async {
+                                                dailyList!.finished! ||
+                                                        dailyList!.refund!
+                                                    ? null
+                                                    : await _handleRefund(
+                                                        context);
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: dailyList!
+                                                            .finished! ||
+                                                        dailyList!.refund!
+                                                    ? const Color(0xFFBDC3C7)
+                                                    : const Color(0xFFE74C3C),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 24,
+                                                  vertical: 12,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                "Reembolso",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white),
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Divider(
-                                          thickness: 1,
-                                          color: Colors.grey.shade300),
-                                    ],
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    const Text(
-                                      'Detalhes do Agendamento',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
+                                          ],
+                                        ),
+                                        const Divider(
+                                            thickness: 1, color: Colors.grey),
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          'Detalhes do Agendamento',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        const SizedBox(height: 5),
                                         _buildDetailRow('Contratante:',
                                             '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
                                         _buildDetailRow('Diarista:',
@@ -319,10 +348,163 @@ class _MeetingviewState extends State<Meetingview> {
                                               ? DateFormat('dd/MM/yyy').format(
                                                   dailyList!.agendamentoDate!)
                                               : 'Data não disponível',
-                                        ),
+                                        ), 
+                                   if (dailyList?.addressContractor != null && dailyList!.addressContractor!.isNotEmpty) ...[
+                                        const SizedBox(height: 10),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Endereço:',
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  'Rua: ${address.street}, ${address.number}',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  'Bairro: ${address.neighborhood}',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  'Cidade: ${address.city}, Estado: ${address.state}',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                       ],
-                                    ),
-                                  ]),
+                                    ],
+                                  ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Card(
+                                elevation: 4,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Detalhes do Serviço',
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        if (dailyList?.services != null &&
+                                            dailyList!
+                                                .services!.isNotEmpty) ...[
+                                          const Text(
+                                            'Serviços a serem realizados:',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          ...dailyList!.services!
+                                              .map((service) {
+                                            return _buildDetailRow(
+                                              'Serviço:',
+                                              getFormattedServices(
+                                                  service.serviceType ??
+                                                      'Nome não disponível'),
+                                            );
+                                          }).toList(),
+                                        ],
+                                        if (dailyList?.rooms != null &&
+                                            dailyList!.rooms!.isNotEmpty) ...[
+                                          const SizedBox(height: 10),
+                                          const Text(
+                                            'Comôdos a serem limpos:',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          ...dailyList!.rooms!.map((room) {
+                                            final quantity = room.roomQnt ?? 0;
+
+                                            return _buildDetailRow('Comôdo: ',
+                                                '${getFormattedRooms(room.roomType ?? 'Nome não disponível')}, quantidade: ${quantity.toString()}');
+                                          }).toList(),
+                                        ],
+                                        const SizedBox(height: 10),
+                                        const Text(
+                                          'Mais Detalhes:',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                        _buildDetailRow(
+                                          'Tipo de limpeza:',
+                                          dailyList?.cleaningType ??
+                                              'Não especificado',
+                                        ),
+                                        _buildDetailRow(
+                                          'Possui Animais de Estimação:',
+                                          dailyList?.havePets == true
+                                              ? 'Sim'
+                                              : 'Não',
+                                        ),
+                                        _buildDetailRow(
+                                          'Possui Materiais de Limpeza:',
+                                          dailyList?.includesCleaningMaterial ==
+                                                  true
+                                              ? 'Sim'
+                                              : 'Não',
+                                        ),
+                                        if (dailyList?.washingBasketQnt !=
+                                                null &&
+                                            dailyList!.washingBasketQnt! >
+                                                0) ...[
+                                          _buildDetailRow(
+                                            'Tipo de cesto (Lavar):',
+                                            getFormattedBasket(
+                                                dailyList?.washingBasketType ??
+                                                    'Não especificado'),
+                                          ),
+                                          _buildDetailRow(
+                                            'Quantidade:',
+                                            dailyList?.washingBasketQnt
+                                                    ?.toString() ??
+                                                'Não especificado',
+                                          ),
+                                        ],
+                                        if (dailyList?.ironingBasketQnt !=
+                                                null &&
+                                            dailyList!.ironingBasketQnt! >
+                                                0) ...[
+                                          _buildDetailRow(
+                                            'Tipo de cesto (Passar):',
+                                            getFormattedBasket(
+                                                dailyList?.ironingBasketType ??
+                                                    'Não especificado'),
+                                          ),
+                                          _buildDetailRow(
+                                            'Quantidade:',
+                                            dailyList?.ironingBasketQnt
+                                                    .toString() ??
+                                                'Não especificado',
+                                          ),
+                                        ]
+                                      ]),
+                                ),
+                              ),
                             ],
                           ),
                         );

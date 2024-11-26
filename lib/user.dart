@@ -515,6 +515,50 @@ class ListDailys {
   }
 }
 
+class RoomsDto {
+  final String roomType; 
+  final int roomQnt;
+
+  RoomsDto({
+    required this.roomType,
+    required this.roomQnt,
+  });
+
+  factory RoomsDto.fromJson(Map<String, dynamic> json) {
+    return RoomsDto(
+      roomType: json['roomType'] ?? '',
+      roomQnt: json['roomQnt'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'roomType': roomType,
+      'roomQnt': roomQnt,
+    };
+  }
+}
+
+class ServiceDto {
+  final String serviceType; 
+
+  ServiceDto({
+    required this.serviceType,
+  });
+
+  factory ServiceDto.fromJson(Map<String, dynamic> json) {
+    return ServiceDto(
+      serviceType: json['serviceType'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'serviceType': serviceType,
+    };
+  }
+}
+
 class PaymentDetails {
   final int? id;
   final int? paymentInfoId;
@@ -539,6 +583,15 @@ class PaymentDetails {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final ContractorPayment? contractorPayment;
+  final bool? includesCleaningMaterial;
+  final bool? havePets;
+  final List<RoomsDto>? rooms;
+  final List<ServiceDto>? services;
+  final String? washingBasketType;
+  final String? ironingBasketType;
+  final int? ironingBasketQnt;
+  final int? washingBasketQnt;
+  final List<Address>? addressContractor;
 
   PaymentDetails({
     required this.id,
@@ -564,6 +617,15 @@ class PaymentDetails {
     this.createdAt,
     this.updatedAt,
     this.contractorPayment,
+    this.includesCleaningMaterial,
+    this.havePets,
+    this.rooms,
+    this.services,
+    this.washingBasketType,
+    this.ironingBasketType,
+    this.ironingBasketQnt,
+    this.washingBasketQnt,
+    this.addressContractor
   });
 
   factory PaymentDetails.fromJson(Map<String, dynamic> json) {
@@ -605,6 +667,21 @@ class PaymentDetails {
       contractorPayment: payment != null
           ? ContractorPayment.fromJson(payment)
           : null,
+      includesCleaningMaterial: contract['includesCleaningMaterial'] ?? false,
+      havePets: contract['havePets'] ?? false,
+     rooms: (contract['rooms'] as List<dynamic>?)
+          ?.map((room) => RoomsDto.fromJson(room as Map<String, dynamic>))
+          .toList(),
+      services: (contract['services'] as List<dynamic>?)
+          ?.map((service) => ServiceDto.fromJson(service as Map<String, dynamic>))
+          .toList(),
+      washingBasketType: contract['washingBasketType'],
+      ironingBasketType: contract['ironingBasketType'],
+      ironingBasketQnt: contract['ironingBasketQnt'],
+      washingBasketQnt: contract['washingBasketQnt'],
+      addressContractor: (contratante['address'] as List<dynamic>?)
+        ?.map((address) => Address.fromJson(address as Map<String, dynamic>))
+        .toList(),
     );
   }
 }
@@ -668,6 +745,3 @@ class PaymentAuditorship {
     );
   }
 }
-
-
-

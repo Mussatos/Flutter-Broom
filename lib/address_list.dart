@@ -117,56 +117,61 @@ class _AddressListState extends State<AddressList> {
               itemCount: address.length,
               itemBuilder: (context, index) {
                 Address userAddress = address[index];
-                return ListTile(
-                  titleTextStyle: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600),
-                  subtitleTextStyle: const TextStyle(
-                      color: Color(0xFF2ECC8F),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      decorationColor: Color(0xFF2ECC8F),
-                      decoration: TextDecoration.overline),
-                  title: Text(getListUserFormatedAddress(userAddress)),
-                  subtitle: Text(getListAddressMore(address[index])),
-                  trailing: PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert),
-                    onSelected: (value) async {
-                      if (value == 'edit') {
-                        final result = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                EditAddressForm(address: userAddress),
-                          ),
-                        );
+                return Card(
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListTile(
+                      titleTextStyle: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600),
+                      subtitleTextStyle: const TextStyle(
+                          color: Color(0xFF2ECC8F),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400),
+                      title: Text(getListUserFormatedAddress(userAddress)),
+                      subtitle: Text(getListAddressMore(address[index])),
+                      trailing: PopupMenuButton<String>(
+                        icon: Icon(Icons.more_vert),
+                        onSelected: (value) async {
+                          if (value == 'edit') {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    EditAddressForm(address: userAddress),
+                              ),
+                            );
 
-                        if (result != null && result is Address) {
-                          setState(() {
-                            address[index] = result;
-                          });
-                        }
-                      } else if (value == 'delete') {
-                        _showDeleteConfirmationDialog(context, userAddress.id,
-                            () => removeAddressAt(index));
-                      }
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return [
-                        PopupMenuItem(
-                          value: 'edit',
-                          child: Text('Editar'),
-                        ),
-                        PopupMenuItem(
-                          value: 'delete',
-                          child: Text('Deletar'),
-                        ),
-                      ];
-                    },
-                  ),
-                  onTap: () {},
-                );
+                            if (result != null && result is Address) {
+                              setState(() {
+                                address[index] = result;
+                              });
+                            }
+                          } else if (value == 'delete') {
+                            _showDeleteConfirmationDialog(context,
+                                userAddress.id, () => removeAddressAt(index));
+                          }
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            PopupMenuItem(
+                              value: 'edit',
+                              child: Text('Editar'),
+                            ),
+                            PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Deletar'),
+                            ),
+                          ];
+                        },
+                      ),
+                      onTap: () {},
+                    ));
               },
             );
           }

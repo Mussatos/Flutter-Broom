@@ -14,7 +14,7 @@ import 'package:broom_main_vscode/utils/routes.dart';
 
 void main() async {
   String stripePublishableKey =
-      "pk_test_51Plexm08Kz6lXWDqBKmn4sBXxiQkiH85DuU3BDV4Zi8Zib7qRKMHviqMn9wwTNiDimlf5TBJ3X2MhXVxQoN1itlm009JR1umMA";
+      "pk_live_51Plexm08Kz6lXWDqdCco7V1icaeMZTQBZJEdDt1jeZLOB38iG15vgJOSlvFb8YTF5Q2DQLzl7BqUx57WDJb9Tr2100ydrJ3YUw";
 
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = stripePublishableKey;

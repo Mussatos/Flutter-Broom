@@ -457,10 +457,10 @@ class _EditUserFormState extends State<EditUserForm> {
                     child: ElevatedButton(
                       onPressed: () async {
                         try {
-                          await saveUser();
                           if (_selectedFile != null) {
                             await sendImage(_selectedFile!);
                           }
+                          await saveUser();
                         } catch (e) {
                           print("Erro ao salvar ou enviar a imagem: $e");
                         }

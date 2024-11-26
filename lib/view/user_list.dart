@@ -110,7 +110,13 @@ class _UserListState extends State<UserList> {
               itemBuilder: (context, index) {
                 ListUsers usuario = usuarios[index];
                 addAddressForUser(usuario);
-                return ListTile(
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
                   titleTextStyle: const TextStyle(
                       color: Colors.black87,
                       fontSize: 20,
@@ -118,9 +124,7 @@ class _UserListState extends State<UserList> {
                   subtitleTextStyle: const TextStyle(
                       color: Color(0xFF2ECC8F),
                       fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      decorationColor: Color(0xFF2ECC8F),
-                      decoration: TextDecoration.overline),
+                      fontWeight: FontWeight.w400,),
                   leading: UserImage(user: usuario),
                   title: Text(getListUserFullName(usuario)),
                   subtitle: Text(getListUserFormatedAddress(address[index])),
@@ -136,6 +140,7 @@ class _UserListState extends State<UserList> {
                       ),
                     );
                   },
+                  ),
                 );
               },
             );

@@ -123,7 +123,13 @@ class _UsermeetingState extends State<Usermeeting> {
                   itemCount: dailys.length,
                   itemBuilder: (context, index) {
                     ListDailys daily = dailys[index];
-                    return ListTile(
+                    return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: ListTile(
                       titleTextStyle: const TextStyle(
                           color: Colors.black87,
                           fontSize: 20,
@@ -146,6 +152,7 @@ class _UsermeetingState extends State<Usermeeting> {
                                 builder: (context) => Meetingview(
                                     agendamentoId: daily.agendamentoId!)));
                       },
+                    ),
                     );
                   },
                 );

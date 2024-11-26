@@ -197,10 +197,10 @@ class _MeetingviewState extends State<Meetingview> {
                   if (snapshot.data?[0] != null) {
                     dailyList = snapshot.data![0] as PaymentDetails;
                   }
-                  final address = dailyList!.addressContractor![0]; 
+                  final address = dailyList!.addressContractor![0];
                   return isPendingPayment(snapshot.data![1] as int)
                       ? Center(
-                        child: Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
@@ -317,76 +317,80 @@ class _MeetingviewState extends State<Meetingview> {
                                         ),
                                         const Divider(
                                             thickness: 1, color: Colors.grey),
-                                        const SizedBox(height: 10),
-                                        const Text(
-                                          'Detalhes do Agendamento',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        _buildDetailRow('Contratante:',
-                                            '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
-                                        _buildDetailRow('Diarista:',
-                                            '${dailyList?.diaristFirstName} ${dailyList?.diaristLastName}'),
-                                        _buildDetailRow('Tipo de Limpeza:',
-                                            dailyList?.cleaningType ?? ''),
-                                        _buildDetailRow(
-                                            'Status do Contrato:',
-                                            getFormattedStatus(dailyList
-                                                    ?.contractStatus) ??
-                                                ''),
-                                        _buildDetailRow('Valor:',
-                                            'R\$ ${dailyList?.contractPrice?.toStringAsFixed(2)}'),
-                                        _buildDetailRow('Status do Pagamento:',
-                                            dailyList?.paymentStatus ?? ''),
-                                        _buildDetailRow('Mensagem:',
-                                            dailyList?.message ?? ''),
-                                        _buildDetailRow(
-                                          'Data:',
-                                          dailyList?.agendamentoDate != null
-                                              ? DateFormat('dd/MM/yyy').format(
-                                                  dailyList!.agendamentoDate!)
-                                              : 'Data não disponível',
-                                        ), 
-                                   if (dailyList?.addressContractor != null && dailyList!.addressContractor!.isNotEmpty) ...[
+                                      ],
+                                      const SizedBox(height: 10),
+                                      const Text(
+                                        'Detalhes do Agendamento',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      _buildDetailRow('Contratante:',
+                                          '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
+                                      _buildDetailRow('Diarista:',
+                                          '${dailyList?.diaristFirstName} ${dailyList?.diaristLastName}'),
+                                      _buildDetailRow('Tipo de Limpeza:',
+                                          dailyList?.cleaningType ?? ''),
+                                      _buildDetailRow(
+                                          'Status do Contrato:',
+                                          getFormattedStatus(
+                                                  dailyList?.contractStatus) ??
+                                              ''),
+                                      _buildDetailRow('Valor:',
+                                          'R\$ ${dailyList?.contractPrice?.toStringAsFixed(2)}'),
+                                      _buildDetailRow('Status do Pagamento:',
+                                          dailyList?.paymentStatus ?? ''),
+                                      _buildDetailRow('Mensagem:',
+                                          dailyList?.message ?? ''),
+                                      _buildDetailRow(
+                                        'Data:',
+                                        dailyList?.agendamentoDate != null
+                                            ? DateFormat('dd/MM/yyy').format(
+                                                dailyList!.agendamentoDate!)
+                                            : 'Data não disponível',
+                                      ),
+                                      if (dailyList?.addressContractor !=
+                                              null &&
+                                          dailyList!.addressContractor!
+                                              .isNotEmpty) ...[
                                         const SizedBox(height: 10),
                                         Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Endereço:',
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  'Rua: ${address.street}, ${address.number}',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  'Bairro: ${address.neighborhood}',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  'Cidade: ${address.city}, Estado: ${address.state}',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Endereço:',
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Rua: ${address.street}, ${address.number}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Bairro: ${address.neighborhood}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Cidade: ${address.city}, Estado: ${address.state}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ],
-                                  ],
                                   ),
                                 ),
                               ),

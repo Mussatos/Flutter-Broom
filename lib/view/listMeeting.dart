@@ -114,48 +114,65 @@ class _UsermeetingState extends State<Usermeeting> {
             future: dailyList,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
+                return const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
               } else if (snapshot.hasError) {
-                return const Center(child: Text('Erro ao carregar usuários'));
+                return const Center(
+                    child: Text(
+                  'Erro ao carregar usuários',
+                ));
               } else {
                 List<ListDailys> dailys = snapshot.data!;
-                return ListView.builder(
-                  itemCount: dailys.length,
-                  itemBuilder: (context, index) {
-                    ListDailys daily = dailys[index];
-                    return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: ListTile(
-                      titleTextStyle: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600),
-                      subtitleTextStyle: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      title: Text(getDataMeeting(daily)),
-                      subtitle: getStatus(daily),
-                      trailing: Icon(
-                        Icons.event_note,
-                        color: Color(0xFF2ECC8F),
-                        size: 30,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Meetingview(
-                                    agendamentoId: daily.agendamentoId!)));
-                      },
-                    ),
-                    );
-                  },
-                );
+                return dailys.isEmpty
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            'Parece que você ainda não tem nenhum agendamento realizado.',
+                            style: TextStyle(fontSize: 20),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: dailys.length,
+                        itemBuilder: (context, index) {
+                          ListDailys daily = dailys[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              titleTextStyle: const TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600),
+                              subtitleTextStyle: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              title: Text(getDataMeeting(daily)),
+                              subtitle: getStatus(daily),
+                              trailing: Icon(
+                                Icons.event_note,
+                                color: Color(0xFF2ECC8F),
+                                size: 30,
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Meetingview(
+                                            agendamentoId:
+                                                daily.agendamentoId!)));
+                              },
+                            ),
+                          );
+                        },
+                      );
               }
             },
           ),

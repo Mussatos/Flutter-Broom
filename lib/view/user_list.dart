@@ -73,9 +73,13 @@ class _UserListState extends State<UserList> {
     }
 
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text('Listagem de usuários',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w600)),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -87,20 +91,21 @@ class _UserListState extends State<UserList> {
           ),
           IconButton(
             icon: Icon(Icons.settings),
-            color: Colors.grey.shade800,
+            color: Colors.white,
             onPressed: () {
               GoRouter.of(context).push('/account/settings');
             },
           ),
         ],
         elevation: 0,
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.black,
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: handleUsuarios,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar usuários'));
           } else {
@@ -111,35 +116,38 @@ class _UserListState extends State<UserList> {
                 ListUsers usuario = usuarios[index];
                 addAddressForUser(usuario);
                 return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   elevation: 4,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
+                  color: Colors.white,
                   child: ListTile(
-                  titleTextStyle: const TextStyle(
-                      color: Colors.black87,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600),
-                  subtitleTextStyle: const TextStyle(
+                    titleTextStyle: const TextStyle(
+                        color: Colors.black87,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600),
+                    subtitleTextStyle: const TextStyle(
                       color: Color(0xFF2ECC8F),
                       fontSize: 14,
-                      fontWeight: FontWeight.w400,),
-                  leading: UserImage(user: usuario),
-                  title: Text(getListUserFullName(usuario)),
-                  subtitle: Text(getListUserFormatedAddress(address[index])),
-                  trailing: FavoriteButton(
-                    isFavorite: usuario.isFavorite,
-                    callback: () => changeFavorite(usuario),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserView(usuario: usuario),
-                      ),
-                    );
-                  },
+                      fontWeight: FontWeight.w400,
+                    ),
+                    leading: UserImage(user: usuario),
+                    title: Text(getListUserFullName(usuario)),
+                    subtitle: Text(getListUserFormatedAddress(address[index])),
+                    trailing: FavoriteButton(
+                      isFavorite: usuario.isFavorite,
+                      callback: () => changeFavorite(usuario),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserView(usuario: usuario),
+                        ),
+                      );
+                    },
                   ),
                 );
               },

@@ -67,9 +67,8 @@ class _MeetingviewState extends State<Meetingview> {
             ));
   }
 
-  bool isPendingPayment(int profileId) {
-    return dailyList!.contractorPayment!.status == 'processando' &&
-        profileId == 1;
+  bool isPendingPayment() {
+    return dailyList!.contractorPayment!.status == 'processando';
   }
 
   Future<void> retrieveCheckout() async {
@@ -161,12 +160,13 @@ class _MeetingviewState extends State<Meetingview> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Color(0xFF2ECC8F),
         appBar: AppBar(
           title: const Text(
             'Informações do contrato',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
           ),
-          backgroundColor: const Color(0xFF2ECC8F),
+          backgroundColor: Colors.black,
           leading: IconButton(
             onPressed: () {
               GoRouter.of(context).push('/meeting-page');
@@ -174,7 +174,7 @@ class _MeetingviewState extends State<Meetingview> {
             icon: const Icon(
               Icons.arrow_back_ios,
               size: 24,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
         ),
@@ -186,7 +186,9 @@ class _MeetingviewState extends State<Meetingview> {
               }),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                      child:
+                          CircularProgressIndicator(color: Color(0xFF2ECC8F)));
                 } else if (snapshot.hasError) {
                   return const Center(
                       child: Text('Erro ao carregar agendamentos'));
@@ -197,9 +199,11 @@ class _MeetingviewState extends State<Meetingview> {
                   if (snapshot.data?[0] != null) {
                     dailyList = snapshot.data![0] as PaymentDetails;
                   }
-                  return isPendingPayment(snapshot.data![1] as int)
+                  final address = dailyList!.addressContractor;
+                  final userProfileId = snapshot.data![1];
+                  return isPendingPayment() && userProfileId == 1
                       ? Center(
-                        child: Column(
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Text(
@@ -239,7 +243,7 @@ class _MeetingviewState extends State<Meetingview> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       if (snapshot.data?[1] != null &&
-                                          snapshot.data![1] == 1) ...[
+                                          userProfileId == 1) ...[
                                         const Text(
                                           'Ações',
                                           style: TextStyle(
@@ -316,81 +320,113 @@ class _MeetingviewState extends State<Meetingview> {
                                         ),
                                         const Divider(
                                             thickness: 1, color: Colors.grey),
-                                        const SizedBox(height: 10),
-                                        const Text(
-                                          'Detalhes do Agendamento',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600),
+                                      ],
+                                      if (snapshot.data?[1] != null &&
+                                          userProfileId == 2 &&
+                                          !isPendingPayment()) ...[
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            dailyList!.finished! ||
+                                                    dailyList!.refund!
+                                                ? null
+                                                : await _handleRefund(context);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                dailyList!.finished! ||
+                                                        dailyList!.refund!
+                                                    ? const Color(0xFFBDC3C7)
+                                                    : const Color(0xFFE74C3C),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 24,
+                                              vertical: 12,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
+                                          child: const Text(
+                                            "Cancelar",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                        const SizedBox(height: 5),
-                                        _buildDetailRow('Contratante:',
-                                            '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
-                                        _buildDetailRow('Diarista:',
-                                            '${dailyList?.diaristFirstName} ${dailyList?.diaristLastName}'),
-                                        _buildDetailRow('Tipo de Limpeza:',
-                                            dailyList?.cleaningType ?? ''),
-                                        _buildDetailRow(
-                                            'Status do Contrato:',
-                                            getFormattedStatus(dailyList
-                                                    ?.contractStatus) ??
-                                                ''),
-                                        _buildDetailRow('Valor:',
-                                            'R\$ ${dailyList?.contractPrice?.toStringAsFixed(2)}'),
-                                        _buildDetailRow('Status do Pagamento:',
-                                            dailyList?.paymentStatus ?? ''),
-                                        _buildDetailRow('Mensagem:',
-                                            dailyList?.message ?? ''),
-                                        _buildDetailRow(
-                                          'Data:',
-                                          dailyList?.agendamentoDate != null
-                                              ? DateFormat('dd/MM/yyy').format(
-                                                  dailyList!.agendamentoDate!)
-                                              : 'Data não disponível',
-                                        ), 
-                                        if (dailyList?.addressContractor !=
-                                                null &&
-                                            dailyList!.addressContractor!
-                                                .isNotEmpty) ...[
-                                          const SizedBox(height: 10),
-                                          ...dailyList!.addressContractor!
-                                              .map((address) {
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Endereço:',
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  'Rua: ${address.street}, ${address.number}',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  'Bairro: ${address.neighborhood}',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  'Cidade: ${address.city}, Estado: ${address.state}',
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            );
-                                          }).toList(),
-                                        ],
+                                        const Divider(
+                                            thickness: 1, color: Colors.grey),
+                                      ],
+                                      const SizedBox(height: 10),
+                                      const Text(
+                                        'Detalhes do Agendamento',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      _buildDetailRow('Contratante:',
+                                          '${dailyList?.contractorFirstName} ${dailyList?.contractorLastName}'),
+                                      _buildDetailRow('Diarista:',
+                                          '${dailyList?.diaristFirstName} ${dailyList?.diaristLastName}'),
+                                      _buildDetailRow('Tipo de Limpeza:',
+                                          dailyList?.cleaningType ?? ''),
+                                      _buildDetailRow(
+                                          'Status do Contrato:',
+                                          getFormattedStatus(
+                                                  dailyList?.contractStatus) ??
+                                              ''),
+                                      _buildDetailRow('Valor:',
+                                          'R\$ ${dailyList?.contractPrice?.toStringAsFixed(2)}'),
+                                      _buildDetailRow('Status do Pagamento:',
+                                          dailyList?.paymentStatus ?? ''),
+                                      _buildDetailRow('Mensagem:',
+                                          dailyList?.message ?? ''),
+                                      _buildDetailRow(
+                                        'Data:',
+                                        dailyList?.agendamentoDate != null
+                                            ? DateFormat('dd/MM/yyy').format(
+                                                dailyList!.agendamentoDate!)
+                                            : 'Data não disponível',
+                                      ),
+                                      if (dailyList?.addressContractor !=
+                                              null &&
+                                          dailyList!.addressContractor!
+                                              .isNotEmpty) ...[
+                                        const SizedBox(height: 10),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Endereço:',
+                                              style: const TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Rua: ${address![0].street}, ${address[0].number}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Bairro: ${address[0].neighborhood}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Cidade: ${address[0].city}, Estado: ${address[0].state}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ],
                                   ),

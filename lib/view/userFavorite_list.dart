@@ -66,9 +66,10 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text('Listagem de favoritos',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white)),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -76,17 +77,17 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
         elevation: 0,
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.black,
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: favorites,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar usuários'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

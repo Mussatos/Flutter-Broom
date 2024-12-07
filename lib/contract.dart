@@ -436,12 +436,14 @@ class _ContractState extends State<Contract> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text(
           'Contrato',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
         ),
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.black,
         leading: IconButton(
           onPressed: () async {
             handleDeleteAgendamento();
@@ -450,7 +452,7 @@ class _ContractState extends State<Contract> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -475,7 +477,7 @@ class _ContractState extends State<Contract> {
               child: Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(35.0),
-                color: Colors.white,
+                color: Color(0xFF2ECC8F),
                 child: Column(
                   children: [
                     Text(
@@ -492,6 +494,12 @@ class _ContractState extends State<Contract> {
                             decoration: InputDecoration(
                                 labelText: 'Quarto',
                                 border: OutlineInputBorder(),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
                                 errorText: invalidRooms['bedroom']!
                                     ? 'Valor inválido'
                                     : null),
@@ -505,6 +513,12 @@ class _ContractState extends State<Contract> {
                             decoration: InputDecoration(
                                 labelText: 'Cozinha',
                                 border: OutlineInputBorder(),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
                                 errorText: invalidRooms['kitchen']!
                                     ? 'Valor inválido'
                                     : null),
@@ -522,6 +536,12 @@ class _ContractState extends State<Contract> {
                             decoration: InputDecoration(
                                 labelText: 'Banheiro',
                                 border: OutlineInputBorder(),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
                                 errorText: invalidRooms['toilet']!
                                     ? 'Valor inválido'
                                     : null),
@@ -535,6 +555,12 @@ class _ContractState extends State<Contract> {
                             decoration: InputDecoration(
                                 labelText: 'Sala',
                                 border: OutlineInputBorder(),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.black),
+                                ),
                                 errorText: invalidRooms['room']!
                                     ? 'Valor inválido'
                                     : null),
@@ -550,7 +576,7 @@ class _ContractState extends State<Contract> {
                           children: [
                             Checkbox(
                               value: petsController,
-                              activeColor: Colors.greenAccent,
+                              activeColor: Colors.black,
                               onChanged: (bool? value) {
                                 setState(() {
                                   petsController = value!;
@@ -564,7 +590,7 @@ class _ContractState extends State<Contract> {
                           children: [
                             Checkbox(
                               value: materialController,
-                              activeColor: Colors.greenAccent,
+                              activeColor: Colors.black,
                               onChanged: (bool? value) {
                                 setState(() {
                                   materialController = value!;
@@ -595,7 +621,7 @@ class _ContractState extends State<Contract> {
                                   ),
                                 ),
                                 value: serviceTypeSelected[index],
-                                activeColor: Colors.greenAccent,
+                                activeColor: Colors.black,
                                 onChanged: (bool? value) {
                                   setState(() {
                                     serviceTypeSelected[index] = value!;
@@ -609,9 +635,9 @@ class _ContractState extends State<Contract> {
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
+                                    border: Border.all(color: Colors.black),
                                     borderRadius: BorderRadius.circular(4),
-                                    color: Colors.white,
+                                    color: const Color(0xFF2ECC8F),
                                   ),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16),
@@ -627,7 +653,7 @@ class _ContractState extends State<Contract> {
                                         Icons.arrow_drop_down,
                                         color: Colors.black,
                                       ),
-                                      dropdownColor: Colors.white,
+                                      dropdownColor: const Color(0xFF2ECC8F),
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           cleanTypeSelected = newValue!;
@@ -649,9 +675,9 @@ class _ContractState extends State<Contract> {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
+                                      border: Border.all(color: Colors.black),
                                       borderRadius: BorderRadius.circular(4),
-                                      color: Colors.white,
+                                      color: const Color(0xFF2ECC8F),
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16),
@@ -667,7 +693,7 @@ class _ContractState extends State<Contract> {
                                           Icons.arrow_drop_down,
                                           color: Colors.black,
                                         ),
-                                        dropdownColor: Colors.white,
+                                        dropdownColor: const Color(0xFF2ECC8F),
                                         onChanged: (String? newValue) {
                                           setState(() {
                                             cleanBasketTypeSelected = newValue!;
@@ -691,6 +717,14 @@ class _ContractState extends State<Contract> {
                                       labelText:
                                           'Quantidade de cestos para lavar',
                                       border: OutlineInputBorder(),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.black),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.black),
+                                      ),
                                       errorText: !_isBasketCleanQuantityValid
                                           ? 'Valor inválido'
                                           : null,
@@ -704,9 +738,9 @@ class _ContractState extends State<Contract> {
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
+                                      border: Border.all(color: Colors.black),
                                       borderRadius: BorderRadius.circular(4),
-                                      color: Colors.white,
+                                      color: const Color(0xFF2ECC8F),
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16),
@@ -722,7 +756,7 @@ class _ContractState extends State<Contract> {
                                           Icons.arrow_drop_down,
                                           color: Colors.black,
                                         ),
-                                        dropdownColor: Colors.white,
+                                        dropdownColor: const Color(0xFF2ECC8F),
                                         onChanged: (String? newValue) {
                                           setState(() {
                                             ironingBasketTypeSelected =
@@ -750,6 +784,14 @@ class _ContractState extends State<Contract> {
                                           ? 'Valor inválido'
                                           : null,
                                       border: OutlineInputBorder(),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.black),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.black),
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -793,6 +835,12 @@ class _ContractState extends State<Contract> {
                       decoration: InputDecoration(
                         labelText: 'Observação',
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
                       ),
                     ),
                     SizedBox(height: 20),
@@ -832,7 +880,7 @@ class _ContractState extends State<Contract> {
                         child: Text('Pagar e enviar contrato'),
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Color(0xFF2ECC8F)),
+                              MaterialStateProperty.all(Colors.black),
                           foregroundColor:
                               MaterialStateProperty.all(Colors.white),
                         ),

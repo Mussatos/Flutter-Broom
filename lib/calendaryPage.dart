@@ -21,16 +21,105 @@ class _CalendarypageState extends State<Calendarypage> {
   int? idDoContract;
   Future<List<dynamic>>? listTypeDailyRate;
   List<dynamic>? ListDailyType;
+  bool loading = false;
+  late List<dynamic> diaristDatesAlreadyAgended = [];
+  late List<dynamic> contractorDatesAlreadyAgended = [];
+  late List<dynamic> serviceByDiaristDate = [];
+
   bool hasAgended = false;
 
   Future<void> fetchContract() async {
     idDoContract = await autentication.getUserId();
   }
 
+  Future<void> _loadDisabledDates() async {
+    setState(() {
+      loading = true;
+    });
+    List<dynamic> fetchedContractorDates = await fetchAgendamentoByContractor();
+    List<dynamic> fetchedDates =
+        await fetchAgendamentoByDiarist(widget.idDoUser);
+    List<dynamic> fetchedServicesByDate =
+        await fetchAgendamentoServiceByDiarist(widget.idDoUser);
+    setState(() {
+      contractorDatesAlreadyAgended = fetchedContractorDates;
+      diaristDatesAlreadyAgended = fetchedDates;
+      serviceByDiaristDate = fetchedServicesByDate;
+      loading = false;
+    });
+  }
+
+  List<DropdownMenuItem<String>>? getDropDownItens() {
+    List<dynamic> service = serviceByDiaristDate.map((dateService) {
+      if (dateService['data'].toString().replaceAll('T', ' ') ==
+          _selectedDay.toString()) {
+        return dateService['tipoDiaria'];
+      }
+    }).toList();
+
+    service.removeWhere((service) => service == null);
+
+    if (service.isNotEmpty) {
+      final list = ListDailyType!.map((option) {
+        if (option['value'] != service[0] &&
+            option['value'] != 'diaria_completa') {
+          return DropdownMenuItem<String>(
+            value: option['value'],
+            child: Text(option['text']),
+          );
+        }
+        return const DropdownMenuItem<String>(
+          value: '',
+          child: Text(''),
+        );
+      }).toList();
+
+      list.removeWhere((list) => list.value!.isEmpty);
+      return list;
+    } else {
+      return ListDailyType!
+          .map((option) => DropdownMenuItem<String>(
+                value: option['value'],
+                child: Text(option['text']),
+              ))
+          .toList();
+    }
+  }
+
+  String getTypeServiceByDay() {
+    List<dynamic> service = serviceByDiaristDate.map((dateService) {
+      if (dateService['data'].toString().replaceAll('T', ' ') ==
+          _selectedDay.toString()) {
+        return dateService['tipoDiaria'];
+      }
+    }).toList();
+
+    service.removeWhere((service) => service == null);
+    return service.isEmpty ? '' : service[0];
+  }
+
+  bool getEnabledDay(DateTime day) {
+    return diaristDatesAlreadyAgended.contains(
+            DateTime.utc(day.year, day.month, day.day).toIso8601String()) ||
+        contractorDatesAlreadyAgended.contains(
+            DateTime.utc(day.year, day.month, day.day).toIso8601String());
+  }
+
+  bool isDisabledItem(String item) {
+    String typeDay = getTypeServiceByDay();
+    bool val = false;
+
+    if (typeDay.isNotEmpty) {
+      val = item == typeDay || item == 'diaria_completa';
+    }
+    return val;
+  }
+
   @override
   void initState() {
     super.initState();
     listTypeDailyRate = fetchDailyRateType();
+    _loadDisabledDates();
   }
 
   Future<void> _saveEventToBackend({
@@ -82,12 +171,14 @@ class _CalendarypageState extends State<Calendarypage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text(
           'Agendamento',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF2ECC8F),
+        backgroundColor: Colors.black,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -95,7 +186,7 @@ class _CalendarypageState extends State<Calendarypage> {
           icon: const Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -103,7 +194,8 @@ class _CalendarypageState extends State<Calendarypage> {
           future: listTypeDailyRate,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.white));
             } else if (snapshot.hasError) {
               return const Center(
                   child: Text('Erro ao carregar o agendamento'));
@@ -111,33 +203,69 @@ class _CalendarypageState extends State<Calendarypage> {
               ListDailyType = snapshot.data;
               return Column(
                 children: [
-                  TableCalendar(
-                    firstDay: DateTime.now(),
-                    lastDay: DateTime.utc(2030, 3, 14),
-                    focusedDay: _focusedDay,
-                    calendarFormat: _calendarFormat,
-                    selectedDayPredicate: (day) {
-                      return isSameDay(_selectedDay, day);
-                    },
-                    onDaySelected: (selectedDay, focusedDay) {
-                      if (!isSameDay(_selectedDay, selectedDay)) {
-                        setState(() {
-                          _selectedDay = selectedDay;
-                          _focusedDay = focusedDay;
-                        });
-                      }
-                    },
-                    onFormatChanged: (format) {
-                      if (_calendarFormat != format) {
-                        setState(() {
-                          _calendarFormat = format;
-                        });
-                      }
-                    },
-                    onPageChanged: (focusedDay) {
-                      _focusedDay = focusedDay;
-                    },
-                  ),
+                  loading
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                color: Color(0xFF2ECC8F),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text('Carregando datas...',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2ECC8F)))
+                            ],
+                          ),
+                        )
+                      : TableCalendar(
+                          firstDay: DateTime.now(),
+                          lastDay: DateTime.utc(2030, 3, 14),
+                          focusedDay: _focusedDay,
+                          calendarFormat: _calendarFormat,
+                          enabledDayPredicate: (day) => !getEnabledDay(day),
+                          selectedDayPredicate: (day) {
+                            return isSameDay(_selectedDay, day);
+                          },
+                          onDaySelected: (selectedDay, focusedDay) {
+                            if (!isSameDay(_selectedDay, selectedDay)) {
+                              setState(() {
+                                _selectedDay = selectedDay;
+                                _focusedDay = focusedDay;
+                              });
+                            }
+                          },
+                          onFormatChanged: (format) {
+                            if (_calendarFormat != format) {
+                              setState(() {
+                                _calendarFormat = format;
+                              });
+                            }
+                          },
+                          onPageChanged: (focusedDay) {
+                            _focusedDay = focusedDay;
+                          },
+                          calendarStyle: const CalendarStyle(
+                              defaultTextStyle: TextStyle(color: Colors.black),
+                              selectedTextStyle: TextStyle(color: Colors.white),
+                              todayTextStyle: TextStyle(color: Colors.white),
+                              disabledTextStyle: TextStyle(
+                                  color: Color.fromARGB(255, 66, 66, 66)),
+                              selectedDecoration: BoxDecoration(
+                                color: Colors.black,
+                                shape: BoxShape.circle,
+                              ),
+                              weekendTextStyle: TextStyle(color: Colors.black),
+                              todayDecoration: BoxDecoration(
+                                  color: Colors.blue, shape: BoxShape.circle),
+                              outsideTextStyle: TextStyle(color: Colors.black)
+                          ),
+                              
+                        ),
                   const SizedBox(height: 16),
                   if (_selectedDay != null) ...[
                     Padding(
@@ -146,14 +274,33 @@ class _CalendarypageState extends State<Calendarypage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Data Selecionada: ${_selectedDay!.toLocal()}"
-                                .split(' ')[0],
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                              "Diária: ${_selectedDay!.toLocal()}"
+                                  .split(' ')[0],
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                           DropdownButton<String>(
                             value: _selectedOption,
+                            focusColor:const Color(0xFF2ECC8F) ,
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.black,
+                            ),
+                            dropdownColor: const Color(0xFF2ECC8F),
+                            
                             onChanged: (value) {
+                              final service = getTypeServiceByDay();
+                              if (service.isNotEmpty) {
+                                setState(() {
+                                  _selectedOption = ListDailyType!
+                                      .where((type) =>
+                                          type['value'] != service &&
+                                          type['value'] != 'diaria_completa')
+                                      .toList()[0]['value'];
+                                });
+                                return;
+                              }
+
                               setState(() {
                                 _selectedOption = value!;
                               });
@@ -161,9 +308,17 @@ class _CalendarypageState extends State<Calendarypage> {
                             items: ListDailyType!
                                 .map((option) => DropdownMenuItem<String>(
                                       value: option['value'],
-                                      child: Text(option['text']),
+                                      child: Text(
+                                        option['text'],
+                                        style: TextStyle(
+                                            color:
+                                                isDisabledItem(option['value'])
+                                                    ? Colors.grey
+                                                    : null),
+                                      ),
                                     ))
                                 .toList(),
+                            underline: const SizedBox(),
                           ),
                         ],
                       ),
@@ -177,7 +332,6 @@ class _CalendarypageState extends State<Calendarypage> {
                             type: _selectedOption!,
                             idDoUser: widget.idDoUser,
                           );
-
                           hasAgended ? Navigator.pop(context) : null;
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -188,7 +342,7 @@ class _CalendarypageState extends State<Calendarypage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2ECC8F),
+                        backgroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(
                             vertical: 16, horizontal: 32),
                       ),

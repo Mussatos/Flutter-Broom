@@ -1,6 +1,5 @@
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/resetPassword.dart';
-import 'package:broom_main_vscode/signup.dart';
 import 'package:broom_main_vscode/ui-components/modal.dart';
 import 'package:broom_main_vscode/utils/validators.dart';
 import 'package:flutter/material.dart';
@@ -185,7 +184,7 @@ class _ConfirmEmailState extends State<ConfirmEmail> {
                       Text("Ainda não possui uma conta?"),
                       GestureDetector(
                         child: Text(
-                          " Sign up",
+                          " Cadastre-se",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,

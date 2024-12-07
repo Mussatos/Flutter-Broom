@@ -28,7 +28,7 @@ class _UserImageState extends State<UserImage> {
       future: userImage,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator(color: Color(0xFF2ECC8F));
         } else if (snapshot.hasError) {
           return const UserIcon();
         } else if (snapshot.hasData) {
@@ -54,7 +54,7 @@ class UserIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 80,
-      decoration: const BoxDecoration(shape: BoxShape.circle),
+      decoration: const BoxDecoration(shape: BoxShape.rectangle,),
       child: const CircleAvatar(child: Icon(Icons.person)),
     );
   }

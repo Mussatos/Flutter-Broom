@@ -1,11 +1,10 @@
 import 'package:broom_main_vscode/Login.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/resetPassword.dart';
-import 'package:broom_main_vscode/user_form.dart';
+import 'package:broom_main_vscode/signUp.dart';
 import 'package:broom_main_vscode/user_provider.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
-import 'package:broom_main_vscode/signup.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
@@ -108,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),
                       child: Text(
-                        "Login",
+                        "Entrar",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
@@ -126,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                           side: BorderSide(color: Colors.black),
                           borderRadius: BorderRadius.circular(50)),
                       child: Text(
-                        "Sign up",
+                        "Cadastrar",
                         style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,

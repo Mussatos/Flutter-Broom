@@ -28,6 +28,10 @@ class _AccountSettingsState extends State<AccountSettings> {
     GoRouter.of(context).push('/favorite-page');
   }
 
+  void goToMeetingPage(context){
+    GoRouter.of(context).push('/meeting-page');
+  }
+
   void confirmLogout(context) {
     showDialog(
         context: context,
@@ -47,12 +51,13 @@ class _AccountSettingsState extends State<AccountSettings> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+          backgroundColor: const Color(0xFF2ECC8F),
           appBar: AppBar(
             title: const Text(
               'Configurações',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
             ),
-            backgroundColor: const Color(0xFF2ECC8F),
+            backgroundColor: Colors.black,
             leading: IconButton(
               onPressed: () {
                 GoRouter.of(context).push('/List');
@@ -60,7 +65,7 @@ class _AccountSettingsState extends State<AccountSettings> {
               icon: const Icon(
                 Icons.arrow_back_ios,
                 size: 24,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -82,42 +87,15 @@ class _AccountSettingsState extends State<AccountSettings> {
                         SizedBox(
                           height: 10,
                         ),
-                        SizedBox(
-                          width: 250,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              GoRouter.of(context).push('/meeting-page');
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2ECC8F),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text(
-                                  'Meus Agendamentos',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Icon(
-                                  color: Colors.white,
-                                  Icons.calendar_today_rounded,
-                                ),
-                              ],
-                            ),
-                          ),
+                        ButtonIcon(
+                          btnText: "Meus agendamentos", 
+                          btnIcon: Icons.calendar_month, 
+                          function: () => goToMeetingPage(context)
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 10
                         ),
-                        if (snapshot.data == 2)
+                        if (snapshot.data == 2)...[
                           ButtonIcon(
                             btnIcon: Icons.monetization_on_outlined,
                             btnText: 'Informações bancárias',
@@ -125,11 +103,13 @@ class _AccountSettingsState extends State<AccountSettings> {
                           ),
                         SizedBox(
                           height: 10,
-                        ),
+                        ),  
+                        ],
                         ButtonIcon(
                             btnText: 'Sair',
                             btnIcon: Icons.logout,
-                            function: () => confirmLogout(context)),
+                            function: () => confirmLogout(context)
+                        ),
                       ],
                     ),
                   ],

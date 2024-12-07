@@ -22,13 +22,15 @@ class UserView extends StatelessWidget {
         ? 'Endereço: Bairro ${address['neighborhood']}, ${address['city']}, ${address['state']}'
         : 'Endereço não cadastrado';
 
+  
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text(
           'Informações do Usuário',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
         ),
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.black,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -36,7 +38,7 @@ class UserView extends StatelessWidget {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -49,7 +51,8 @@ class UserView extends StatelessWidget {
         ]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar usuários'));
           } else if (!snapshot.hasData) {
@@ -64,6 +67,7 @@ class UserView extends StatelessWidget {
             if (userData == null) {
               return const Center(child: Text('Erro ao carregar dados'));
             }
+            bool isAvailable = userData.wantService;
 
             return SingleChildScrollView(
               child: Padding(
@@ -87,22 +91,35 @@ class UserView extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 10),
-                    Text(
-                      'Serviço: ${userData.wantService ? "Está à procura." : "Não está necessitando."}',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade700,
+                    if (profileId == 1) ...[
+                      Text(
+                        'Serviço: ${userData.wantService ? "Está à procura." : "Não está necessitando."}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade900,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 10),
+                      SizedBox(height: 10),
+                    ] else if (profileId == 2) ...[
+                      Text(
+                        'Disponível: ${userData.wantService ? "Sim." : "Não."}',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade900,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 10),
+                    ],
                     Text(
                       formatAddress,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: Colors.grey.shade600,
+                        color: Colors.grey.shade900,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -124,7 +141,7 @@ class UserView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: Colors.grey.shade600,
+                        color: Colors.grey.shade900,
                         height: 1.5,
                       ),
                       textAlign: TextAlign.justify,
@@ -134,7 +151,7 @@ class UserView extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
+                          Icon(Icons.build, color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Procurando serviço:',
@@ -155,7 +172,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                       ),
                       SizedBox(height: 15),
@@ -163,7 +180,7 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.access_time,
-                              color: Color(0xFF2ECC8F), size: 20),
+                              color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Horário de preferência:',
@@ -184,7 +201,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                       ),
                       SizedBox(height: 15),
@@ -192,7 +209,7 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.attach_money,
-                              color: Color(0xFF2ECC8F), size: 20),
+                              color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Valor que estou disposto a pagar:',
@@ -213,7 +230,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                       ),
                       SizedBox(height: 15),
@@ -223,7 +240,7 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.pin_drop,
-                              color: Color(0xFF2ECC8F), size: 20),
+                              color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Atendo nas seguintes regiões:',
@@ -251,7 +268,7 @@ class UserView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade700,
+                              color: Colors.grey.shade900,
                             ),
                           ),
                         ],
@@ -261,7 +278,7 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.cleaning_services,
-                              color: Color(0xFF2ECC8F), size: 20),
+                              color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Especialidades:',
@@ -288,7 +305,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                       ),
                     ],
@@ -304,38 +321,43 @@ class UserView extends StatelessWidget {
                     */
                         if (profileId == 1) ...[
                           ElevatedButton.icon(
-                            onPressed: () async {
-                              final phoneNumber = userData.cellphoneNumber;
-                              if (phoneNumber != null &&
-                                  phoneNumber.isNotEmpty) {
-                                final whatsappUrl =
-                                    'https://wa.me/$phoneNumber';
-                                if (await canLaunch(whatsappUrl)) {
-                                  await launch(whatsappUrl);
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Não foi possível abrir o WhatsApp.'),
-                                    ),
-                                  );
-                                }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Número de telefone não cadastrado.'),
-                                  ),
-                                );
-                              }
-                            },
+                            onPressed: isAvailable
+                                ? () async {
+                                    final phoneNumber =
+                                        userData.cellphoneNumber;
+                                    if (phoneNumber != null &&
+                                        phoneNumber.isNotEmpty) {
+                                      final whatsappUrl =
+                                          'https://wa.me/$phoneNumber';
+                                      if (await canLaunch(whatsappUrl)) {
+                                        await launch(whatsappUrl);
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                'Não foi possível abrir o WhatsApp.'),
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Número de telefone não cadastrado.'),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                : () {},
                             icon: Icon(Icons.message, color: Colors.white),
                             label: Text(
                               'Contatar pelo WhatsApp',
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF2ECC8F),
+                              backgroundColor: Colors.black,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -345,26 +367,30 @@ class UserView extends StatelessWidget {
                           )
                         ] else if (profileId == 2) ...[
                           ElevatedButton.icon(
-                            onPressed: () async {
-                              final phoneNumber = userData.cellphoneNumber;
-                              if (phoneNumber.isNotEmpty) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Contract(
-                                      idDoUser: usuario.id,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Número de telefone não cadastrado.'),
-                                  ),
-                                );
-                              }
-                            },
+                            onPressed: isAvailable
+                                ? () async {
+                                    final phoneNumber =
+                                        userData.cellphoneNumber;
+                                    if (phoneNumber.isNotEmpty) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Contract(
+                                            idDoUser: usuario.id,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Número de telefone não cadastrado.'),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                : () {},
                             icon:
                                 const Icon(Icons.message, color: Colors.white),
                             label: const Text(
@@ -372,7 +398,7 @@ class UserView extends StatelessWidget {
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2ECC8F),
+                              backgroundColor: Colors.black,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                               shape: RoundedRectangleBorder(

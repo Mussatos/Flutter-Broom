@@ -93,12 +93,13 @@ class _UsermeetingState extends State<Usermeeting> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
+          backgroundColor: Color(0xFF2ECC8F),
           appBar: AppBar(
             title: const Text(
               'Meus Agendamentos',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
             ),
-            backgroundColor: const Color(0xFF2ECC8F),
+            backgroundColor: Colors.black,
             leading: IconButton(
               onPressed: () {
                 GoRouter.of(context).push('/account/settings');
@@ -106,7 +107,7 @@ class _UsermeetingState extends State<Usermeeting> {
               icon: const Icon(
                 Icons.arrow_back_ios,
                 size: 24,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           ),
@@ -142,7 +143,7 @@ class _UsermeetingState extends State<Usermeeting> {
                       subtitle: getStatus(daily),
                       trailing: Icon(
                         Icons.event_note,
-                        color: Color(0xFF2ECC8F),
+                        color: Colors.black,
                         size: 30,
                       ),
                       onTap: () {

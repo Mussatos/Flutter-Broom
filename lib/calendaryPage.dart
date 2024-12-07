@@ -171,12 +171,14 @@ class _CalendarypageState extends State<Calendarypage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text(
           'Agendamento',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF2ECC8F),
+        backgroundColor: Colors.black,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -184,7 +186,7 @@ class _CalendarypageState extends State<Calendarypage> {
           icon: const Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -192,7 +194,8 @@ class _CalendarypageState extends State<Calendarypage> {
           future: listTypeDailyRate,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
+              return const Center(
+                  child: CircularProgressIndicator(color: Colors.white));
             } else if (snapshot.hasError) {
               return const Center(
                   child: Text('Erro ao carregar o agendamento'));
@@ -246,6 +249,22 @@ class _CalendarypageState extends State<Calendarypage> {
                           onPageChanged: (focusedDay) {
                             _focusedDay = focusedDay;
                           },
+                          calendarStyle: const CalendarStyle(
+                              defaultTextStyle: TextStyle(color: Colors.black),
+                              selectedTextStyle: TextStyle(color: Colors.white),
+                              todayTextStyle: TextStyle(color: Colors.white),
+                              disabledTextStyle: TextStyle(
+                                  color: Color.fromARGB(255, 66, 66, 66)),
+                              selectedDecoration: BoxDecoration(
+                                color: Colors.black,
+                                shape: BoxShape.circle,
+                              ),
+                              weekendTextStyle: TextStyle(color: Colors.black),
+                              todayDecoration: BoxDecoration(
+                                  color: Colors.blue, shape: BoxShape.circle),
+                              outsideTextStyle: TextStyle(color: Colors.black)
+                          ),
+                              
                         ),
                   const SizedBox(height: 16),
                   if (_selectedDay != null) ...[
@@ -255,13 +274,20 @@ class _CalendarypageState extends State<Calendarypage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Data Selecionada: ${_selectedDay!.toLocal()}"
-                                .split(' ')[0],
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                              "Diária: ${_selectedDay!.toLocal()}"
+                                  .split(' ')[0],
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                           DropdownButton<String>(
                             value: _selectedOption,
+                            focusColor:const Color(0xFF2ECC8F) ,
+                            icon: Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.black,
+                            ),
+                            dropdownColor: const Color(0xFF2ECC8F),
+                            
                             onChanged: (value) {
                               final service = getTypeServiceByDay();
                               if (service.isNotEmpty) {
@@ -292,6 +318,7 @@ class _CalendarypageState extends State<Calendarypage> {
                                       ),
                                     ))
                                 .toList(),
+                            underline: const SizedBox(),
                           ),
                         ],
                       ),
@@ -315,7 +342,7 @@ class _CalendarypageState extends State<Calendarypage> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2ECC8F),
+                        backgroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(
                             vertical: 16, horizontal: 32),
                       ),

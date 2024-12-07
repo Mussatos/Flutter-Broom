@@ -169,12 +169,14 @@ class _EditUserFormState extends State<EditUserForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text(
           'Edição de perfil',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
         ),
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.black,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -182,7 +184,7 @@ class _EditUserFormState extends State<EditUserForm> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -243,6 +245,12 @@ class _EditUserFormState extends State<EditUserForm> {
                     decoration: InputDecoration(
                       labelText: 'Nome',
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -257,6 +265,12 @@ class _EditUserFormState extends State<EditUserForm> {
                     decoration: InputDecoration(
                       labelText: 'Sobrenome',
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -271,6 +285,12 @@ class _EditUserFormState extends State<EditUserForm> {
                     decoration: InputDecoration(
                       labelText: 'E-mail',
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -285,6 +305,12 @@ class _EditUserFormState extends State<EditUserForm> {
                     decoration: InputDecoration(
                       labelText: 'Número de celular',
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -301,6 +327,12 @@ class _EditUserFormState extends State<EditUserForm> {
                       decoration: InputDecoration(
                         labelText: 'Informe o serviço que está procurando',
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                       ),
                       items: serviceType
                           .map<DropdownMenuItem<String>>((String value) {
@@ -319,6 +351,12 @@ class _EditUserFormState extends State<EditUserForm> {
                       decoration: InputDecoration(
                         labelText: 'Informe o período de preferência',
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                       ),
                       items: daytimeType.map((String option) {
                         return DropdownMenuItem<String>(
@@ -338,6 +376,12 @@ class _EditUserFormState extends State<EditUserForm> {
                       decoration: InputDecoration(
                         labelText: 'Informe o valor que deseja pagar',
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                         prefixText: 'R\$',
                       ),
                     ),
@@ -348,6 +392,12 @@ class _EditUserFormState extends State<EditUserForm> {
                         decoration: InputDecoration(
                           labelText: 'Informe o estado que você atua',
                           border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
                         ),
                         items: listState!
                             .map<DropdownMenuItem<String>>((dynamic value) {
@@ -419,7 +469,14 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: descriptionController,
                     decoration: InputDecoration(
                       labelText: 'Descrição',
+                      hintStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     maxLines: 3,
                     validator: (value) {
@@ -442,7 +499,7 @@ class _EditUserFormState extends State<EditUserForm> {
                           width: 20,
                         ),
                         Switch(
-                          activeColor: Color(0xFF2ECC8F),
+                          activeColor: Colors.white,
                           value: wantService!,
                           onChanged: (bool? value) {
                             setState(() {
@@ -452,7 +509,7 @@ class _EditUserFormState extends State<EditUserForm> {
                         ),
                       ],
                     ),
-                  ]  else if(profileId == 2) ...[
+                  ] else if (profileId == 2) ...[
                     Row(
                       children: [
                         Text(
@@ -464,7 +521,7 @@ class _EditUserFormState extends State<EditUserForm> {
                           width: 20,
                         ),
                         Switch(
-                          activeColor: Color(0xFF2ECC8F),
+                          activeColor: Colors.white,
                           value: wantService!,
                           onChanged: (bool? value) {
                             setState(() {

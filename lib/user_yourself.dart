@@ -81,12 +81,13 @@ class _UserYourselfState extends State<UserYourself> {
     }
 
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text(
           'Seu Perfil',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
         ),
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.black,
         leading: IconButton(
           onPressed: () {
             GoRouter.of(context).push("/List");
@@ -94,7 +95,7 @@ class _UserYourselfState extends State<UserYourself> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.black,
+            color: Colors.white,
           ),
         ),
       ),
@@ -146,7 +147,7 @@ class _UserYourselfState extends State<UserYourself> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade700,
+                            color: Colors.grey.shade900,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -156,7 +157,7 @@ class _UserYourselfState extends State<UserYourself> {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade700,
+                            color: Colors.grey.shade900,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -170,7 +171,7 @@ class _UserYourselfState extends State<UserYourself> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade600,
+                          color: Colors.grey.shade900,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -192,7 +193,7 @@ class _UserYourselfState extends State<UserYourself> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade600,
+                          color: Colors.grey.shade900,
                           height: 1.5,
                         ),
                         textAlign: TextAlign.justify,
@@ -227,7 +228,7 @@ class _UserYourselfState extends State<UserYourself> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey.shade700,
+                            color: Colors.grey.shade900,
                           ),
                         ),
                         SizedBox(height: 15),
@@ -256,7 +257,7 @@ class _UserYourselfState extends State<UserYourself> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey.shade700,
+                            color: Colors.grey.shade900,
                           ),
                         ),
                         SizedBox(height: 15),
@@ -285,7 +286,7 @@ class _UserYourselfState extends State<UserYourself> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey.shade700,
+                            color: Colors.grey.shade900,
                           ),
                         ),
                         SizedBox(height: 15),
@@ -320,7 +321,7 @@ class _UserYourselfState extends State<UserYourself> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey.shade700,
+                            color: Colors.grey.shade900,
                           ),
                         ),
                         SizedBox(height: 15),
@@ -354,7 +355,7 @@ class _UserYourselfState extends State<UserYourself> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
-                            color: Colors.grey.shade700,
+                            color: Colors.grey.shade900,
                           ),
                         ),
                       ],
@@ -372,7 +373,7 @@ class _UserYourselfState extends State<UserYourself> {
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF2ECC8F),
+                              backgroundColor: Colors.black,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -421,7 +422,7 @@ class _UserYourselfState extends State<UserYourself> {
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF2ECC8F),
+                              backgroundColor: Colors.black,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                               shape: RoundedRectangleBorder(

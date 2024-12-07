@@ -160,12 +160,13 @@ class _MeetingviewState extends State<Meetingview> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Color(0xFF2ECC8F),
         appBar: AppBar(
           title: const Text(
             'Informações do contrato',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
           ),
-          backgroundColor: const Color(0xFF2ECC8F),
+          backgroundColor: Colors.black,
           leading: IconButton(
             onPressed: () {
               GoRouter.of(context).push('/meeting-page');
@@ -173,7 +174,7 @@ class _MeetingviewState extends State<Meetingview> {
             icon: const Icon(
               Icons.arrow_back_ios,
               size: 24,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
         ),

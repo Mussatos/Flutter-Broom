@@ -69,7 +69,7 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
       backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text('Listagem de favoritos',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white)),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black)),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -77,11 +77,11 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: favorites,

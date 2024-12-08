@@ -85,9 +85,9 @@ class _UserYourselfState extends State<UserYourself> {
       appBar: AppBar(
         title: Text(
           'Seu Perfil',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             GoRouter.of(context).push("/List");
@@ -95,7 +95,7 @@ class _UserYourselfState extends State<UserYourself> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

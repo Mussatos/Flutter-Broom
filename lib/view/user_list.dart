@@ -77,28 +77,28 @@ class _UserListState extends State<UserList> {
       appBar: AppBar(
         title: Text('Listagem de usuários',
             style: TextStyle(
-                color: Colors.white,
+                color: Colors.black,
                 fontSize: 22,
                 fontWeight: FontWeight.w600)),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: Icon(Icons.person),
-            color: Colors.white,
+            color: Colors.black,
             onPressed: () {
               GoRouter.of(context).push('/account/view');
             },
           ),
           IconButton(
             icon: Icon(Icons.settings),
-            color: Colors.white,
+            color: Colors.black,
             onPressed: () {
               GoRouter.of(context).push('/account/settings');
             },
           ),
         ],
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: handleUsuarios,

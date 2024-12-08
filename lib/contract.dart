@@ -441,9 +441,9 @@ class _ContractState extends State<Contract> {
         title: Text(
           'Contrato',
           style: TextStyle(
-              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () async {
             handleDeleteAgendamento();
@@ -452,7 +452,7 @@ class _ContractState extends State<Contract> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

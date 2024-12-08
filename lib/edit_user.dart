@@ -174,9 +174,9 @@ class _EditUserFormState extends State<EditUserForm> {
         title: Text(
           'Edição de perfil',
           style: TextStyle(
-              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -184,7 +184,7 @@ class _EditUserFormState extends State<EditUserForm> {
           icon: Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),
@@ -244,6 +244,7 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: nameController,
                     decoration: InputDecoration(
                       labelText: 'Nome',
+                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -264,6 +265,7 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: lastNameController,
                     decoration: InputDecoration(
                       labelText: 'Sobrenome',
+                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -284,6 +286,7 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: emailController,
                     decoration: InputDecoration(
                       labelText: 'E-mail',
+                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -304,6 +307,7 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: cellphoneNumberController,
                     decoration: InputDecoration(
                       labelText: 'Número de celular',
+                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -326,6 +330,7 @@ class _EditUserFormState extends State<EditUserForm> {
                       value: serviceTypeSelected,
                       decoration: InputDecoration(
                         labelText: 'Informe o serviço que está procurando',
+                        labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -350,6 +355,7 @@ class _EditUserFormState extends State<EditUserForm> {
                       value: favoriteDaytimeSelected,
                       decoration: InputDecoration(
                         labelText: 'Informe o período de preferência',
+                        labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -375,6 +381,7 @@ class _EditUserFormState extends State<EditUserForm> {
                       controller: valueWillingToPayController,
                       decoration: InputDecoration(
                         labelText: 'Informe o valor que deseja pagar',
+                        labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.black),
@@ -391,6 +398,7 @@ class _EditUserFormState extends State<EditUserForm> {
                         value: stateAtendimentSelected,
                         decoration: InputDecoration(
                           labelText: 'Informe o estado que você atua',
+                          labelStyle: TextStyle(color: Colors.black),
                           border: OutlineInputBorder(),
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.black),
@@ -419,6 +427,7 @@ class _EditUserFormState extends State<EditUserForm> {
                       children: listZones!.map((zone) {
                         return CheckboxListTile(
                           title: Text(zone['text'] ?? ''),
+                          activeColor: Colors.black,
                           value:
                               zoneAtendimentSelected!.contains(zone['value']),
                           onChanged: (bool? value) {
@@ -445,6 +454,7 @@ class _EditUserFormState extends State<EditUserForm> {
                       children: listSpecialties!.map((specialty) {
                         return CheckboxListTile(
                           title: Text(specialty['text'] ?? ''),
+                          activeColor: Colors.black,
                           value:
                               specialtiesSelected!.contains(specialty['value']),
                           onChanged: (bool? value) {
@@ -469,6 +479,7 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: descriptionController,
                     decoration: InputDecoration(
                       labelText: 'Descrição',
+                      labelStyle: TextStyle(color: Colors.black),
                       hintStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
                       enabledBorder: OutlineInputBorder(

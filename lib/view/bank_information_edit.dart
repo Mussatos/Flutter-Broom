@@ -112,9 +112,9 @@ class _BankInformationEditState extends State<BankInformationEdit> {
         title: const Text(
           'Edição de informações',
           style: TextStyle(
-              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             GoRouter.of(context).push('/bank/information');
@@ -122,7 +122,7 @@ class _BankInformationEditState extends State<BankInformationEdit> {
           icon: const Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

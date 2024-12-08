@@ -169,7 +169,19 @@ class _SignUpState extends State<SignUpPage> {
                             height: 1,
                             color: Colors.black,
                           ),
-                          dropdownColor: Color(0xFF2ECC8F),
+                           dropdownColor: Colors.black,
+                      selectedItemBuilder: (context) {
+                        return profileType.map((int item) {
+                          return Container(
+                            alignment: Alignment.centerLeft,
+                            constraints: const BoxConstraints(minWidth: 100),
+                            child: Text(
+                              item == 1 ? 'Cliente' : 'Diarista',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          );
+                        }).toList();
+                      },
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
@@ -183,7 +195,7 @@ class _SignUpState extends State<SignUpPage> {
                             return DropdownMenuItem<int>(
                                 value: value,
                                 child:
-                                    Text(value == 1 ? 'Cliente' : 'Diarista'));
+                                    Text(value == 1 ? 'Cliente' : 'Diarista', style: TextStyle(color: Color(0xFF2ECC8F))));
                           }).toList(),
                           onChanged: (int? value) {
                             setState(() {

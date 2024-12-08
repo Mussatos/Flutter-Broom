@@ -65,12 +65,13 @@ class _CalendarypageState extends State<Calendarypage> {
             option['value'] != 'diaria_completa') {
           return DropdownMenuItem<String>(
             value: option['value'],
-            child: Text(option['text']),
+            child: Text(option['text'],
+                style: TextStyle(color: Color(0xFF2ECC8F))),
           );
         }
         return const DropdownMenuItem<String>(
           value: '',
-          child: Text(''),
+          child: Text('', style: TextStyle(color: Color(0xFF2ECC8F))),
         );
       }).toList();
 
@@ -80,7 +81,8 @@ class _CalendarypageState extends State<Calendarypage> {
       return ListDailyType!
           .map((option) => DropdownMenuItem<String>(
                 value: option['value'],
-                child: Text(option['text']),
+                child: Text(option['text'],
+                    style: TextStyle(color: Color(0xFF2ECC8F))),
               ))
           .toList();
     }
@@ -262,9 +264,7 @@ class _CalendarypageState extends State<Calendarypage> {
                               weekendTextStyle: TextStyle(color: Colors.black),
                               todayDecoration: BoxDecoration(
                                   color: Colors.blue, shape: BoxShape.circle),
-                              outsideTextStyle: TextStyle(color: Colors.black)
-                          ),
-                              
+                              outsideTextStyle: TextStyle(color: Colors.black)),
                         ),
                   const SizedBox(height: 16),
                   if (_selectedDay != null) ...[
@@ -274,20 +274,31 @@ class _CalendarypageState extends State<Calendarypage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                              "Diária: ${_selectedDay!.toLocal()}"
-                                  .split(' ')[0],
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            "Diária: ${_selectedDay!.toLocal()}".split(' ')[0],
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
                           ),
                           DropdownButton<String>(
                             value: _selectedOption,
-                            focusColor:const Color(0xFF2ECC8F) ,
+                            focusColor: const Color(0xFF2ECC8F),
                             icon: Icon(
                               Icons.arrow_drop_down,
                               color: Colors.black,
                             ),
-                            dropdownColor: const Color(0xFF2ECC8F),
-                            
+                            dropdownColor: Colors.black,
+                            selectedItemBuilder: (context) {
+                              return ListDailyType!.map((dynamic item) {
+                                return Container(
+                                  alignment: Alignment.centerLeft,
+                                  constraints:
+                                      const BoxConstraints(minWidth: 100),
+                                  child: Text(
+                                    item['text'],
+                                    style: const TextStyle(color: Colors.black),
+                                  ),
+                                );
+                              }).toList();
+                            },
                             onChanged: (value) {
                               final service = getTypeServiceByDay();
                               if (service.isNotEmpty) {
@@ -314,7 +325,7 @@ class _CalendarypageState extends State<Calendarypage> {
                                             color:
                                                 isDisabledItem(option['value'])
                                                     ? Colors.grey
-                                                    : null),
+                                                    : Color(0xFF2ECC8F)),
                                       ),
                                     ))
                                 .toList(),

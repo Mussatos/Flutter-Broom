@@ -66,36 +66,36 @@ class _EditAddressFormState extends State<EditAddressForm> {
   }
 
   void saveAddress() async {
-  if (_formKey.currentState!.validate()) {
-    Address updatedAddress = Address(
-      city: cityController.text,
-      state: stateController.text,
-      street: streetController.text,
-      addressType: addressTypeSelected,
-      neighborhood: neighController.text,
-      addressCode: addressCodeController.text.replaceAll(RegExp(r'-'), ''),
-      complement: complementController.text,
-      number: int.parse(numberController.text),
-      userId: widget.address.userId,
-      id: id,  
-    );
+    if (_formKey.currentState!.validate()) {
+      Address updatedAddress = Address(
+        city: cityController.text,
+        state: stateController.text,
+        street: streetController.text,
+        addressType: addressTypeSelected,
+        neighborhood: neighController.text,
+        addressCode: addressCodeController.text.replaceAll(RegExp(r'-'), ''),
+        complement: complementController.text,
+        number: int.parse(numberController.text),
+        userId: widget.address.userId,
+        id: id,
+      );
 
-    await updateAddress(id, updatedAddress.toJson());
+      await updateAddress(id, updatedAddress.toJson());
 
-    setState(() {
-      widget.address.street = updatedAddress.street;
-      widget.address.city = updatedAddress.city;
-      widget.address.state = updatedAddress.state;
-      widget.address.neighborhood = updatedAddress.neighborhood;
-      widget.address.number = updatedAddress.number;
-      widget.address.complement = updatedAddress.complement;
-      widget.address.addressCode = updatedAddress.addressCode;
-      widget.address.addressType = updatedAddress.addressType;
-    });
+      setState(() {
+        widget.address.street = updatedAddress.street;
+        widget.address.city = updatedAddress.city;
+        widget.address.state = updatedAddress.state;
+        widget.address.neighborhood = updatedAddress.neighborhood;
+        widget.address.number = updatedAddress.number;
+        widget.address.complement = updatedAddress.complement;
+        widget.address.addressCode = updatedAddress.addressCode;
+        widget.address.addressType = updatedAddress.addressType;
+      });
 
-    GoRouter.of(context).pop(updatedAddress);
+      GoRouter.of(context).pop(updatedAddress);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -349,19 +349,28 @@ class _EditAddressFormState extends State<EditAddressForm> {
                           height: 1,
                           color: Colors.black,
                         ),
-                        dropdownColor: Color(0xFF2ECC8F),
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        dropdownColor: Colors.black,
+                        selectedItemBuilder: (context) {
+                          return addressType.map((String item) {
+                            return Container(
+                              alignment: Alignment.centerLeft,
+                              constraints: const BoxConstraints(minWidth: 100),
+                              child: Text(
+                                item,
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            );
+                          }).toList();
+                        },
                         isExpanded: true,
                         iconSize: 35,
                         iconEnabledColor: Colors.black,
                         items: addressType
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
-                              value: value, child: Text(value));
+                              value: value,
+                              child: Text(value,
+                                  style: TextStyle(color: Color(0xFF2ECC8F))));
                         }).toList(),
                         onChanged: (String? value) {
                           setState(() {

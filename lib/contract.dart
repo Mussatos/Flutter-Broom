@@ -645,15 +645,25 @@ class _ContractState extends State<Contract> {
                                     child: DropdownButton<String>(
                                       value: cleanTypeSelected,
                                       isExpanded: true,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                      ),
+                                      selectedItemBuilder: (context) {
+                                        return cleanType.map((String item) {
+                                          return Container(
+                                            alignment: Alignment.centerLeft,
+                                            constraints: const BoxConstraints(
+                                                minWidth: 100),
+                                            child: Text(
+                                              item,
+                                              style: const TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                          );
+                                        }).toList();
+                                      },
                                       icon: Icon(
                                         Icons.arrow_drop_down,
                                         color: Colors.black,
                                       ),
-                                      dropdownColor: const Color(0xFF2ECC8F),
+                                      dropdownColor: Colors.black,
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           cleanTypeSelected = newValue!;
@@ -662,7 +672,11 @@ class _ContractState extends State<Contract> {
                                       items: cleanType.map((String value) {
                                         return DropdownMenuItem<String>(
                                           value: value,
-                                          child: Text(value),
+                                          child: Text(
+                                            value,
+                                            style: TextStyle(
+                                                color: Color(0xFF2ECC8F)),
+                                          ),
                                         );
                                       }).toList(),
                                     ),
@@ -685,15 +699,27 @@ class _ContractState extends State<Contract> {
                                       child: DropdownButton<String>(
                                         value: cleanBasketTypeSelected,
                                         isExpanded: true,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
+                                        selectedItemBuilder:
+                                            (BuildContext context) {
+                                          return cleanBasketType
+                                              .map((dynamic item) {
+                                            return Container(
+                                              alignment: Alignment.centerLeft,
+                                              constraints: const BoxConstraints(
+                                                  minWidth: 100),
+                                              child: Text(
+                                                item['text'],
+                                                style: const TextStyle(
+                                                    color: Colors.black),
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
                                         icon: Icon(
                                           Icons.arrow_drop_down,
                                           color: Colors.black,
                                         ),
-                                        dropdownColor: const Color(0xFF2ECC8F),
+                                        dropdownColor: Colors.black,
                                         onChanged: (String? newValue) {
                                           setState(() {
                                             cleanBasketTypeSelected = newValue!;
@@ -703,7 +729,11 @@ class _ContractState extends State<Contract> {
                                             .map((dynamic value) {
                                           return DropdownMenuItem<String>(
                                             value: value['value'],
-                                            child: Text(value['text']),
+                                            child: Text(
+                                              value['text'],
+                                              style: TextStyle(
+                                                  color: Color(0xFF2ECC8F)),
+                                            ),
                                           );
                                         }).toList(),
                                       ),
@@ -748,15 +778,26 @@ class _ContractState extends State<Contract> {
                                       child: DropdownButton<String>(
                                         value: ironingBasketTypeSelected,
                                         isExpanded: true,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
+                                        selectedItemBuilder: (context) {
+                                          return ironingBasketType
+                                              .map((dynamic item) {
+                                            return Container(
+                                              alignment: Alignment.centerLeft,
+                                              constraints: const BoxConstraints(
+                                                  minWidth: 100),
+                                              child: Text(
+                                                item['text'],
+                                                style: const TextStyle(
+                                                    color: Colors.black),
+                                              ),
+                                            );
+                                          }).toList();
+                                        },
                                         icon: Icon(
                                           Icons.arrow_drop_down,
                                           color: Colors.black,
                                         ),
-                                        dropdownColor: const Color(0xFF2ECC8F),
+                                        dropdownColor: Colors.black,
                                         onChanged: (String? newValue) {
                                           setState(() {
                                             ironingBasketTypeSelected =
@@ -767,7 +808,11 @@ class _ContractState extends State<Contract> {
                                             .map((dynamic value) {
                                           return DropdownMenuItem<String>(
                                             value: value['value'],
-                                            child: Text(value['text']),
+                                            child: Text(
+                                              value['text'],
+                                              style: TextStyle(
+                                                  color: Color(0xFF2ECC8F)),
+                                            ),
                                           );
                                         }).toList(),
                                       ),

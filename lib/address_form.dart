@@ -60,11 +60,11 @@ class _AddressFormState extends State<AddressForm> {
         id: null,
       );
 
-    await createAddress(newAddress.toJson());
+      await createAddress(newAddress.toJson());
 
-    Navigator.pop(context, newAddress);
+      Navigator.pop(context, newAddress);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -341,6 +341,18 @@ class _AddressFormState extends State<AddressForm> {
                         color: Colors.white,
                       ),
                       dropdownColor: Colors.black,
+                      selectedItemBuilder: (context) {
+                        return addressType.map((String item) {
+                          return Container(
+                            alignment: Alignment.centerLeft,
+                            constraints: const BoxConstraints(minWidth: 100),
+                            child: Text(
+                              item,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          );
+                        }).toList();
+                      },
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
@@ -352,7 +364,9 @@ class _AddressFormState extends State<AddressForm> {
                       items: addressType
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
-                            value: value, child: Text(value));
+                            value: value,
+                            child: Text(value,
+                                style: TextStyle(color: Color(0xFF2ECC8F))));
                       }).toList(),
                       onChanged: (String? value) {
                         setState(() {

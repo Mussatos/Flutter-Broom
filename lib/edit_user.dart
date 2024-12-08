@@ -333,16 +333,31 @@ class _EditUserFormState extends State<EditUserForm> {
                         labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      ),
+                      dropdownColor: Colors.black,
+                      selectedItemBuilder: (context) {
+                        return serviceType.map((String item) {
+                          return Container(
+                            alignment: Alignment.centerLeft,
+                            constraints: const BoxConstraints(minWidth: 100),
+                            child: Text(
+                              item,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          );
+                        }).toList();
+                      },
                       items: serviceType
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
-                            value: value, child: Text(value));
+                            value: value,
+                            child: Text(value,
+                                style: TextStyle(color: Color(0xFF2ECC8F))));
                       }).toList(),
                       onChanged: (String? value) {
                         setState(() {
@@ -353,21 +368,35 @@ class _EditUserFormState extends State<EditUserForm> {
                     SizedBox(height: 10),
                     DropdownButtonFormField<String>(
                       value: favoriteDaytimeSelected,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Informe o período de preferência',
                         labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      ),
+                      dropdownColor: Colors.black,
+                      selectedItemBuilder: (context) {
+                        return daytimeType.map((String item) {
+                          return Container(
+                            alignment: Alignment.centerLeft,
+                            constraints: const BoxConstraints(minWidth: 100),
+                            child: Text(
+                              item,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          );
+                        }).toList();
+                      },
                       items: daytimeType.map((String option) {
                         return DropdownMenuItem<String>(
                           value: option,
-                          child: Text(option),
+                          child: Text(option,
+                              style: TextStyle(color: Color(0xFF2ECC8F))),
                         );
                       }).toList(),
                       onChanged: (String? value) {
@@ -379,16 +408,16 @@ class _EditUserFormState extends State<EditUserForm> {
                     SizedBox(height: 10),
                     TextFormField(
                       controller: valueWillingToPayController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Informe o valor que deseja pagar',
                         labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
                         enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      ),
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
                         prefixText: 'R\$',
                       ),
                     ),
@@ -396,7 +425,7 @@ class _EditUserFormState extends State<EditUserForm> {
                     SizedBox(height: 10),
                     DropdownButtonFormField<String>(
                         value: stateAtendimentSelected,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Informe o estado que você atua',
                           labelStyle: TextStyle(color: Colors.black),
                           border: OutlineInputBorder(),
@@ -407,11 +436,25 @@ class _EditUserFormState extends State<EditUserForm> {
                             borderSide: BorderSide(color: Colors.black),
                           ),
                         ),
+                        dropdownColor: Colors.black,
+                        selectedItemBuilder: (context) {
+                          return listState!.map((dynamic item) {
+                            return Container(
+                              alignment: Alignment.centerLeft,
+                              constraints: const BoxConstraints(minWidth: 100),
+                              child: Text(
+                                item['text'],
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            );
+                          }).toList();
+                        },
                         items: listState!
                             .map<DropdownMenuItem<String>>((dynamic value) {
                           return DropdownMenuItem<String>(
                               value: value!['value'],
-                              child: Text(value!['text']));
+                              child: Text(value!['text'],
+                                  style: TextStyle(color: Color(0xFF2ECC8F))));
                         }).toList(),
                         onChanged: (String? value) {
                           setState(() {
@@ -442,6 +485,7 @@ class _EditUserFormState extends State<EditUserForm> {
                               }
                             });
                           },
+                          activeColor: Colors.black,
                         );
                       }).toList(),
                     ),
@@ -470,6 +514,7 @@ class _EditUserFormState extends State<EditUserForm> {
                               }
                             });
                           },
+                          activeColor: Colors.black,
                         );
                       }).toList(),
                     ),

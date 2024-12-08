@@ -77,11 +77,11 @@ class _AddressListState extends State<AddressList> {
             style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
-                color: Colors.white)),
+                color: Colors.black)),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
-            color: Colors.white,
+            color: Colors.black,
             onPressed: () async {
               final result = await GoRouter.of(context).push("/address/form");
 
@@ -94,7 +94,7 @@ class _AddressListState extends State<AddressList> {
           ),
         ],
         elevation: 0,
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             GoRouter.of(context).push('/account/view');
@@ -102,7 +102,7 @@ class _AddressListState extends State<AddressList> {
           icon: const Icon(
             Icons.arrow_back_ios,
             size: 20,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

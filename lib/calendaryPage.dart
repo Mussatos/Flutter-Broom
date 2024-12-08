@@ -178,9 +178,9 @@ class _CalendarypageState extends State<Calendarypage> {
         title: Text(
           'Agendamento',
           style: TextStyle(
-              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -188,7 +188,7 @@ class _CalendarypageState extends State<Calendarypage> {
           icon: const Icon(
             Icons.arrow_back_ios,
             size: 24,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),

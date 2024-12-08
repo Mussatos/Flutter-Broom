@@ -97,9 +97,9 @@ class _UsermeetingState extends State<Usermeeting> {
           appBar: AppBar(
             title: const Text(
               'Meus Agendamentos',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
             ),
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.transparent,
             leading: IconButton(
               onPressed: () {
                 GoRouter.of(context).push('/account/settings');
@@ -107,7 +107,7 @@ class _UsermeetingState extends State<Usermeeting> {
               icon: const Icon(
                 Icons.arrow_back_ios,
                 size: 24,
-                color: Colors.white,
+                color: Colors.black,
               ),
             ),
           ),

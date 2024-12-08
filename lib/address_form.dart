@@ -101,38 +101,47 @@ class _AddressFormState extends State<AddressForm> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: addressCodeController,
                     decoration: InputDecoration(
                       labelText: 'CEP',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle:
+                          TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.transparent,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Informe o CEP';
                       }
+
                       return null;
                     },
                     onChanged: (value) async {
                       if (value.length == 9) {
                         cep = await fetchCEP(value);
+
                         cityController.text = cep['localidade'] ?? '';
+
                         stateController.text = cep['uf'] ?? '';
+
                         streetController.text = cep['logradouro'] ?? '';
+
                         neighController.text = cep['bairro'] ?? '';
+
                         setState(() {
                           isUnique = neighController.text.isEmpty &&
                               streetController.text.isEmpty;
@@ -143,202 +152,254 @@ class _AddressFormState extends State<AddressForm> {
                 ),
                 SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: TextFormField(
                     enabled: false,
                     controller: stateController,
                     decoration: InputDecoration(
                       labelText: 'Estado',
-                      labelStyle: TextStyle(color: Colors.white),
+
+                      labelStyle:
+                          TextStyle(color: Colors.black),
+
                       filled: true,
+
                       fillColor: Colors.transparent,
+
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Informe o seu estado';
                       }
+
                       return null;
                     },
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: cityController,
                     decoration: InputDecoration(
                       enabled: false,
+
                       labelText: 'Cidade',
-                      labelStyle: TextStyle(color: Colors.white),
+
+                      labelStyle:
+                          TextStyle(color: Colors.black),
+
                       filled: true,
+
                       fillColor: Colors.transparent,
+
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Informe a sua cidade';
                       }
+
                       return null;
                     },
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: TextFormField(
                     enabled: isUnique,
                     controller: streetController,
                     decoration: InputDecoration(
                       labelText: 'Rua',
-                      labelStyle: TextStyle(color: Colors.white),
+
+                      labelStyle:
+                          TextStyle(color: Colors.black),
+
                       filled: true,
+
                       fillColor: Colors.transparent,
+
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Informe a sua rua';
                       }
+
                       return null;
                     },
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: TextFormField(
                     enabled: isUnique,
                     controller: neighController,
                     decoration: InputDecoration(
                       labelText: 'Bairro',
-                      labelStyle: TextStyle(color: Colors.white),
+
+                      labelStyle:
+                          TextStyle(color: Colors.black),
+
                       filled: true,
+
                       fillColor: Colors.transparent,
+
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Informe o bairro';
                       }
+
                       return null;
                     },
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: numberController,
                     decoration: InputDecoration(
                       labelText: 'Número',
-                      labelStyle: TextStyle(color: Colors.white),
+
+                      labelStyle:
+                          TextStyle(color: Colors.black),
+
                       filled: true,
+
                       fillColor: Colors.transparent,
+
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Informe o número';
                       }
+
                       return null;
                     },
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: TextFormField(
                     controller: complementController,
                     decoration: InputDecoration(
                       labelText: 'Complemento',
-                      labelStyle: TextStyle(color: Colors.white),
+
+                      labelStyle:
+                          TextStyle(color: Colors.black),
+
                       filled: true,
+
                       fillColor: Colors.transparent,
+
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
+
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(
+                            color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black, 
                     ),
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.020),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: Text(
                     'Escolha o tipo do endereço',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
+
                         fontSize: 16,
                         fontWeight: FontWeight.w400),
                   ),
                 ),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   child: DropdownButton<String>(
                       value: addressTypeSelected,
                       underline: Container(
                         height: 1,
-                        color: Colors.white,
+
+                        color: Colors.black, 
                       ),
                       dropdownColor: Colors.black,
                       selectedItemBuilder: (context) {
@@ -354,13 +415,15 @@ class _AddressFormState extends State<AddressForm> {
                         }).toList();
                       },
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black, 
+
                         fontSize: 16,
+
                         fontWeight: FontWeight.w500,
                       ),
                       isExpanded: true,
                       iconSize: 35,
-                      iconEnabledColor: Colors.white,
+                      iconEnabledColor: Colors.black,
                       items: addressType
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
@@ -376,7 +439,6 @@ class _AddressFormState extends State<AddressForm> {
                 ),
                 SizedBox(height: screenHeight * 0.050),
                 SizedBox(
-                  // width: 350,
                   width: screenWidth * 0.9,
                   height: 50,
                   child: TextButton(

@@ -14,11 +14,20 @@ class Usermeeting extends StatefulWidget {
 
 class _UsermeetingState extends State<Usermeeting> {
   Future<List<ListDailys>>? dailyList;
+  int? profileId;
 
   @override
   void initState() {
     dailyList = fetchMeetings();
     super.initState();
+    fetchUserById().then((_) {
+      setState(() {});
+    });
+  }
+
+  Future<Yourself?> fetchUserById() async {
+    profileId = await autentication.getProfileId();
+    return await getUserById();
   }
 
   Color getStatusColor(String status) {
@@ -66,7 +75,7 @@ class _UsermeetingState extends State<Usermeeting> {
     return Column(children: [
       Row(
         children: [
-          Text('Status do contrato: '),
+          const Text('Status do contrato: '),
           Text(
             contractStatus,
             style: TextStyle(
@@ -77,7 +86,7 @@ class _UsermeetingState extends State<Usermeeting> {
       ),
       Row(
         children: [
-          Text('Status do pagamento: '),
+          const Text('Status do pagamento: '),
           Text(
             paymentStatus,
             style: TextStyle(
@@ -93,11 +102,14 @@ class _UsermeetingState extends State<Usermeeting> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Color(0xFF2ECC8F),
+          backgroundColor: const Color(0xFF2ECC8F),
           appBar: AppBar(
             title: const Text(
               'Meus Agendamentos',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
+              style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
             ),
             backgroundColor: Colors.transparent,
             leading: IconButton(
@@ -111,54 +123,104 @@ class _UsermeetingState extends State<Usermeeting> {
               ),
             ),
           ),
-          body: FutureBuilder<List<ListDailys>>(
-            future: dailyList,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F)));
-              } else if (snapshot.hasError) {
-                return const Center(child: Text('Erro ao carregar usuários'));
-              } else {
-                List<ListDailys> dailys = snapshot.data!;
-                return ListView.builder(
-                  itemCount: dailys.length,
-                  itemBuilder: (context, index) {
-                    ListDailys daily = dailys[index];
-                    return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: ListTile(
-                      titleTextStyle: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600),
-                      subtitleTextStyle: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      title: Text(getDataMeeting(daily)),
-                      subtitle: getStatus(daily),
-                      trailing: Icon(
-                        Icons.event_note,
-                        color: Colors.black,
-                        size: 30,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Meetingview(
-                                    agendamentoId: daily.agendamentoId!)));
-                      },
-                    ),
-                    );
+          body: Column(
+            children: [
+              Expanded(
+                child: FutureBuilder<List<ListDailys>>(
+                  future: dailyList,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                          child: CircularProgressIndicator(
+                              color: Color(0xFF2ECC8F)));
+                    } else if (snapshot.hasError) {
+                      return const Center(
+                          child: Text('Erro ao carregar usuários'));
+                    } else {
+                      List<ListDailys> dailys = snapshot.data!;
+                      return ListView.builder(
+                        itemCount: dailys.length,
+                        itemBuilder: (context, index) {
+                          ListDailys daily = dailys[index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 16),
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ListTile(
+                              titleTextStyle: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600),
+                              subtitleTextStyle: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
+                              title: Text(getDataMeeting(daily)),
+                              subtitle: getStatus(daily),
+                              trailing: const Icon(
+                                Icons.event_note,
+                                color: Colors.black,
+                                size: 30,
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Meetingview(
+                                            agendamentoId:
+                                                daily.agendamentoId!)));
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    }
                   },
-                );
-              }
-            },
+                ),
+              ),
+              if (profileId == 1) ...[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                         GoRouter.of(context).push('/List');
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center, 
+                        children: [
+                           Icon(
+                            Icons.add,
+                            size: 30, 
+                          ),
+                          SizedBox(
+                              width: 8), 
+                          Text(
+                            'Agende aqui o seu serviço!',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold, 
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16.0, horizontal: 32.0),
+                        textStyle: const TextStyle(fontSize: 18),
+                      ),
+                    ),
+                  ),
+                ),
+              ]
+            ],
           ),
         ));
   }

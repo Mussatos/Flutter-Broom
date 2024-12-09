@@ -485,7 +485,7 @@ class _EditUserFormState extends State<EditUserForm> {
                               }
                             });
                           },
-                          activeColor: Colors.black,
+                          
                         );
                       }).toList(),
                     ),
@@ -514,7 +514,7 @@ class _EditUserFormState extends State<EditUserForm> {
                               }
                             });
                           },
-                          activeColor: Colors.black,
+                          
                         );
                       }).toList(),
                     ),

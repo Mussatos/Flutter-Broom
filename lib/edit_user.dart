@@ -485,7 +485,6 @@ class _EditUserFormState extends State<EditUserForm> {
                               }
                             });
                           },
-                          
                         );
                       }).toList(),
                     ),
@@ -514,7 +513,6 @@ class _EditUserFormState extends State<EditUserForm> {
                               }
                             });
                           },
-                          
                         );
                       }).toList(),
                     ),

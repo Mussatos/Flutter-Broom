@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:broom_main_vscode/address_list.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
 import 'package:broom_main_vscode/main.dart';
 import 'package:broom_main_vscode/ui-components/favorite_button.dart';
@@ -20,11 +21,69 @@ class UserList extends StatefulWidget {
 
 class _UserListState extends State<UserList> {
   Future<List<ListUsers>>? handleUsuarios;
+  bool hasNoAddress = false;
 
   @override
   void initState() {
     handleUsuarios = fetchUsuarios();
     super.initState();
+    _checkUserAddresses();
+  }
+
+ Future<void> _checkUserAddresses() async {
+    try {
+      final addresses = await fetchAddress();
+      setState(() {
+        hasNoAddress = addresses.isEmpty; 
+      });
+    } catch (error) {
+      print('Erro ao buscar endereços: $error');
+    }
+  }
+
+   void _showAddressesDialog() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              'Aviso',
+               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+            content: const Text(
+                'Você ainda não possui nenhum endereço cadastrado. Deseja adicionar um agora?', 
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                        'Cancelar',
+                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 16),
+                        ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  'Adicionar endereço',
+                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 16),
+                  ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const AddressList(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   @override
@@ -82,6 +141,38 @@ class _UserListState extends State<UserList> {
                 fontWeight: FontWeight.w600)),
         automaticallyImplyLeading: false,
         actions: [
+           Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                color: Colors.black,
+                onPressed: () {
+                  if (hasNoAddress) {
+                    _showAddressesDialog();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Nenhuma notificação no momento.'),
+                      ),
+                    );
+                  }
+                },
+              ),
+              if (hasNoAddress)
+              Positioned(
+                right: 12,
+                top: 12,
+                child: Container(
+                  width: 7,
+                  height: 7,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ],
+          ),
           IconButton(
             icon: Icon(Icons.person),
             color: Colors.black,

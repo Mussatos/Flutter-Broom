@@ -54,7 +54,7 @@ class UserIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 80,
-      decoration: const BoxDecoration(shape: BoxShape.circle),
+      decoration: const BoxDecoration(shape: BoxShape.rectangle,),
       child: const CircleAvatar(child: Icon(Icons.person)),
     );
   }

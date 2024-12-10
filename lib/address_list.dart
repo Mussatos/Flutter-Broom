@@ -71,13 +71,17 @@ class _AddressListState extends State<AddressList> {
     }
 
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text('Seus endereços',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
+            style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Colors.black)),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
-            color: Colors.white,
+            color: Colors.black,
             onPressed: () async {
               final result = await GoRouter.of(context).push("/address/form");
 
@@ -90,7 +94,7 @@ class _AddressListState extends State<AddressList> {
           ),
         ],
         elevation: 0,
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             GoRouter.of(context).push('/account/view');
@@ -106,7 +110,10 @@ class _AddressListState extends State<AddressList> {
         future: addresses,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Color(0xFF2ECC8F),));
+            return const Center(
+                child: CircularProgressIndicator(
+              color: Color(0xFF2ECC8F),
+            ));
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar endereços'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

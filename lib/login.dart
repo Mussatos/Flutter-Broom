@@ -1,6 +1,5 @@
 import 'package:broom_main_vscode/confirmEmail.dart';
 import 'package:broom_main_vscode/resetPassword.dart';
-import 'package:broom_main_vscode/signup.dart';
 import 'package:broom_main_vscode/view/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:broom_main_vscode/api/user.api.dart';
@@ -10,14 +9,12 @@ import 'package:go_router/go_router.dart';
 class LoginPage extends StatelessWidget {
   TextEditingController? emailController = TextEditingController(text: '');
   TextEditingController? passwordController = TextEditingController(text: '');
-  bool isLogged = false;
-  
 
   void userLogged(context) async {
     if (await login(emailController!.text, passwordController!.text)) {
       emailController!.dispose();
       passwordController!.dispose();
-      
+
       GoRouter.of(context).push('/List');
       return;
     }
@@ -36,8 +33,7 @@ class LoginPage extends StatelessWidget {
   }
 
   bool validCredentials() {
-    if (emailController!.text.isNotEmpty &&
-        passwordController!.text.isNotEmpty) {
+    if (emailController!.text.isNotEmpty && passwordController!.text.isNotEmpty) {
       return validEmail(emailController!.text);
     }
 
@@ -102,7 +98,7 @@ class LoginPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                       ),
                     ],
@@ -130,6 +126,7 @@ class LoginPage extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
+                              color: Colors.black,
                             ),
                           ),
                           onTap: () {
@@ -147,13 +144,7 @@ class LoginPage extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.only(top: 3, left: 3),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border(
-                            bottom: BorderSide(color: Colors.black),
-                            top: BorderSide(color: Colors.black),
-                            left: BorderSide(color: Colors.black),
-                            right: BorderSide(color: Colors.black),
-                          )),
+                          borderRadius: BorderRadius.circular(50)),
                       child: MaterialButton(
                           minWidth: double.infinity,
                           height: 60,
@@ -198,13 +189,16 @@ class LoginPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Ainda não possui uma conta?"),
+                      Text("Ainda não possui uma conta?",
+                          style:
+                              TextStyle(color: Colors.black)),
                       GestureDetector(
                         child: Text(
                           " Cadastre-se",
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 18,
+                            color: Colors.black, 
                           ),
                         ),
                         onTap: () {
@@ -231,7 +225,9 @@ Widget inputFile(
       Text(
         label,
         style: TextStyle(
-            fontSize: 15, fontWeight: FontWeight.w400, color: Colors.white),
+            fontSize: 15,
+            fontWeight: FontWeight.w400,
+            color: Colors.black),
       ),
       SizedBox(
         height: 5,
@@ -241,16 +237,16 @@ Widget inputFile(
         obscureText: obscureText,
         decoration: InputDecoration(
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
+              borderSide: BorderSide(color: Colors.black),
             ),
             contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
+              borderSide: BorderSide(color: Colors.black),
             ),
             border:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.grey))),
         style: TextStyle(
-          color: Colors.white,
+          color: Colors.black,
         ),
       ),
       SizedBox(

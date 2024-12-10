@@ -66,9 +66,10 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text('Listagem de favoritos',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black)),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -80,7 +81,7 @@ class _UserfavoriteListState extends State<UserfavoriteList> {
           ),
         ),
         elevation: 0,
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.transparent,
       ),
       body: FutureBuilder<List<ListUsers>>(
         future: favorites,

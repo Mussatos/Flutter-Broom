@@ -22,6 +22,7 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   Future<List<ListUsers>>? handleUsuarios;
   bool hasNoAddress = false;
+  int notificationCount = 0;
 
   @override
   void initState() {
@@ -35,9 +36,13 @@ class _UserListState extends State<UserList> {
       final addresses = await fetchAddress();
       setState(() {
         hasNoAddress = addresses.isEmpty; 
+        notificationCount = hasNoAddress ? notificationCount+1 : notificationCount*0;
       });
     } catch (error) {
       print('Erro ao buscar endereços: $error');
+      setState(() {
+        notificationCount = 0;
+      });
     }
   }
 
@@ -77,6 +82,9 @@ class _UserListState extends State<UserList> {
                       builder: (context) => const AddressList(),
                     ),
                   );
+                   setState(() {
+                    notificationCount = 0; 
+                  });
                 },
               ),
             ],
@@ -147,7 +155,7 @@ class _UserListState extends State<UserList> {
                 icon: const Icon(Icons.notifications),
                 color: Colors.black,
                 onPressed: () {
-                  if (hasNoAddress) {
+                  if (notificationCount > 0) {
                     _showAddressesDialog();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -158,19 +166,28 @@ class _UserListState extends State<UserList> {
                   }
                 },
               ),
-              if (hasNoAddress)
-              Positioned(
-                right: 12,
+              if (notificationCount > 0)
+                Positioned(
+                  right: 12,
                 top: 12,
                 child: Container(
-                  width: 7,
-                  height: 7,
+                  width: 10,
+                  height: 10,
                   decoration: const BoxDecoration(
                     color: Colors.red,
                     shape: BoxShape.circle,
                   ),
+                    child: Text(
+                      '$notificationCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
-              ),
             ],
           ),
           IconButton(

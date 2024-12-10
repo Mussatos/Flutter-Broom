@@ -200,7 +200,7 @@ class _UsermeetingState extends State<Usermeeting> {
                           SizedBox(
                               width: 8), 
                           Text(
-                            'Agende aqui o seu serviço!',
+                            'Clique e agende um serviço!',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold, 

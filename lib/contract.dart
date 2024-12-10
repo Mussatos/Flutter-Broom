@@ -851,7 +851,6 @@ class _ContractState extends State<Contract> {
                             onPressed: () async {
                               agendamentoId =
                                   await autentication.getAgendamentoId();
-                              print(agendamentoId);
                               if (agendamentoId == -1) {
                                 Navigator.push(
                                     context,
@@ -870,7 +869,24 @@ class _ContractState extends State<Contract> {
                               Icons.calendar_today_rounded,
                               color: Colors.black,
                             )),
-                        Text('Agendamento'),
+                        const Text(
+                          'Agendamento',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                       
+                        Tooltip(
+                          message:
+                              'Não se esqueça de agendar um horário para o erviço.',
+                          child: IconButton(
+                            icon: Icon(Icons.info_outline),
+                            color: Colors.black,
+                            onPressed: () {},
+                          ),
+                        ),                       
                       ],
                     ),
                     SizedBox(height: 20),

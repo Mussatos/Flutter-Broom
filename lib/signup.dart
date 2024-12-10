@@ -32,6 +32,8 @@ class _SignUpState extends State<SignUpPage> {
   bool isValidEmail = true;
   String gender = '';
   bool isValidName = true;
+  MaskedTextController controllerNumber =
+      MaskedTextController(mask: '(00)0 0000-0000');
 
   String? cpfError;
   String? emailError;
@@ -40,6 +42,7 @@ class _SignUpState extends State<SignUpPage> {
   String? passwordError;
   String? dateError;
   String? genderError;
+  String? numberError;
 
   @override
   void dispose() {
@@ -49,6 +52,7 @@ class _SignUpState extends State<SignUpPage> {
     controllerDate.dispose();
     controllerEmail.dispose();
     controllerPassword.dispose();
+    controllerNumber.dispose();
     super.dispose();
   }
 
@@ -81,6 +85,9 @@ class _SignUpState extends State<SignUpPage> {
             : 'Preencha o campo Data de Nascimento corretamente';
         genderError =
             gender.isNotEmpty ? null : 'Preencha o campo genero corretamente';
+        numberError = controllerNumber.text.isNotEmpty
+            ? null
+            : 'Informe o número de celular';
       });
 
       return emailError == null &&
@@ -89,7 +96,8 @@ class _SignUpState extends State<SignUpPage> {
           cpfError == null &&
           passwordError == null &&
           dateError == null &&
-          genderError == null;
+          genderError == null &&
+          numberError == null;
     }
 
     void save(context) async {
@@ -106,7 +114,8 @@ class _SignUpState extends State<SignUpPage> {
           data: picked,
           profileId: userProfileSelected,
           description: '',
-          cellphone_number: '',
+          cellphone_number:
+              controllerNumber.text.replaceAll(RegExp(r'[\(\)\s-]'), ''),
           user_image: '',
           wantService: true,
           gender: gender);
@@ -169,19 +178,20 @@ class _SignUpState extends State<SignUpPage> {
                             height: 1,
                             color: Colors.black,
                           ),
-                           dropdownColor: Colors.black,
-                      selectedItemBuilder: (context) {
-                        return profileType.map((int item) {
-                          return Container(
-                            alignment: Alignment.centerLeft,
-                            constraints: const BoxConstraints(minWidth: 100),
-                            child: Text(
-                              item == 1 ? 'Cliente' : 'Diarista',
-                              style: const TextStyle(color: Colors.black),
-                            ),
-                          );
-                        }).toList();
-                      },
+                          dropdownColor: Colors.black,
+                          selectedItemBuilder: (context) {
+                            return profileType.map((int item) {
+                              return Container(
+                                alignment: Alignment.centerLeft,
+                                constraints:
+                                    const BoxConstraints(minWidth: 100),
+                                child: Text(
+                                  item == 1 ? 'Cliente' : 'Diarista',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              );
+                            }).toList();
+                          },
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16,
@@ -194,8 +204,9 @@ class _SignUpState extends State<SignUpPage> {
                               .map<DropdownMenuItem<int>>((int value) {
                             return DropdownMenuItem<int>(
                                 value: value,
-                                child:
-                                    Text(value == 1 ? 'Cliente' : 'Diarista', style: TextStyle(color: Color(0xFF2ECC8F))));
+                                child: Text(value == 1 ? 'Cliente' : 'Diarista',
+                                    style:
+                                        TextStyle(color: Color(0xFF2ECC8F))));
                           }).toList(),
                           onChanged: (int? value) {
                             setState(() {
@@ -274,6 +285,44 @@ class _SignUpState extends State<SignUpPage> {
                         setState(() {
                           isValidName = validName(controllerSobrenome.text);
                         });
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  color: Color(0xFF2ECC8F),
+                  padding: EdgeInsets.all(5),
+                  child: SizedBox(
+                    width: 350,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Número de celular',
+                        errorText: numberError,
+                        labelStyle: TextStyle(color: Colors.black),
+                        filled: true,
+                        fillColor: Colors.transparent,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                      ),
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                      controller: controllerNumber,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Informe o número de celular';
+                        }
+                        return null;
                       },
                     ),
                   ),

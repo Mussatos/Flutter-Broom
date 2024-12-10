@@ -35,7 +35,7 @@ class _UserListState extends State<UserList> {
     handleUsuarios = fetchUsuarios();
     super.initState();
     _checkUserAddresses();
-    fetchUserById();
+    _checkUserInfos();
   }
 
   Future<void> _checkUserAddresses() async {
@@ -49,18 +49,20 @@ class _UserListState extends State<UserList> {
     }
   }
 
-  Future<Yourself?> fetchUserById() async {
+  Future<Yourself?> _checkUserInfos() async {
     profileId = await autentication.getProfileId();
     final userData = await getUserById();
 
     if (userData != null && profileId == 1) {
       customData = await fetchCustomContractorProfile(userData.id);
-      print("$customData customData cliente");
       setState(() {
-        if (customData == null) {
-          hasNoCustomInfo == true;
-        }
-        print("$hasNoCustomInfo custom cliente");
+        hasNoCustomInfo = customData == null ||
+            (customData!.serviceType == null ||
+                    customData!.serviceType!.isEmpty) &&
+                (customData!.favoriteDaytime == null ||
+                    customData!.favoriteDaytime!.isEmpty) &&
+                (customData!.valueWillingToPay == null ||
+                    customData!.valueWillingToPay == 0.0);
       });
     } else if (userData != null && profileId == 2) {
       customDataSpecialties = await fetchDataDiaristSpecialties(userData.id);
@@ -68,63 +70,108 @@ class _UserListState extends State<UserList> {
       setState(() {
         hasNoCustomInfo = customDataSpecialties!.isEmpty;
         hasNoCustomInfoActivity = customDataActivity!.isEmpty;
-        print("$hasNoCustomInfo specialties");
-        print("$hasNoCustomInfoActivity activity");
       });
     }
 
     return userData;
   }
 
-  void _showAddressesDialog() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text(
-              'Aviso',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+  void goToAddressCreate() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const AddressList(),
+      ),
+    );
+  }
+
+  void goToEditInfos() {
+    GoRouter.of(context).push('/account/view');
+  }
+
+  OverlayEntry? _overlayEntry;
+
+  void _showNotificationOverlay() {
+    if (_overlayEntry != null) return;
+
+    final overlay = Overlay.of(context);
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          GestureDetector(
+            onTap: () {
+              _hideNotificationOverlay();
+            },
+            child: Container(
+              color: Colors.transparent,
             ),
-            content: const Text(
-              'Você ainda não possui nenhum endereço cadastrado. Deseja adicionar um agora?',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Positioned(
+            top: 50,
+            right: 20,
+            child: Material(
+              elevation: 5,
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                width: 250,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (hasNoAddress) ...[
+                      ListTile(
+                        leading: const Icon(Icons.warning, color: Colors.red),
+                        title: const Text(
+                          "Preencha o endereço",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        onTap: () {
+                          _hideNotificationOverlay();
+                          goToAddressCreate();
+                        },
+                      ),
+                      Divider(),
+                    ],
+                    if (hasNoCustomInfo) ...[
+                      ListTile(
+                        leading: const Icon(Icons.info, color: Colors.blue),
+                        title: const Text(
+                          "Seu perfil não está totalmente atualizado, atualize agora!",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        onTap: () {
+                          _hideNotificationOverlay();
+                          goToEditInfos();
+                        },
+                      ),
+                      // Divider(),
+                    ],
+                    if (!hasNoAddress && !hasNoCustomInfo)
+                      const Center(
+                        child: Text(
+                          "Nenhuma notificação no momento.",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text(
-                  'Cancelar',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: const Text(
-                  'Adicionar endereço',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => const AddressList(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      );
-    });
+          ),
+        ],
+      ),
+    );
+
+    overlay?.insert(_overlayEntry!);
+  }
+
+  void _hideNotificationOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 
   @override
@@ -188,18 +235,14 @@ class _UserListState extends State<UserList> {
                 icon: const Icon(Icons.notifications),
                 color: Colors.black,
                 onPressed: () {
-                  if (hasNoAddress || hasNoCustomInfo) {
-                    _showAddressesDialog();
+                  if (_overlayEntry == null) {
+                    _showNotificationOverlay();
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Nenhuma notificação no momento.'),
-                      ),
-                    );
+                    _hideNotificationOverlay();
                   }
                 },
               ),
-              if (hasNoAddress)
+              if (hasNoAddress || hasNoCustomInfo)
                 Positioned(
                   right: 12,
                   top: 12,

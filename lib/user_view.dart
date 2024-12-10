@@ -22,13 +22,15 @@ class UserView extends StatelessWidget {
         ? 'Endereço: Bairro ${address['neighborhood']}, ${address['city']}, ${address['state']}'
         : 'Endereço não cadastrado';
 
+  
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text(
           'Informações do Usuário',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
         ),
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -95,7 +97,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -106,7 +108,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -117,7 +119,7 @@ class UserView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: Colors.grey.shade600,
+                        color: Colors.grey.shade900,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -139,17 +141,17 @@ class UserView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: Colors.grey.shade600,
+                        color: Colors.grey.shade900,
                         height: 1.5,
                       ),
                       textAlign: TextAlign.justify,
                     ),
                     if (profileId == 1) ...[
                       SizedBox(height: 20),
-                      Row(
+                     const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.build, color: Color(0xFF2ECC8F), size: 20),
+                          Icon(Icons.build, color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Procurando serviço:',
@@ -170,7 +172,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                       ),
                       SizedBox(height: 15),
@@ -178,7 +180,7 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.access_time,
-                              color: Color(0xFF2ECC8F), size: 20),
+                              color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Horário de preferência:',
@@ -199,7 +201,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                       ),
                       SizedBox(height: 15),
@@ -207,7 +209,7 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.attach_money,
-                              color: Color(0xFF2ECC8F), size: 20),
+                              color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Valor que estou disposto a pagar:',
@@ -228,7 +230,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                       ),
                       SizedBox(height: 15),
@@ -238,7 +240,7 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.pin_drop,
-                              color: Color(0xFF2ECC8F), size: 20),
+                              color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Atendo nas seguintes regiões:',
@@ -266,7 +268,7 @@ class UserView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade700,
+                              color: Colors.grey.shade900,
                             ),
                           ),
                         ],
@@ -276,7 +278,7 @@ class UserView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.cleaning_services,
-                              color: Color(0xFF2ECC8F), size: 20),
+                              color: Colors.black, size: 20),
                           SizedBox(width: 10),
                           Text(
                             'Especialidades:',
@@ -303,7 +305,7 @@ class UserView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
-                          color: Colors.grey.shade700,
+                          color: Colors.grey.shade900,
                         ),
                       ),
                     ],
@@ -355,7 +357,7 @@ class UserView extends StatelessWidget {
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFF2ECC8F),
+                              backgroundColor: Colors.black,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -396,7 +398,7 @@ class UserView extends StatelessWidget {
                               style: TextStyle(color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2ECC8F),
+                              backgroundColor: Colors.black,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 12),
                               shape: RoundedRectangleBorder(

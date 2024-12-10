@@ -169,12 +169,14 @@ class _EditUserFormState extends State<EditUserForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF2ECC8F),
       appBar: AppBar(
         title: Text(
           'Edição de perfil',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
         ),
-        backgroundColor: Color(0xFF2ECC8F),
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -242,7 +244,14 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: nameController,
                     decoration: InputDecoration(
                       labelText: 'Nome',
+                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -256,7 +265,14 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: lastNameController,
                     decoration: InputDecoration(
                       labelText: 'Sobrenome',
+                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -270,7 +286,14 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: emailController,
                     decoration: InputDecoration(
                       labelText: 'E-mail',
+                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -284,7 +307,14 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: cellphoneNumberController,
                     decoration: InputDecoration(
                       labelText: 'Número de celular',
+                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -300,12 +330,34 @@ class _EditUserFormState extends State<EditUserForm> {
                       value: serviceTypeSelected,
                       decoration: InputDecoration(
                         labelText: 'Informe o serviço que está procurando',
+                        labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
                       ),
+                      dropdownColor: Colors.black,
+                      selectedItemBuilder: (context) {
+                        return serviceType.map((String item) {
+                          return Container(
+                            alignment: Alignment.centerLeft,
+                            constraints: const BoxConstraints(minWidth: 100),
+                            child: Text(
+                              item,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          );
+                        }).toList();
+                      },
                       items: serviceType
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
-                            value: value, child: Text(value));
+                            value: value,
+                            child: Text(value,
+                                style: TextStyle(color: Color(0xFF2ECC8F))));
                       }).toList(),
                       onChanged: (String? value) {
                         setState(() {
@@ -316,14 +368,35 @@ class _EditUserFormState extends State<EditUserForm> {
                     SizedBox(height: 10),
                     DropdownButtonFormField<String>(
                       value: favoriteDaytimeSelected,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Informe o período de preferência',
+                        labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
                       ),
+                      dropdownColor: Colors.black,
+                      selectedItemBuilder: (context) {
+                        return daytimeType.map((String item) {
+                          return Container(
+                            alignment: Alignment.centerLeft,
+                            constraints: const BoxConstraints(minWidth: 100),
+                            child: Text(
+                              item,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          );
+                        }).toList();
+                      },
                       items: daytimeType.map((String option) {
                         return DropdownMenuItem<String>(
                           value: option,
-                          child: Text(option),
+                          child: Text(option,
+                              style: TextStyle(color: Color(0xFF2ECC8F))),
                         );
                       }).toList(),
                       onChanged: (String? value) {
@@ -335,9 +408,16 @@ class _EditUserFormState extends State<EditUserForm> {
                     SizedBox(height: 10),
                     TextFormField(
                       controller: valueWillingToPayController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Informe o valor que deseja pagar',
+                        labelStyle: TextStyle(color: Colors.black),
                         border: OutlineInputBorder(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
                         prefixText: 'R\$',
                       ),
                     ),
@@ -345,15 +425,36 @@ class _EditUserFormState extends State<EditUserForm> {
                     SizedBox(height: 10),
                     DropdownButtonFormField<String>(
                         value: stateAtendimentSelected,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Informe o estado que você atua',
+                          labelStyle: TextStyle(color: Colors.black),
                           border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black),
+                          ),
                         ),
+                        dropdownColor: Colors.black,
+                        selectedItemBuilder: (context) {
+                          return listState!.map((dynamic item) {
+                            return Container(
+                              alignment: Alignment.centerLeft,
+                              constraints: const BoxConstraints(minWidth: 100),
+                              child: Text(
+                                item['text'],
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            );
+                          }).toList();
+                        },
                         items: listState!
                             .map<DropdownMenuItem<String>>((dynamic value) {
                           return DropdownMenuItem<String>(
                               value: value!['value'],
-                              child: Text(value!['text']));
+                              child: Text(value!['text'],
+                                  style: TextStyle(color: Color(0xFF2ECC8F))));
                         }).toList(),
                         onChanged: (String? value) {
                           setState(() {
@@ -369,6 +470,7 @@ class _EditUserFormState extends State<EditUserForm> {
                       children: listZones!.map((zone) {
                         return CheckboxListTile(
                           title: Text(zone['text'] ?? ''),
+                          activeColor: Colors.black,
                           value:
                               zoneAtendimentSelected!.contains(zone['value']),
                           onChanged: (bool? value) {
@@ -395,6 +497,7 @@ class _EditUserFormState extends State<EditUserForm> {
                       children: listSpecialties!.map((specialty) {
                         return CheckboxListTile(
                           title: Text(specialty['text'] ?? ''),
+                          activeColor: Colors.black,
                           value:
                               specialtiesSelected!.contains(specialty['value']),
                           onChanged: (bool? value) {
@@ -419,7 +522,15 @@ class _EditUserFormState extends State<EditUserForm> {
                     controller: descriptionController,
                     decoration: InputDecoration(
                       labelText: 'Descrição',
+                      labelStyle: TextStyle(color: Colors.black),
+                      hintStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black),
+                      ),
                     ),
                     maxLines: 3,
                     validator: (value) {
@@ -442,7 +553,7 @@ class _EditUserFormState extends State<EditUserForm> {
                           width: 20,
                         ),
                         Switch(
-                          activeColor: Color(0xFF2ECC8F),
+                          activeColor: Colors.white,
                           value: wantService!,
                           onChanged: (bool? value) {
                             setState(() {
@@ -452,7 +563,7 @@ class _EditUserFormState extends State<EditUserForm> {
                         ),
                       ],
                     ),
-                  ]  else if(profileId == 2) ...[
+                  ] else if (profileId == 2) ...[
                     Row(
                       children: [
                         Text(
@@ -464,7 +575,7 @@ class _EditUserFormState extends State<EditUserForm> {
                           width: 20,
                         ),
                         Switch(
-                          activeColor: Color(0xFF2ECC8F),
+                          activeColor: Colors.white,
                           value: wantService!,
                           onChanged: (bool? value) {
                             setState(() {

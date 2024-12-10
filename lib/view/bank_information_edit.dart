@@ -62,7 +62,7 @@ class _BankInformationEditState extends State<BankInformationEdit> {
       'bank_name': bankNameController.text,
       'pix_key': pixKeyController.text,
       'account_number': accountNumberController.text,
-        'agency': agencyController.text,
+      'agency': agencyController.text,
     };
 
     await updateDiaistBankInformation(body);
@@ -107,12 +107,14 @@ class _BankInformationEditState extends State<BankInformationEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF2ECC8F),
       appBar: AppBar(
         title: const Text(
           'Edição de informações',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
         ),
-        backgroundColor: const Color(0xFF2ECC8F),
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           onPressed: () {
             GoRouter.of(context).push('/bank/information');
@@ -129,7 +131,7 @@ class _BankInformationEditState extends State<BankInformationEdit> {
           height: MediaQuery.of(context).size.height,
           alignment: Alignment.center,
           padding: const EdgeInsets.all(12.0),
-          color: Colors.white,
+          color: const Color(0xFF2ECC8F),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -139,6 +141,12 @@ class _BankInformationEditState extends State<BankInformationEdit> {
                   labelText: 'Nome do banco',
                   errorText: errors['bank_name']! ? 'Valor inválido' : null,
                   border: const OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
               ),
               SizedBox(
@@ -150,6 +158,12 @@ class _BankInformationEditState extends State<BankInformationEdit> {
                   labelText: 'Nome do titular da conta',
                   errorText: errors['account_name']! ? 'Valor inválido' : null,
                   border: const OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
               ),
               SizedBox(
@@ -161,6 +175,12 @@ class _BankInformationEditState extends State<BankInformationEdit> {
                   labelText: 'Chave pix',
                   errorText: errors['pix_key']! ? 'Valor inválido' : null,
                   border: const OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
               ),
               SizedBox(
@@ -172,6 +192,12 @@ class _BankInformationEditState extends State<BankInformationEdit> {
                   labelText: 'Agência da conta',
                   errorText: errors['agency']! ? 'Valor inválido' : null,
                   border: const OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
               ),
               SizedBox(
@@ -184,15 +210,27 @@ class _BankInformationEditState extends State<BankInformationEdit> {
                   errorText:
                       errors['account_number']! ? 'Valor inválido' : null,
                   border: const OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
                 ),
               ),
               const SizedBox(
                 height: 14,
               ),
-              ButtonText(
-                  btnText: 'Salvar',
-                  width: 150,
-                  function: () => {saveInfos(context)})
+              ElevatedButton(
+                onPressed: () => saveInfos(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black, // Cor de fundo
+                ),
+                child: Text(
+                  'Salvar',
+                  style: TextStyle(color: Colors.white), // Cor do texto
+                ),
+              )
             ],
           ),
         ),

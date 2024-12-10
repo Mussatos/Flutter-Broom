@@ -66,36 +66,36 @@ class _EditAddressFormState extends State<EditAddressForm> {
   }
 
   void saveAddress() async {
-  if (_formKey.currentState!.validate()) {
-    Address updatedAddress = Address(
-      city: cityController.text,
-      state: stateController.text,
-      street: streetController.text,
-      addressType: addressTypeSelected,
-      neighborhood: neighController.text,
-      addressCode: addressCodeController.text.replaceAll(RegExp(r'-'), ''),
-      complement: complementController.text,
-      number: int.parse(numberController.text),
-      userId: widget.address.userId,
-      id: id,  
-    );
+    if (_formKey.currentState!.validate()) {
+      Address updatedAddress = Address(
+        city: cityController.text,
+        state: stateController.text,
+        street: streetController.text,
+        addressType: addressTypeSelected,
+        neighborhood: neighController.text,
+        addressCode: addressCodeController.text.replaceAll(RegExp(r'-'), ''),
+        complement: complementController.text,
+        number: int.parse(numberController.text),
+        userId: widget.address.userId,
+        id: id,
+      );
 
-    await updateAddress(id, updatedAddress.toJson());
+      await updateAddress(id, updatedAddress.toJson());
 
-    setState(() {
-      widget.address.street = updatedAddress.street;
-      widget.address.city = updatedAddress.city;
-      widget.address.state = updatedAddress.state;
-      widget.address.neighborhood = updatedAddress.neighborhood;
-      widget.address.number = updatedAddress.number;
-      widget.address.complement = updatedAddress.complement;
-      widget.address.addressCode = updatedAddress.addressCode;
-      widget.address.addressType = updatedAddress.addressType;
-    });
+      setState(() {
+        widget.address.street = updatedAddress.street;
+        widget.address.city = updatedAddress.city;
+        widget.address.state = updatedAddress.state;
+        widget.address.neighborhood = updatedAddress.neighborhood;
+        widget.address.number = updatedAddress.number;
+        widget.address.complement = updatedAddress.complement;
+        widget.address.addressCode = updatedAddress.addressCode;
+        widget.address.addressType = updatedAddress.addressType;
+      });
 
-    GoRouter.of(context).pop(updatedAddress);
+      GoRouter.of(context).pop(updatedAddress);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -139,18 +139,18 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     // enabled: false,
                     decoration: InputDecoration(
                       labelText: 'CEP',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.transparent,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -168,18 +168,18 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     controller: stateController,
                     decoration: InputDecoration(
                       labelText: 'Estado',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.transparent,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -197,18 +197,18 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     controller: cityController,
                     decoration: InputDecoration(
                       labelText: 'Cidade',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.transparent,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -226,18 +226,18 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     controller: streetController,
                     decoration: InputDecoration(
                       labelText: 'Rua',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.transparent,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -255,18 +255,18 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     controller: neighController,
                     decoration: InputDecoration(
                       labelText: 'Bairro',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.transparent,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -284,18 +284,18 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     controller: numberController,
                     decoration: InputDecoration(
                       labelText: 'Número',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.transparent,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -313,18 +313,18 @@ class _EditAddressFormState extends State<EditAddressForm> {
                     controller: complementController,
                     decoration: InputDecoration(
                       labelText: 'Complemento',
-                      labelStyle: TextStyle(color: Colors.white),
+                      labelStyle: TextStyle(color: Colors.black),
                       filled: true,
                       fillColor: Colors.transparent,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.black),
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ),
@@ -335,7 +335,7 @@ class _EditAddressFormState extends State<EditAddressForm> {
                   child: Text(
                     'Escolha o tipo do endereço',
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.w400),
                   ),
@@ -347,21 +347,30 @@ class _EditAddressFormState extends State<EditAddressForm> {
                         value: addressTypeSelected,
                         underline: Container(
                           height: 1,
-                          color: Colors.white,
+                          color: Colors.black,
                         ),
                         dropdownColor: Colors.black,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        selectedItemBuilder: (context) {
+                          return addressType.map((String item) {
+                            return Container(
+                              alignment: Alignment.centerLeft,
+                              constraints: const BoxConstraints(minWidth: 100),
+                              child: Text(
+                                item,
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            );
+                          }).toList();
+                        },
                         isExpanded: true,
                         iconSize: 35,
-                        iconEnabledColor: Colors.white,
+                        iconEnabledColor: Colors.black,
                         items: addressType
                             .map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem<String>(
-                              value: value, child: Text(value));
+                              value: value,
+                              child: Text(value,
+                                  style: TextStyle(color: Color(0xFF2ECC8F))));
                         }).toList(),
                         onChanged: (String? value) {
                           setState(() {

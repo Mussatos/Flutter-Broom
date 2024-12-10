@@ -22,26 +22,61 @@ class UserList extends StatefulWidget {
 class _UserListState extends State<UserList> {
   Future<List<ListUsers>>? handleUsuarios;
   bool hasNoAddress = false;
+  bool hasNoCustomInfo = false;
+  bool hasNoCustomInfoActivity = false;
+  int? profileId;
+  ContractorCustomInformation? customData;
+  List<dynamic>? customDataSpecialties = [];
+  List<dynamic>? customDataActivity = [];
+  Future<Yourself?>? userData;
 
   @override
   void initState() {
     handleUsuarios = fetchUsuarios();
     super.initState();
     _checkUserAddresses();
+    fetchUserById();
   }
 
- Future<void> _checkUserAddresses() async {
+  Future<void> _checkUserAddresses() async {
     try {
       final addresses = await fetchAddress();
       setState(() {
-        hasNoAddress = addresses.isEmpty; 
+        hasNoAddress = addresses.isEmpty;
       });
     } catch (error) {
       print('Erro ao buscar endereços: $error');
     }
   }
 
-   void _showAddressesDialog() {
+  Future<Yourself?> fetchUserById() async {
+    profileId = await autentication.getProfileId();
+    final userData = await getUserById();
+
+    if (userData != null && profileId == 1) {
+      customData = await fetchCustomContractorProfile(userData.id);
+      print("$customData customData cliente");
+      setState(() {
+        if (customData == null) {
+          hasNoCustomInfo == true;
+        }
+        print("$hasNoCustomInfo custom cliente");
+      });
+    } else if (userData != null && profileId == 2) {
+      customDataSpecialties = await fetchDataDiaristSpecialties(userData.id);
+      customDataActivity = await fetchDataDiaristZones(userData.id);
+      setState(() {
+        hasNoCustomInfo = customDataSpecialties!.isEmpty;
+        hasNoCustomInfoActivity = customDataActivity!.isEmpty;
+        print("$hasNoCustomInfo specialties");
+        print("$hasNoCustomInfoActivity activity");
+      });
+    }
+
+    return userData;
+  }
+
+  void _showAddressesDialog() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialog(
         context: context,
@@ -49,18 +84,21 @@ class _UserListState extends State<UserList> {
           return AlertDialog(
             title: const Text(
               'Aviso',
-               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
             content: const Text(
-                'Você ainda não possui nenhum endereço cadastrado. Deseja adicionar um agora?', 
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+              'Você ainda não possui nenhum endereço cadastrado. Deseja adicionar um agora?',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
             actions: <Widget>[
               TextButton(
                 child: const Text(
-                        'Cancelar',
-                        style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 16),
-                        ),
+                  'Cancelar',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -68,8 +106,11 @@ class _UserListState extends State<UserList> {
               TextButton(
                 child: const Text(
                   'Adicionar endereço',
-                   style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700, fontSize: 16),
-                  ),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                   Navigator.of(context).push(
@@ -141,13 +182,13 @@ class _UserListState extends State<UserList> {
                 fontWeight: FontWeight.w600)),
         automaticallyImplyLeading: false,
         actions: [
-           Stack(
+          Stack(
             children: [
               IconButton(
                 icon: const Icon(Icons.notifications),
                 color: Colors.black,
                 onPressed: () {
-                  if (hasNoAddress) {
+                  if (hasNoAddress || hasNoCustomInfo) {
                     _showAddressesDialog();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -159,18 +200,18 @@ class _UserListState extends State<UserList> {
                 },
               ),
               if (hasNoAddress)
-              Positioned(
-                right: 12,
-                top: 12,
-                child: Container(
-                  width: 7,
-                  height: 7,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
-                    shape: BoxShape.circle,
+                Positioned(
+                  right: 12,
+                  top: 12,
+                  child: Container(
+                    width: 7,
+                    height: 7,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           IconButton(

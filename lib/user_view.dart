@@ -148,7 +148,7 @@ class UserView extends StatelessWidget {
                     ),
                     if (profileId == 1) ...[
                       SizedBox(height: 20),
-                      Row(
+                     const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.build, color: Colors.black, size: 20),

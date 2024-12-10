@@ -207,7 +207,7 @@ class _UserYourselfState extends State<UserYourself> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.build,
-                                color: Color(0xFF2ECC8F), size: 20),
+                                color: Colors.black, size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Procurando serviço:',
@@ -236,7 +236,7 @@ class _UserYourselfState extends State<UserYourself> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.access_time,
-                                color: Color(0xFF2ECC8F), size: 20),
+                                color: Colors.black, size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Horário de preferência:',
@@ -265,7 +265,7 @@ class _UserYourselfState extends State<UserYourself> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(Icons.attach_money,
-                                color: Color(0xFF2ECC8F), size: 20),
+                                color: Colors.black, size: 20),
                             SizedBox(width: 10),
                             Text(
                               'Valor que estou disposto a pagar:',

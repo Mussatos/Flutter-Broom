@@ -1,0 +1,4 @@
+/build/
+/.firebase/
+firebase.json
+.dart_tool
